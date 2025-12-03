@@ -1,8 +1,216 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@model FitnessCenter.Models.ViewModels.HomeViewModel
+@{
+    ViewData["Title"] = "Ana Sayfa";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <h1 class="display-4 fw-bold mb-4">Sağlıklı Yaşamın Adresi</h1>
+                <p class="lead mb-4">Modern ekipmanlar, uzman antrenörler ve kişiselleştirilmiş programlarla fitness hedeflerinize ulaşın.</p>
+                <div class="d-flex gap-3">
+                    <a asp-controller="Account" asp-action="Register" class="btn btn-primary btn-lg">
+                        <i class="bi bi-person-plus"></i> Hemen Üye Ol
+                    </a>
+                    <a asp-controller="Service" asp-action="Index" class="btn btn-outline-light btn-lg">
+                        <i class="bi bi-grid"></i> Hizmetleri İncele
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-6 text-center">
+                <img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=600" 
+                     alt="Fitness" class="img-fluid rounded-4 shadow-lg" style="max-height: 400px; object-fit: cover;">
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Stats Section -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row text-center">
+            <div class="col-md-3 mb-4">
+                <div class="p-4">
+                    <i class="bi bi-people-fill display-4 text-primary-custom"></i>
+                    <h2 class="fw-bold mt-3">@Model.TotalMembers+</h2>
+                    <p class="text-muted">Aktif Üye</p>
+                </div>
+            </div>
+            <div class="col-md-3 mb-4">
+                <div class="p-4">
+                    <i class="bi bi-person-badge display-4 text-primary-custom"></i>
+                    <h2 class="fw-bold mt-3">@Model.TotalTrainers</h2>
+                    <p class="text-muted">Uzman Antrenör</p>
+                </div>
+            </div>
+            <div class="col-md-3 mb-4">
+                <div class="p-4">
+                    <i class="bi bi-grid-fill display-4 text-primary-custom"></i>
+                    <h2 class="fw-bold mt-3">@(Model.FeaturedServices?.Count ?? 0)+</h2>
+                    <p class="text-muted">Farklı Hizmet</p>
+                </div>
+            </div>
+            <div class="col-md-3 mb-4">
+                <div class="p-4">
+                    <i class="bi bi-clock-fill display-4 text-primary-custom"></i>
+                    <h2 class="fw-bold mt-3">17 Saat</h2>
+                    <p class="text-muted">Günlük Açık</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Services Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="fw-bold">Hizmetlerimiz</h2>
+            <p class="text-muted">Size özel fitness programları ve profesyonel eğitim hizmetleri</p>
+        </div>
+        <div class="row">
+            @if (Model.FeaturedServices != null)
+            {
+                @foreach (var service in Model.FeaturedServices)
+                {
+                    <div class="col-md-4 mb-4">
+                        <div class="card service-card h-100 shadow-sm">
+                            <div class="card-body text-center p-4">
+                                <div class="feature-icon mx-auto">
+                                    @if (service.Category?.ToLower().Contains("yoga") == true)
+                                    {
+                                        <i class="bi bi-flower1"></i>
+                                    }
+                                    else if (service.Category?.ToLower().Contains("pilates") == true)
+                                    {
+                                        <i class="bi bi-heart-pulse"></i>
+                                    }
+                                    else if (service.Category?.ToLower().Contains("personal") == true)
+                                    {
+                                        <i class="bi bi-person-check"></i>
+                                    }
+                                    else if (service.Category?.ToLower().Contains("weight") == true)
+                                    {
+                                        <i class="bi bi-arrow-down-circle"></i>
+                                    }
+                                    else if (service.Category?.ToLower().Contains("muscle") == true)
+                                    {
+                                        <i class="bi bi-arrow-up-circle"></i>
+                                    }
+                                    else
+                                    {
+                                        <i class="bi bi-lightning"></i>
+                                    }
+                                </div>
+                                <h5 class="card-title">@service.Name</h5>
+                                <p class="card-text text-muted small">@service.Description</p>
+                                <div class="d-flex justify-content-between align-items-center mt-3">
+                                    <span class="badge bg-secondary">@service.DurationMinutes dk</span>
+                                    <span class="fw-bold text-primary-custom">@service.Price.ToString("N0") ₺</span>
+                                </div>
+                            </div>
+                            <div class="card-footer bg-transparent border-0 pb-4 text-center">
+                                <a asp-controller="Appointment" asp-action="Create" asp-route-serviceId="@service.Id" 
+                                   class="btn btn-outline-primary">
+                                    <i class="bi bi-calendar-plus"></i> Randevu Al
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+        <div class="text-center mt-4">
+            <a asp-controller="Service" asp-action="Index" class="btn btn-primary">
+                <i class="bi bi-arrow-right"></i> Tüm Hizmetleri Gör
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Trainers Section -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="fw-bold">Uzman Antrenörlerimiz</h2>
+            <p class="text-muted">Alanında deneyimli ve sertifikalı eğitmenler</p>
+        </div>
+        <div class="row">
+            @if (Model.FeaturedTrainers != null)
+            {
+                @foreach (var trainer in Model.FeaturedTrainers)
+                {
+                    <div class="col-md-3 mb-4">
+                        <div class="card trainer-card h-100 shadow-sm">
+                            <img src="@(trainer.ProfileImageUrl ?? "https://via.placeholder.com/300x250?text=" + trainer.FirstName)" 
+                                 class="card-img-top" alt="@trainer.FullName">
+                            <div class="card-body text-center">
+                                <h5 class="card-title mb-1">@trainer.FullName</h5>
+                                <p class="text-muted small mb-2">@trainer.Specializations</p>
+                                <span class="badge bg-primary-custom">@trainer.ExperienceYears Yıl Deneyim</span>
+                            </div>
+                            <div class="card-footer bg-transparent border-0 pb-3 text-center">
+                                <a asp-controller="Trainer" asp-action="Details" asp-route-id="@trainer.Id" 
+                                   class="btn btn-sm btn-outline-primary">
+                                    <i class="bi bi-info-circle"></i> Detaylar
+                                </a>
+                                <a asp-controller="Appointment" asp-action="Create" asp-route-trainerId="@trainer.Id" 
+                                   class="btn btn-sm btn-primary">
+                                    <i class="bi bi-calendar"></i> Randevu
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+        <div class="text-center mt-4">
+            <a asp-controller="Trainer" asp-action="Index" class="btn btn-primary">
+                <i class="bi bi-arrow-right"></i> Tüm Antrenörleri Gör
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- AI Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6 mb-4">
+                <img src="https://images.unsplash.com/photo-1576678927484-cc907957088c?w=600" 
+                     alt="AI Fitness" class="img-fluid rounded-4 shadow">
+            </div>
+            <div class="col-lg-6">
+                <h2 class="fw-bold mb-4">
+                    <i class="bi bi-robot text-primary-custom"></i> Yapay Zeka Destekli Öneri Sistemi
+                </h2>
+                <p class="lead mb-4">
+                    Vücut tipiniz, hedefleriniz ve sağlık durumunuza göre kişiselleştirilmiş egzersiz ve diyet 
+                    programları alın.
+                </p>
+                <ul class="list-unstyled mb-4">
+                    <li class="mb-2"><i class="bi bi-check-circle-fill text-success"></i> Kişiye özel egzersiz programı</li>
+                    <li class="mb-2"><i class="bi bi-check-circle-fill text-success"></i> Beslenme önerileri</li>
+                    <li class="mb-2"><i class="bi bi-check-circle-fill text-success"></i> Hedef odaklı tavsiyeler</li>
+                    <li class="mb-2"><i class="bi bi-check-circle-fill text-success"></i> Sağlık durumuna uygun program</li>
+                </ul>
+                <a asp-controller="AI" asp-action="Index" class="btn btn-primary btn-lg">
+                    <i class="bi bi-stars"></i> Hemen Dene
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="py-5 bg-primary-custom text-white">
+    <div class="container text-center">
+        <h2 class="fw-bold mb-4">Sağlıklı Yaşama İlk Adımı Atın!</h2>
+        <p class="lead mb-4">Hemen üye olun, ilk seansınız bizden olsun.</p>
+        <a asp-controller="Account" asp-action="Register" class="btn btn-light btn-lg">
+            <i class="bi bi-person-plus"></i> Ücretsiz Kayıt Ol
+        </a>
+    </div>
+</section>
