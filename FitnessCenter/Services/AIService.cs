@@ -24,7 +24,8 @@ namespace FitnessCenter.Services
 
         public async Task<string> GetFitnessRecommendationAsync(AIRecommendationViewModel model)
         {
-            var apiKey = _configuration["Gemini:ApiKey"];
+            // .env dosyasından API key'i al
+            var apiKey = Environment.GetEnvironmentVariable("GEMINI_API_KEY");
             
             // If no API key, return a demo recommendation
             if (string.IsNullOrEmpty(apiKey))

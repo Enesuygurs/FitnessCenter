@@ -1,8 +1,12 @@
+using DotNetEnv;
 using FitnessCenter.Data;
 using FitnessCenter.Models;
 using FitnessCenter.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+
+// .env dosyasını yükle
+Env.Load();
 
 var builder = WebApplication.CreateBuilder(args);
 
