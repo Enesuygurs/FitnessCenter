@@ -1,6 +1,7 @@
 @model List<FitnessCenter.Models.Service>
 @{
     ViewData["Title"] = "Hizmetlerimiz";
+    ViewData["NoTopPadding"] = true;
     var categories = Model.Select(s => s.Category).Distinct().ToList();
 }
 
@@ -8,6 +9,7 @@
     .page-header {
         background: linear-gradient(135deg, rgba(0, 210, 106, 0.1) 0%, rgba(0, 255, 136, 0.05) 100%);
         padding: 60px 0;
+        padding-top: 140px;
         margin-bottom: 50px;
         border-bottom: 1px solid rgba(0, 210, 106, 0.2);
     }
