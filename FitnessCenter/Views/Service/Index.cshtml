@@ -1,0 +1,90 @@
+@model List<FitnessCenter.Models.Service>
+@{
+    ViewData["Title"] = "Hizmetlerimiz";
+    var categories = Model.Select(s => s.Category).Distinct().ToList();
+}
+
+<div class="container py-5">
+    <div class="text-center mb-5">
+        <h1 class="fw-bold"><i class="bi bi-list-stars text-primary-custom"></i> Hizmetlerimiz</h1>
+        <p class="text-muted lead">Size en uygun fitness programını seçin</p>
+    </div>
+
+    <!-- Kategori Filtreleri -->
+    <div class="text-center mb-4">
+        <div class="btn-group" role="group" id="categoryFilter">
+            <button type="button" class="btn btn-outline-primary active" data-category="all">Tümü</button>
+            @foreach (var category in categories)
+            {
+                <button type="button" class="btn btn-outline-primary" data-category="@category">@category</button>
+            }
+        </div>
+    </div>
+
+    <div class="row" id="serviceList">
+        @foreach (var service in Model)
+        {
+            <div class="col-md-4 mb-4 service-item" data-category="@service.Category">
+                <div class="card h-100 shadow-sm service-card">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0 text-center">@service.Name</h5>
+                    </div>
+                    <div class="card-body d-flex flex-column">
+                        <div class="text-center mb-3">
+                            <span class="badge bg-secondary fs-6">@service.Category</span>
+                        </div>
+                        <p class="card-text text-muted flex-grow-1">
+                            @(service.Description?.Length > 150 ? service.Description.Substring(0, 150) + "..." : service.Description)
+                        </p>
+                        <hr>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div>
+                                <i class="bi bi-clock text-primary"></i>
+                                <span>@service.DurationMinutes Dakika</span>
+                            </div>
+                            <div class="text-end">
+                                <h4 class="text-success mb-0">@service.Price ₺</h4>
+                                <small class="text-muted">/ seans</small>
+                            </div>
+                        </div>
+                        @if (service.Gym != null)
+                        {
+                            <p class="text-muted small mb-3">
+                                <i class="bi bi-building"></i> @service.Gym.Name
+                            </p>
+                        }
+                    </div>
+                    <div class="card-footer bg-transparent">
+                        <a asp-controller="Appointment" asp-action="Create" asp-route-serviceId="@service.Id" 
+                           class="btn btn-primary w-100">
+                            <i class="bi bi-calendar-plus"></i> Randevu Al
+                        </a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.querySelectorAll('#categoryFilter button').forEach(button => {
+            button.addEventListener('click', function() {
+                // Remove active class from all buttons
+                document.querySelectorAll('#categoryFilter button').forEach(b => b.classList.remove('active'));
+                // Add active class to clicked button
+                this.classList.add('active');
+                
+                const category = this.dataset.category;
+                
+                document.querySelectorAll('.service-item').forEach(item => {
+                    if (category === 'all' || item.dataset.category === category) {
+                        item.style.display = 'block';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+            });
+        });
+    </script>
+}
