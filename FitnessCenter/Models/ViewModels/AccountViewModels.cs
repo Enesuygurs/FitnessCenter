@@ -31,6 +31,7 @@ namespace FitnessCenter.Models.ViewModels
         public string ConfirmPassword { get; set; } = string.Empty;
 
         [Phone(ErrorMessage = "Geçerli bir telefon numarası giriniz")]
+        [RegularExpression(@"^(05)[0-9]{9}$", ErrorMessage = "Telefon numarası 05XX XXX XX XX formatında olmalıdır")]
         [Display(Name = "Telefon")]
         public string? PhoneNumber { get; set; }
     }
@@ -68,6 +69,7 @@ namespace FitnessCenter.Models.ViewModels
         public string? Email { get; set; }
 
         [Phone(ErrorMessage = "Geçerli bir telefon numarası giriniz")]
+        [RegularExpression(@"^(05)[0-9]{9}$", ErrorMessage = "Telefon numarası 05XX XXX XX XX formatında olmalıdır")]
         [Display(Name = "Telefon")]
         public string? PhoneNumber { get; set; }
 
