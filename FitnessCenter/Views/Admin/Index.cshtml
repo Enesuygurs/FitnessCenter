@@ -1,0 +1,179 @@
+@model FitnessCenter.Models.ViewModels.DashboardViewModel
+@{
+    ViewData["Title"] = "Admin Panel";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container py-4">
+    <h2 class="mb-4"><i class="bi bi-speedometer2"></i> Admin Dashboard</h2>
+
+    <!-- Stats Cards -->
+    <div class="row mb-4">
+        <div class="col-md-3 mb-3">
+            <div class="card bg-primary text-white shadow">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-title">Toplam Üye</h6>
+                            <h2 class="mb-0">@Model.TotalMembers</h2>
+                        </div>
+                        <i class="bi bi-people-fill display-4 opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card bg-success text-white shadow">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-title">Antrenörler</h6>
+                            <h2 class="mb-0">@Model.TotalTrainers</h2>
+                        </div>
+                        <i class="bi bi-person-badge-fill display-4 opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card bg-warning text-dark shadow">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-title">Bekleyen Randevu</h6>
+                            <h2 class="mb-0">@Model.PendingAppointments</h2>
+                        </div>
+                        <i class="bi bi-clock-history display-4 opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card bg-info text-white shadow">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-title">Aylık Gelir</h6>
+                            <h2 class="mb-0">@Model.MonthlyRevenue.ToString("N0") ₺</h2>
+                        </div>
+                        <i class="bi bi-currency-lira display-4 opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-lightning"></i> Hızlı İşlemler</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex flex-wrap gap-2">
+                        <a asp-action="Gyms" class="btn btn-outline-primary">
+                            <i class="bi bi-building"></i> Spor Salonları
+                        </a>
+                        <a asp-action="Services" class="btn btn-outline-success">
+                            <i class="bi bi-grid"></i> Hizmetler
+                        </a>
+                        <a asp-action="Trainers" class="btn btn-outline-info">
+                            <i class="bi bi-people"></i> Antrenörler
+                        </a>
+                        <a asp-action="Appointments" class="btn btn-outline-warning">
+                            <i class="bi bi-calendar-check"></i> Randevular
+                        </a>
+                        <a asp-action="Members" class="btn btn-outline-secondary">
+                            <i class="bi bi-person-lines-fill"></i> Üyeler
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Appointments -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="bi bi-calendar3"></i> Son Randevular</h5>
+                    <a asp-action="Appointments" class="btn btn-sm btn-primary">Tümünü Gör</a>
+                </div>
+                <div class="card-body">
+                    @if (Model.RecentAppointments?.Any() == true)
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Tarih</th>
+                                        <th>Saat</th>
+                                        <th>Üye</th>
+                                        <th>Antrenör</th>
+                                        <th>Hizmet</th>
+                                        <th>Durum</th>
+                                        <th>İşlem</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var apt in Model.RecentAppointments)
+                                    {
+                                        <tr>
+                                            <td>@apt.AppointmentDate.ToString("dd.MM.yyyy")</td>
+                                            <td>@apt.AppointmentTime.ToString(@"hh\:mm")</td>
+                                            <td>@apt.User?.FullName</td>
+                                            <td>@apt.Trainer?.FullName</td>
+                                            <td>@apt.Service?.Name</td>
+                                            <td>
+                                                @{
+                                                    var badgeClass = apt.Status switch
+                                                    {
+                                                        FitnessCenter.Models.AppointmentStatus.Pending => "bg-warning text-dark",
+                                                        FitnessCenter.Models.AppointmentStatus.Confirmed => "bg-success",
+                                                        FitnessCenter.Models.AppointmentStatus.Cancelled => "bg-danger",
+                                                        FitnessCenter.Models.AppointmentStatus.Completed => "bg-info",
+                                                        _ => "bg-secondary"
+                                                    };
+                                                    var statusText = apt.Status switch
+                                                    {
+                                                        FitnessCenter.Models.AppointmentStatus.Pending => "Beklemede",
+                                                        FitnessCenter.Models.AppointmentStatus.Confirmed => "Onaylandı",
+                                                        FitnessCenter.Models.AppointmentStatus.Cancelled => "İptal",
+                                                        FitnessCenter.Models.AppointmentStatus.Completed => "Tamamlandı",
+                                                        _ => "Bilinmiyor"
+                                                    };
+                                                }
+                                                <span class="badge @badgeClass">@statusText</span>
+                                            </td>
+                                            <td>
+                                                @if (apt.Status == FitnessCenter.Models.AppointmentStatus.Pending)
+                                                {
+                                                    <form asp-action="ConfirmAppointment" asp-route-id="@apt.Id" method="post" class="d-inline">
+                                                        <button type="submit" class="btn btn-sm btn-success">
+                                                            <i class="bi bi-check"></i>
+                                                        </button>
+                                                    </form>
+                                                    <form asp-action="CancelAppointment" asp-route-id="@apt.Id" method="post" class="d-inline">
+                                                        <button type="submit" class="btn btn-sm btn-danger">
+                                                            <i class="bi bi-x"></i>
+                                                        </button>
+                                                    </form>
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <p class="text-muted mb-0">Henüz randevu bulunmamaktadır.</p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

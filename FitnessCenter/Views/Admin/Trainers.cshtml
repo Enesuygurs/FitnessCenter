@@ -1,0 +1,68 @@
+@model List<FitnessCenter.Models.Trainer>
+@{
+    ViewData["Title"] = "Antrenör Yönetimi";
+}
+
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="bi bi-people"></i> Antrenör Yönetimi</h2>
+        <a asp-action="CreateTrainer" class="btn btn-primary">
+            <i class="bi bi-plus-lg"></i> Yeni Antrenör
+        </a>
+    </div>
+
+    <div class="card shadow">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Ad Soyad</th>
+                            <th>E-posta</th>
+                            <th>Telefon</th>
+                            <th>Uzmanlık</th>
+                            <th>Çalışma Saatleri</th>
+                            <th>Durum</th>
+                            <th>İşlemler</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var trainer in Model)
+                        {
+                            <tr>
+                                <td>@trainer.Id</td>
+                                <td>@trainer.FullName</td>
+                                <td>@trainer.Email</td>
+                                <td>@trainer.Phone</td>
+                                <td><small>@trainer.Specializations</small></td>
+                                <td>@trainer.WorkStartTime.ToString(@"hh\:mm") - @trainer.WorkEndTime.ToString(@"hh\:mm")</td>
+                                <td>
+                                    @if (trainer.IsActive)
+                                    {
+                                        <span class="badge bg-success">Aktif</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger">Pasif</span>
+                                    }
+                                </td>
+                                <td>
+                                    <a asp-action="EditTrainer" asp-route-id="@trainer.Id" class="btn btn-sm btn-outline-primary">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                    <form asp-action="DeleteTrainer" asp-route-id="@trainer.Id" method="post" class="d-inline"
+                                          onsubmit="return confirm('Bu antrenörü silmek istediğinize emin misiniz?');">
+                                        <button type="submit" class="btn btn-sm btn-outline-danger">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

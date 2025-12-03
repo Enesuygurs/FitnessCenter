@@ -1,0 +1,68 @@
+@model List<FitnessCenter.Models.Service>
+@{
+    ViewData["Title"] = "Hizmet Yönetimi";
+}
+
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="bi bi-grid"></i> Hizmet Yönetimi</h2>
+        <a asp-action="CreateService" class="btn btn-primary">
+            <i class="bi bi-plus-lg"></i> Yeni Hizmet
+        </a>
+    </div>
+
+    <div class="card shadow">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Hizmet Adı</th>
+                            <th>Kategori</th>
+                            <th>Süre</th>
+                            <th>Ücret</th>
+                            <th>Spor Salonu</th>
+                            <th>Durum</th>
+                            <th>İşlemler</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var service in Model)
+                        {
+                            <tr>
+                                <td>@service.Id</td>
+                                <td>@service.Name</td>
+                                <td><span class="badge bg-secondary">@service.Category</span></td>
+                                <td>@service.DurationMinutes dk</td>
+                                <td>@service.Price.ToString("N0") ₺</td>
+                                <td>@service.Gym?.Name</td>
+                                <td>
+                                    @if (service.IsActive)
+                                    {
+                                        <span class="badge bg-success">Aktif</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger">Pasif</span>
+                                    }
+                                </td>
+                                <td>
+                                    <a asp-action="EditService" asp-route-id="@service.Id" class="btn btn-sm btn-outline-primary">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                    <form asp-action="DeleteService" asp-route-id="@service.Id" method="post" class="d-inline"
+                                          onsubmit="return confirm('Bu hizmeti silmek istediğinize emin misiniz?');">
+                                        <button type="submit" class="btn btn-sm btn-outline-danger">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

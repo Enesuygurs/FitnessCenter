@@ -1,0 +1,55 @@
+@model List<(FitnessCenter.Models.ApplicationUser User, IList<string> Roles)>
+@{
+    ViewData["Title"] = "Üye Yönetimi";
+}
+
+<div class="container py-4">
+    <h2 class="mb-4"><i class="bi bi-person-lines-fill"></i> Üye Yönetimi</h2>
+
+    <div class="card shadow">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Ad Soyad</th>
+                            <th>E-posta</th>
+                            <th>Telefon</th>
+                            <th>Kayıt Tarihi</th>
+                            <th>Rol</th>
+                            <th>İşlemler</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var (user, roles) in Model)
+                        {
+                            <tr>
+                                <td>@user.FullName</td>
+                                <td>@user.Email</td>
+                                <td>@user.PhoneNumber</td>
+                                <td>@user.RegistrationDate.ToString("dd.MM.yyyy")</td>
+                                <td>
+                                    @foreach (var role in roles)
+                                    {
+                                        <span class="badge @(role == "Admin" ? "bg-danger" : "bg-primary")">@role</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (!roles.Contains("Admin"))
+                                    {
+                                        <form asp-action="DeleteMember" asp-route-id="@user.Id" method="post" class="d-inline"
+                                              onsubmit="return confirm('Bu üyeyi silmek istediğinize emin misiniz?');">
+                                            <button type="submit" class="btn btn-sm btn-outline-danger">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </form>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
