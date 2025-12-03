@@ -1,121 +1,476 @@
 @model FitnessCenter.Models.ViewModels.ProfileViewModel
 @{
     ViewData["Title"] = "Profilim";
+    ViewData["NoTopPadding"] = true;
 }
 
-<div class="container py-5">
-    <div class="row">
-        <div class="col-md-4 mb-4">
-            <div class="card shadow">
-                <div class="card-body text-center p-4">
-                    <div class="mb-3">
-                        @if (!string.IsNullOrEmpty(Model.ProfileImageUrl))
-                        {
-                            <img src="@Model.ProfileImageUrl" alt="Profil" class="rounded-circle" style="width: 150px; height: 150px; object-fit: cover;">
-                        }
-                        else
-                        {
-                            <i class="bi bi-person-circle display-1 text-primary-custom"></i>
-                        }
+<style>
+    .profile-page {
+        min-height: 100vh;
+        padding-top: 120px;
+        padding-bottom: 80px;
+    }
+
+    .page-header {
+        text-align: center;
+        margin-bottom: 50px;
+    }
+
+    .page-header h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #fff;
+        margin-bottom: 15px;
+    }
+
+    .page-header h1 i {
+        background: linear-gradient(135deg, #00d26a, #00ff88);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .page-header p {
+        color: #b8b8b8;
+        font-size: 1.1rem;
+    }
+
+    .profile-card {
+        background: linear-gradient(145deg, #12121c 0%, #0d0d14 100%);
+        border: 1px solid rgba(0, 210, 106, 0.1);
+        border-radius: 20px;
+        overflow: hidden;
+        height: 100%;
+    }
+
+    .profile-header {
+        background: linear-gradient(135deg, rgba(0, 210, 106, 0.15) 0%, rgba(0, 210, 106, 0.05) 100%);
+        padding: 40px 30px;
+        text-align: center;
+        border-bottom: 1px solid rgba(0, 210, 106, 0.1);
+    }
+
+    .profile-avatar {
+        width: 140px;
+        height: 140px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #00d26a, #00ff88);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 20px;
+        font-size: 4rem;
+        color: #0a0a14;
+        box-shadow: 0 10px 40px rgba(0, 210, 106, 0.3);
+    }
+
+    .profile-avatar img {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+
+    .profile-name {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #fff;
+        margin-bottom: 5px;
+    }
+
+    .profile-email {
+        color: #00d26a;
+        font-size: 0.95rem;
+    }
+
+    .profile-stats {
+        padding: 25px 30px;
+    }
+
+    .stat-item {
+        display: flex;
+        align-items: center;
+        padding: 15px;
+        background: rgba(255, 255, 255, 0.02);
+        border-radius: 12px;
+        margin-bottom: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        transition: all 0.3s ease;
+    }
+
+    .stat-item:hover {
+        background: rgba(0, 210, 106, 0.05);
+        border-color: rgba(0, 210, 106, 0.2);
+    }
+
+    .stat-item:last-child {
+        margin-bottom: 0;
+    }
+
+    .stat-icon {
+        width: 45px;
+        height: 45px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, rgba(0, 210, 106, 0.2), rgba(0, 210, 106, 0.1));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 15px;
+        color: #00d26a;
+        font-size: 1.2rem;
+    }
+
+    .stat-info {
+        flex: 1;
+    }
+
+    .stat-label {
+        font-size: 0.8rem;
+        color: #888;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .stat-value {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #fff;
+    }
+
+    .edit-card {
+        background: linear-gradient(145deg, #12121c 0%, #0d0d14 100%);
+        border: 1px solid rgba(0, 210, 106, 0.1);
+        border-radius: 20px;
+        overflow: hidden;
+    }
+
+    .edit-card-header {
+        background: linear-gradient(135deg, rgba(0, 210, 106, 0.15) 0%, rgba(0, 210, 106, 0.05) 100%);
+        padding: 25px 30px;
+        border-bottom: 1px solid rgba(0, 210, 106, 0.1);
+    }
+
+    .edit-card-header h5 {
+        margin: 0;
+        color: #fff;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .edit-card-header h5 i {
+        color: #00d26a;
+    }
+
+    .edit-card-body {
+        padding: 30px;
+    }
+
+    .form-label {
+        color: #b8b8b8;
+        font-weight: 500;
+        margin-bottom: 8px;
+        font-size: 0.9rem;
+    }
+
+    .form-control, .form-select {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        color: #fff;
+        padding: 12px 16px;
+        font-size: 0.95rem;
+        transition: all 0.3s ease;
+    }
+
+    .form-control:focus, .form-select:focus {
+        background: rgba(0, 210, 106, 0.05);
+        border-color: #00d26a;
+        box-shadow: 0 0 0 3px rgba(0, 210, 106, 0.1);
+        color: #fff;
+    }
+
+    .form-control::placeholder {
+        color: #666;
+    }
+
+    .form-select option {
+        background: #12121c;
+        color: #fff;
+    }
+
+    .section-divider {
+        border: none;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        margin: 30px 0;
+    }
+
+    .section-title {
+        color: #00d26a;
+        font-size: 1rem;
+        font-weight: 600;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .section-title i {
+        font-size: 1.2rem;
+    }
+
+    .btn-save {
+        background: linear-gradient(135deg, #00d26a, #00ff88);
+        border: none;
+        color: #0a0a14;
+        font-weight: 600;
+        padding: 14px 30px;
+        border-radius: 12px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .btn-save:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 30px rgba(0, 210, 106, 0.3);
+        color: #0a0a14;
+    }
+
+    .alert-danger {
+        background: rgba(220, 53, 69, 0.1);
+        border: 1px solid rgba(220, 53, 69, 0.3);
+        border-radius: 12px;
+        color: #ff6b6b;
+    }
+
+    .text-danger {
+        color: #ff6b6b !important;
+        font-size: 0.85rem;
+        margin-top: 5px;
+    }
+
+    .empty-stat {
+        color: #666;
+        font-style: italic;
+    }
+
+    @@media (max-width: 991px) {
+        .profile-page {
+            padding-top: 100px;
+        }
+    }
+</style>
+
+<div class="profile-page">
+    <div class="container">
+        <!-- Page Header -->
+        <div class="page-header" data-aos="fade-down">
+            <h1><i class="bi bi-person-circle me-2"></i>Profilim</h1>
+            <p>Kişisel bilgilerinizi görüntüleyin ve düzenleyin</p>
+        </div>
+
+        <div class="row g-4">
+            <!-- Sol Taraf - Profil Kartı -->
+            <div class="col-lg-4" data-aos="fade-right">
+                <div class="profile-card">
+                    <div class="profile-header">
+                        <div class="profile-avatar">
+                            @if (!string.IsNullOrEmpty(Model.ProfileImageUrl))
+                            {
+                                <img src="@Model.ProfileImageUrl" alt="Profil">
+                            }
+                            else
+                            {
+                                <i class="bi bi-person-fill"></i>
+                            }
+                        </div>
+                        <h4 class="profile-name">@Model.FirstName @Model.LastName</h4>
+                        <p class="profile-email">@Model.Email</p>
                     </div>
-                    <h4>@Model.FirstName @Model.LastName</h4>
-                    <p class="text-muted">@Model.Email</p>
-                    <hr>
-                    <div class="text-start">
-                        @if (Model.Height.HasValue)
-                        {
-                            <p><i class="bi bi-rulers"></i> Boy: @Model.Height cm</p>
-                        }
-                        @if (Model.Weight.HasValue)
-                        {
-                            <p><i class="bi bi-speedometer2"></i> Kilo: @Model.Weight kg</p>
-                        }
-                        @if (Model.Age.HasValue)
-                        {
-                            <p><i class="bi bi-calendar"></i> Yaş: @Model.Age</p>
-                        }
-                        @if (!string.IsNullOrEmpty(Model.Gender))
-                        {
-                            <p><i class="bi bi-gender-ambiguous"></i> Cinsiyet: @Model.Gender</p>
-                        }
+                    <div class="profile-stats">
+                        <div class="stat-item">
+                            <div class="stat-icon">
+                                <i class="bi bi-rulers"></i>
+                            </div>
+                            <div class="stat-info">
+                                <div class="stat-label">Boy</div>
+                                <div class="stat-value">
+                                    @if (Model.Height.HasValue)
+                                    {
+                                        @($"{Model.Height} cm")
+                                    }
+                                    else
+                                    {
+                                        <span class="empty-stat">Belirtilmemiş</span>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-icon">
+                                <i class="bi bi-speedometer2"></i>
+                            </div>
+                            <div class="stat-info">
+                                <div class="stat-label">Kilo</div>
+                                <div class="stat-value">
+                                    @if (Model.Weight.HasValue)
+                                    {
+                                        @($"{Model.Weight} kg")
+                                    }
+                                    else
+                                    {
+                                        <span class="empty-stat">Belirtilmemiş</span>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-icon">
+                                <i class="bi bi-calendar-heart"></i>
+                            </div>
+                            <div class="stat-info">
+                                <div class="stat-label">Yaş</div>
+                                <div class="stat-value">
+                                    @if (Model.Age.HasValue)
+                                    {
+                                        @Model.Age
+                                    }
+                                    else
+                                    {
+                                        <span class="empty-stat">Belirtilmemiş</span>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-icon">
+                                <i class="bi bi-gender-ambiguous"></i>
+                            </div>
+                            <div class="stat-info">
+                                <div class="stat-label">Cinsiyet</div>
+                                <div class="stat-value">
+                                    @if (!string.IsNullOrEmpty(Model.Gender))
+                                    {
+                                        @Model.Gender
+                                    }
+                                    else
+                                    {
+                                        <span class="empty-stat">Belirtilmemiş</span>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-icon">
+                                <i class="bi bi-body-text"></i>
+                            </div>
+                            <div class="stat-info">
+                                <div class="stat-label">Vücut Tipi</div>
+                                <div class="stat-value">
+                                    @if (!string.IsNullOrEmpty(Model.BodyType))
+                                    {
+                                        @Model.BodyType
+                                    }
+                                    else
+                                    {
+                                        <span class="empty-stat">Belirtilmemiş</span>
+                                    }
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="col-md-8">
-            <div class="card shadow">
-                <div class="card-header bg-primary-custom text-white">
-                    <h5 class="mb-0"><i class="bi bi-pencil"></i> Profili Düzenle</h5>
-                </div>
-                <div class="card-body p-4">
-                    <form asp-action="Profile" method="post">
-                        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
 
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label asp-for="FirstName" class="form-label"></label>
-                                <input asp-for="FirstName" class="form-control" />
-                                <span asp-validation-for="FirstName" class="text-danger"></span>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label asp-for="LastName" class="form-label"></label>
-                                <input asp-for="LastName" class="form-control" />
-                                <span asp-validation-for="LastName" class="text-danger"></span>
-                            </div>
-                        </div>
+            <!-- Sağ Taraf - Düzenleme Formu -->
+            <div class="col-lg-8" data-aos="fade-left">
+                <div class="edit-card">
+                    <div class="edit-card-header">
+                        <h5><i class="bi bi-pencil-square"></i> Profili Düzenle</h5>
+                    </div>
+                    <div class="edit-card-body">
+                        <form asp-action="Profile" method="post">
+                            <div asp-validation-summary="ModelOnly" class="alert alert-danger mb-4" role="alert"></div>
 
-                        <div class="mb-3">
-                            <label asp-for="PhoneNumber" class="form-label"></label>
-                            <input asp-for="PhoneNumber" class="form-control" />
-                            <span asp-validation-for="PhoneNumber" class="text-danger"></span>
-                        </div>
+                            <!-- Kişisel Bilgiler -->
+                            <div class="section-title">
+                                <i class="bi bi-person"></i> Kişisel Bilgiler
+                            </div>
 
-                        <hr>
-                        <h6 class="text-muted mb-3">Fiziksel Bilgiler (AI Öneri için)</h6>
+                            <div class="row">
+                                <div class="col-md-6 mb-4">
+                                    <label asp-for="FirstName" class="form-label">Ad</label>
+                                    <input asp-for="FirstName" class="form-control" placeholder="Adınız" />
+                                    <span asp-validation-for="FirstName" class="text-danger"></span>
+                                </div>
+                                <div class="col-md-6 mb-4">
+                                    <label asp-for="LastName" class="form-label">Soyad</label>
+                                    <input asp-for="LastName" class="form-control" placeholder="Soyadınız" />
+                                    <span asp-validation-for="LastName" class="text-danger"></span>
+                                </div>
+                            </div>
 
-                        <div class="row">
-                            <div class="col-md-3 mb-3">
-                                <label asp-for="Height" class="form-label"></label>
-                                <input asp-for="Height" class="form-control" />
-                                <span asp-validation-for="Height" class="text-danger"></span>
+                            <div class="mb-4">
+                                <label asp-for="PhoneNumber" class="form-label">Telefon Numarası</label>
+                                <input asp-for="PhoneNumber" class="form-control" placeholder="05XX XXX XX XX" />
+                                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
                             </div>
-                            <div class="col-md-3 mb-3">
-                                <label asp-for="Weight" class="form-label"></label>
-                                <input asp-for="Weight" class="form-control" />
-                                <span asp-validation-for="Weight" class="text-danger"></span>
+
+                            <hr class="section-divider">
+
+                            <!-- Fiziksel Bilgiler -->
+                            <div class="section-title">
+                                <i class="bi bi-activity"></i> Fiziksel Bilgiler (AI Öneri için)
                             </div>
-                            <div class="col-md-3 mb-3">
-                                <label asp-for="Age" class="form-label"></label>
-                                <input asp-for="Age" class="form-control" />
-                                <span asp-validation-for="Age" class="text-danger"></span>
+
+                            <div class="row">
+                                <div class="col-md-3 mb-4">
+                                    <label asp-for="Height" class="form-label">Boy (cm)</label>
+                                    <input asp-for="Height" class="form-control" placeholder="175" />
+                                    <span asp-validation-for="Height" class="text-danger"></span>
+                                </div>
+                                <div class="col-md-3 mb-4">
+                                    <label asp-for="Weight" class="form-label">Kilo (kg)</label>
+                                    <input asp-for="Weight" class="form-control" placeholder="70" />
+                                    <span asp-validation-for="Weight" class="text-danger"></span>
+                                </div>
+                                <div class="col-md-3 mb-4">
+                                    <label asp-for="Age" class="form-label">Yaş</label>
+                                    <input asp-for="Age" class="form-control" placeholder="25" />
+                                    <span asp-validation-for="Age" class="text-danger"></span>
+                                </div>
+                                <div class="col-md-3 mb-4">
+                                    <label asp-for="Gender" class="form-label">Cinsiyet</label>
+                                    <select asp-for="Gender" class="form-select">
+                                        <option value="">Seçiniz</option>
+                                        <option value="Erkek">Erkek</option>
+                                        <option value="Kadın">Kadın</option>
+                                    </select>
+                                </div>
                             </div>
-                            <div class="col-md-3 mb-3">
-                                <label asp-for="Gender" class="form-label"></label>
-                                <select asp-for="Gender" class="form-select">
+
+                            <div class="mb-4">
+                                <label asp-for="BodyType" class="form-label">Vücut Tipi</label>
+                                <select asp-for="BodyType" class="form-select">
                                     <option value="">Seçiniz</option>
-                                    <option value="Erkek">Erkek</option>
-                                    <option value="Kadın">Kadın</option>
+                                    <option value="Ektomorf">Ektomorf (İnce yapılı)</option>
+                                    <option value="Mezomorf">Mezomorf (Atletik yapılı)</option>
+                                    <option value="Endomorf">Endomorf (Geniş yapılı)</option>
+                                    <option value="Normal">Normal</option>
                                 </select>
                             </div>
-                        </div>
 
-                        <div class="mb-3">
-                            <label asp-for="BodyType" class="form-label"></label>
-                            <select asp-for="BodyType" class="form-select">
-                                <option value="">Seçiniz</option>
-                                <option value="Ektomorf">Ektomorf (İnce yapılı)</option>
-                                <option value="Mezomorf">Mezomorf (Atletik yapılı)</option>
-                                <option value="Endomorf">Endomorf (Geniş yapılı)</option>
-                                <option value="Normal">Normal</option>
-                            </select>
-                        </div>
-
-                        <div class="d-grid">
-                            <button type="submit" class="btn btn-primary">
-                                <i class="bi bi-check-lg"></i> Kaydet
-                            </button>
-                        </div>
-                    </form>
+                            <div class="d-grid mt-4">
+                                <button type="submit" class="btn btn-save">
+                                    <i class="bi bi-check2-circle"></i> Değişiklikleri Kaydet
+                                </button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
