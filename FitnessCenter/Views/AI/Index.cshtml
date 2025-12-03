@@ -235,6 +235,16 @@
                         </div>
 
                         <div class="mb-4">
+                            <label asp-for="Gender" class="form-label">Cinsiyet</label>
+                            <select asp-for="Gender" class="form-select">
+                                <option value="">Seçin...</option>
+                                <option value="Erkek">Erkek</option>
+                                <option value="Kadın">Kadın</option>
+                            </select>
+                            <span asp-validation-for="Gender" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-4">
                             <label asp-for="BodyType" class="form-label">Vücut Tipi</label>
                             <select asp-for="BodyType" class="form-select">
                                 <option value="">Seçin...</option>
