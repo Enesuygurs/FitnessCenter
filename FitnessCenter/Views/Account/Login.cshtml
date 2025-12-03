@@ -3,66 +3,207 @@
     ViewData["Title"] = "Giriş Yap";
 }
 
-<div class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-md-5">
-            <div class="card shadow">
-                <div class="card-body p-5">
-                    <div class="text-center mb-4">
-                        <i class="bi bi-person-circle display-1 text-primary-custom"></i>
-                        <h2 class="mt-3">Giriş Yap</h2>
-                        <p class="text-muted">Hesabınıza giriş yapın</p>
-                    </div>
+<style>
+    .auth-container {
+        min-height: calc(100vh - 200px);
+        display: flex;
+        align-items: center;
+        padding: 40px 0;
+    }
 
-                    <form asp-action="Login" method="post">
-                        <input type="hidden" name="returnUrl" value="@ViewData["ReturnUrl"]" />
-                        
-                        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+    .auth-card {
+        background: rgba(26, 26, 46, 0.9);
+        border: 1px solid rgba(0, 210, 106, 0.2);
+        border-radius: 25px;
+        overflow: hidden;
+        backdrop-filter: blur(20px);
+    }
 
-                        <div class="mb-3">
-                            <label asp-for="Email" class="form-label"></label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="bi bi-envelope"></i></span>
-                                <input asp-for="Email" class="form-control" placeholder="ornek@email.com" />
+    .auth-card .card-body {
+        padding: 50px;
+    }
+
+    .auth-icon {
+        width: 100px;
+        height: 100px;
+        background: linear-gradient(135deg, rgba(0, 210, 106, 0.2) 0%, rgba(0, 255, 136, 0.1) 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 25px;
+    }
+
+    .auth-icon i {
+        font-size: 3rem;
+        background: linear-gradient(135deg, #00d26a 0%, #00ff88 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .auth-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #fff;
+    }
+
+    .form-label {
+        color: #b8b8b8;
+        font-weight: 500;
+    }
+
+    .form-control {
+        background: rgba(15, 15, 26, 0.8);
+        border: 1px solid rgba(0, 210, 106, 0.2);
+        color: #fff;
+        border-radius: 12px;
+        padding: 14px 15px;
+        transition: all 0.3s ease;
+    }
+
+    .form-control:focus {
+        border-color: #00d26a;
+        box-shadow: 0 0 0 3px rgba(0, 210, 106, 0.1);
+        background: rgba(15, 15, 26, 0.9);
+        color: #fff;
+    }
+
+    .input-group-text {
+        background: rgba(0, 210, 106, 0.2);
+        border: 1px solid rgba(0, 210, 106, 0.2);
+        color: #00d26a;
+        border-radius: 12px 0 0 12px;
+    }
+
+    .input-group .form-control {
+        border-radius: 0 12px 12px 0;
+    }
+
+    .form-check-input {
+        background-color: rgba(15, 15, 26, 0.8);
+        border-color: rgba(0, 210, 106, 0.3);
+    }
+
+    .form-check-input:checked {
+        background-color: #00d26a;
+        border-color: #00d26a;
+    }
+
+    .form-check-label {
+        color: #b8b8b8;
+    }
+
+    .btn-login {
+        background: linear-gradient(135deg, #00d26a 0%, #00ff88 100%);
+        border: none;
+        color: #000;
+        font-weight: 700;
+        padding: 15px 30px;
+        border-radius: 30px;
+        font-size: 1.1rem;
+        transition: all 0.3s ease;
+    }
+
+    .btn-login:hover {
+        transform: scale(1.03);
+        box-shadow: 0 10px 30px rgba(0, 210, 106, 0.4);
+        color: #000;
+    }
+
+    .divider {
+        border-color: rgba(0, 210, 106, 0.2);
+        margin: 30px 0;
+    }
+
+    .demo-box {
+        background: rgba(0, 210, 106, 0.1);
+        border: 1px solid rgba(0, 210, 106, 0.2);
+        border-radius: 15px;
+        padding: 20px;
+        color: #b8b8b8;
+    }
+
+    .demo-box strong {
+        color: #00d26a;
+    }
+
+    .link-register {
+        color: #00d26a !important;
+        text-decoration: none;
+        font-weight: 600;
+    }
+
+    .link-register:hover {
+        color: #00ff88 !important;
+        text-decoration: underline;
+    }
+</style>
+
+<div class="auth-container">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-5 col-md-7" data-aos="fade-up">
+                <div class="auth-card">
+                    <div class="card-body">
+                        <div class="text-center mb-4">
+                            <div class="auth-icon">
+                                <i class="bi bi-person-circle"></i>
                             </div>
-                            <span asp-validation-for="Email" class="text-danger"></span>
+                            <h2 class="auth-title">Giriş Yap</h2>
+                            <p class="text-white-50">Hesabınıza giriş yapın</p>
                         </div>
 
-                        <div class="mb-3">
-                            <label asp-for="Password" class="form-label"></label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="bi bi-lock"></i></span>
-                                <input asp-for="Password" class="form-control" placeholder="Şifreniz" />
+                        <form asp-action="Login" method="post">
+                            <input type="hidden" name="returnUrl" value="@ViewData["ReturnUrl"]" />
+                            
+                            <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                            <div class="mb-4">
+                                <label asp-for="Email" class="form-label"></label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                                    <input asp-for="Email" class="form-control" placeholder="ornek@email.com" />
+                                </div>
+                                <span asp-validation-for="Email" class="text-danger"></span>
                             </div>
-                            <span asp-validation-for="Password" class="text-danger"></span>
+
+                            <div class="mb-4">
+                                <label asp-for="Password" class="form-label"></label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                                    <input asp-for="Password" class="form-control" placeholder="Şifreniz" />
+                                </div>
+                                <span asp-validation-for="Password" class="text-danger"></span>
+                            </div>
+
+                            <div class="mb-4 form-check">
+                                <input asp-for="RememberMe" class="form-check-input" />
+                                <label asp-for="RememberMe" class="form-check-label"></label>
+                            </div>
+
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-login">
+                                    <i class="bi bi-box-arrow-in-right"></i> Giriş Yap
+                                </button>
+                            </div>
+                        </form>
+
+                        <hr class="divider">
+
+                        <div class="text-center">
+                            <p class="text-white-50 mb-0">Hesabınız yok mu? 
+                                <a asp-action="Register" class="link-register">Üye Ol</a>
+                            </p>
                         </div>
 
-                        <div class="mb-3 form-check">
-                            <input asp-for="RememberMe" class="form-check-input" />
-                            <label asp-for="RememberMe" class="form-check-label"></label>
+                        <div class="demo-box mt-4">
+                            <small>
+                                <strong><i class="bi bi-info-circle"></i> Demo Hesaplar:</strong><br>
+                                <span class="text-white-50">Admin:</span> ogrencinumarasi@sakarya.edu.tr / sau<br>
+                                <span class="text-white-50">Üye:</span> uye@example.com / Uye123!
+                            </small>
                         </div>
-
-                        <div class="d-grid">
-                            <button type="submit" class="btn btn-primary btn-lg">
-                                <i class="bi bi-box-arrow-in-right"></i> Giriş Yap
-                            </button>
-                        </div>
-                    </form>
-
-                    <hr class="my-4">
-
-                    <div class="text-center">
-                        <p class="mb-0">Hesabınız yok mu? 
-                            <a asp-action="Register" class="text-primary-custom">Üye Ol</a>
-                        </p>
-                    </div>
-
-                    <div class="mt-4 p-3 bg-light rounded">
-                        <small class="text-muted">
-                            <strong>Demo Hesaplar:</strong><br>
-                            Admin: ogrencinumarasi@sakarya.edu.tr / sau<br>
-                            Üye: uye@example.com / Uye123!
-                        </small>
                     </div>
                 </div>
             </div>

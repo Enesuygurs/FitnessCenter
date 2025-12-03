@@ -36,6 +36,16 @@
             overflow-x: hidden;
         }
         
+        /* Page Content - Navbar için padding */
+        .page-content {
+            padding-top: 100px;
+        }
+        
+        /* Homepage için padding kaldır (hero section kendi padding'ini yönetir) */
+        .page-content.no-padding {
+            padding-top: 0;
+        }
+        
         /* Navbar Styles */
         .navbar {
             background: rgba(15, 15, 26, 0.95) !important;
@@ -423,7 +433,9 @@
                 </div>
             </div>
         }
-        @RenderBody()
+        <div class="page-content @(ViewData["NoTopPadding"] != null ? "no-padding" : "")">
+            @RenderBody()
+        </div>
     </main>
 
     <footer class="text-white py-5 mt-5">

@@ -3,22 +3,211 @@
     ViewData["Title"] = "Yapay Zeka Önerileri";
 }
 
-<div class="container py-5">
-    <div class="text-center mb-5">
-        <h1 class="fw-bold"><i class="bi bi-robot text-primary"></i> Yapay Zeka Fitness Asistanı</h1>
-        <p class="text-muted lead">Kişisel fitness ve beslenme önerilerinizi alın</p>
-    </div>
+<style>
+    .page-header {
+        background: linear-gradient(135deg, rgba(0, 210, 106, 0.1) 0%, rgba(0, 255, 136, 0.05) 100%);
+        padding: 60px 0;
+        margin-bottom: 50px;
+        border-bottom: 1px solid rgba(0, 210, 106, 0.2);
+    }
 
+    .page-header h1 {
+        font-size: 3rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, #00d26a 0%, #00ff88 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .ai-card {
+        background: rgba(26, 26, 46, 0.8);
+        border: 1px solid rgba(0, 210, 106, 0.1);
+        border-radius: 20px;
+        overflow: hidden;
+    }
+
+    .ai-card .card-header {
+        background: linear-gradient(135deg, #00d26a 0%, #00ff88 100%);
+        color: #000;
+        padding: 20px 25px;
+        border: none;
+    }
+
+    .ai-card .card-header h5 {
+        font-weight: 700;
+    }
+
+    .ai-card .card-body {
+        padding: 30px;
+    }
+
+    .form-label {
+        color: #b8b8b8;
+        font-weight: 500;
+        margin-bottom: 8px;
+    }
+
+    .form-control, .form-select {
+        background: rgba(15, 15, 26, 0.8);
+        border: 1px solid rgba(0, 210, 106, 0.2);
+        color: #fff;
+        border-radius: 12px;
+        padding: 12px 15px;
+        transition: all 0.3s ease;
+    }
+
+    .form-control:focus, .form-select:focus {
+        border-color: #00d26a;
+        box-shadow: 0 0 0 3px rgba(0, 210, 106, 0.1);
+        background: rgba(15, 15, 26, 0.9);
+        color: #fff;
+    }
+
+    .form-select option {
+        background: #1a1a2e;
+        color: #fff;
+    }
+
+    .input-group-text {
+        background: rgba(0, 210, 106, 0.2);
+        border: 1px solid rgba(0, 210, 106, 0.2);
+        color: #00d26a;
+        border-radius: 0 12px 12px 0;
+    }
+
+    .input-group .form-control {
+        border-radius: 12px 0 0 12px;
+    }
+
+    .btn-ai {
+        background: linear-gradient(135deg, #00d26a 0%, #00ff88 100%);
+        border: none;
+        color: #000;
+        font-weight: 700;
+        padding: 15px 30px;
+        border-radius: 30px;
+        font-size: 1.1rem;
+        transition: all 0.3s ease;
+    }
+
+    .btn-ai:hover {
+        transform: scale(1.05);
+        box-shadow: 0 10px 30px rgba(0, 210, 106, 0.4);
+        color: #000;
+    }
+
+    .bmi-card {
+        background: rgba(26, 26, 46, 0.8);
+        border: 1px solid rgba(0, 210, 106, 0.1);
+        border-radius: 20px;
+        margin-top: 25px;
+    }
+
+    .bmi-card .card-header {
+        background: transparent;
+        border-bottom: 1px solid rgba(0, 210, 106, 0.1);
+        padding: 15px 25px;
+        color: #fff;
+    }
+
+    .bmi-card .card-body {
+        padding: 25px;
+    }
+
+    .result-card {
+        background: rgba(26, 26, 46, 0.8);
+        border: 1px solid rgba(0, 210, 106, 0.2);
+        border-radius: 20px;
+        overflow: hidden;
+    }
+
+    .result-card .card-header {
+        background: linear-gradient(135deg, rgba(0, 210, 106, 0.3) 0%, rgba(0, 255, 136, 0.1) 100%);
+        padding: 20px 25px;
+        border: none;
+    }
+
+    .result-card .card-header h5 {
+        color: #00d26a;
+        font-weight: 700;
+    }
+
+    .result-card .card-body {
+        padding: 30px;
+    }
+
+    .recommendation-content {
+        line-height: 1.9;
+        color: #e0e0e0;
+    }
+
+    .recommendation-content strong {
+        color: #00d26a;
+    }
+
+    .empty-result {
+        text-align: center;
+        padding: 60px 30px;
+    }
+
+    .empty-result i {
+        color: rgba(0, 210, 106, 0.3);
+        font-size: 5rem;
+        margin-bottom: 25px;
+    }
+
+    .feature-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 0;
+        color: #b8b8b8;
+    }
+
+    .feature-item i {
+        color: #00d26a;
+        font-size: 1.3rem;
+    }
+
+    .alert-custom {
+        background: rgba(0, 210, 106, 0.1);
+        border: 1px solid rgba(0, 210, 106, 0.3);
+        color: #00d26a;
+        border-radius: 15px;
+        padding: 20px;
+    }
+
+    .alert-custom a {
+        color: #00ff88;
+    }
+
+    .progress {
+        background: rgba(0, 210, 106, 0.1);
+        border-radius: 10px;
+        height: 12px;
+    }
+</style>
+
+<!-- Page Header -->
+<div class="page-header text-center" data-aos="fade-down">
+    <div class="container">
+        <h1><i class="bi bi-robot"></i> Yapay Zeka Fitness Asistanı</h1>
+        <p class="lead text-white-50 mt-3">Kişisel fitness ve beslenme önerilerinizi alın</p>
+    </div>
+</div>
+
+<div class="container pb-5">
     <div class="row">
         <!-- Sol Taraf - Form -->
-        <div class="col-md-5">
-            <div class="card shadow-sm">
-                <div class="card-header bg-primary text-white">
+        <div class="col-lg-5 mb-4" data-aos="fade-right">
+            <div class="ai-card">
+                <div class="card-header">
                     <h5 class="mb-0"><i class="bi bi-person-lines-fill"></i> Bilgilerinizi Girin</h5>
                 </div>
                 <div class="card-body">
                     <form asp-action="GetRecommendation" method="post" id="aiForm">
-                        <div class="mb-3">
+                        <div class="mb-4">
                             <label asp-for="Height" class="form-label">Boy (cm)</label>
                             <div class="input-group">
                                 <input asp-for="Height" type="number" class="form-control" placeholder="175" min="100" max="250">
@@ -27,7 +216,7 @@
                             <span asp-validation-for="Height" class="text-danger"></span>
                         </div>
 
-                        <div class="mb-3">
+                        <div class="mb-4">
                             <label asp-for="Weight" class="form-label">Kilo (kg)</label>
                             <div class="input-group">
                                 <input asp-for="Weight" type="number" step="0.1" class="form-control" placeholder="70" min="30" max="300">
@@ -36,13 +225,13 @@
                             <span asp-validation-for="Weight" class="text-danger"></span>
                         </div>
 
-                        <div class="mb-3">
+                        <div class="mb-4">
                             <label asp-for="Age" class="form-label">Yaş</label>
                             <input asp-for="Age" type="number" class="form-control" placeholder="25" min="10" max="100">
                             <span asp-validation-for="Age" class="text-danger"></span>
                         </div>
 
-                        <div class="mb-3">
+                        <div class="mb-4">
                             <label asp-for="BodyType" class="form-label">Vücut Tipi</label>
                             <select asp-for="BodyType" class="form-select">
                                 <option value="">Seçin...</option>
@@ -53,7 +242,7 @@
                             <span asp-validation-for="BodyType" class="text-danger"></span>
                         </div>
 
-                        <div class="mb-3">
+                        <div class="mb-4">
                             <label asp-for="FitnessGoal" class="form-label">Fitness Hedefiniz</label>
                             <select asp-for="FitnessGoal" class="form-select">
                                 <option value="">Seçin...</option>
@@ -66,7 +255,7 @@
                             <span asp-validation-for="FitnessGoal" class="text-danger"></span>
                         </div>
 
-                        <div class="mb-3">
+                        <div class="mb-4">
                             <label asp-for="ActivityLevel" class="form-label">Aktivite Seviyesi</label>
                             <select asp-for="ActivityLevel" class="form-select">
                                 <option value="">Seçin...</option>
@@ -86,7 +275,7 @@
                         </div>
 
                         <div class="d-grid">
-                            <button type="submit" class="btn btn-primary btn-lg" id="submitBtn">
+                            <button type="submit" class="btn btn-ai" id="submitBtn">
                                 <i class="bi bi-magic"></i> Öneri Al
                             </button>
                         </div>
@@ -95,26 +284,26 @@
             </div>
 
             <!-- BMI Hesaplama -->
-            <div class="card shadow-sm mt-4">
+            <div class="bmi-card">
                 <div class="card-header">
-                    <h6 class="mb-0"><i class="bi bi-calculator"></i> Vücut Kitle İndeksi (BMI)</h6>
+                    <h6 class="mb-0"><i class="bi bi-calculator text-primary-custom"></i> Vücut Kitle İndeksi (BMI)</h6>
                 </div>
                 <div class="card-body">
-                    <div id="bmiResult" class="text-center py-3">
-                        <p class="text-muted">Boy ve kilo bilgilerini girin</p>
+                    <div id="bmiResult" class="text-center">
+                        <p class="text-white-50">Boy ve kilo bilgilerini girin</p>
                     </div>
                 </div>
             </div>
         </div>
 
         <!-- Sağ Taraf - Sonuçlar -->
-        <div class="col-md-7">
+        <div class="col-lg-7" data-aos="fade-left">
             @if (!string.IsNullOrEmpty(Model?.Recommendation))
             {
                 <!-- Öneriler -->
-                <div class="card shadow-sm mb-4">
-                    <div class="card-header bg-success text-white">
-                        <h5 class="mb-0"><i class="bi bi-lightning"></i> Kişiselleştirilmiş Öneriler</h5>
+                <div class="result-card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="bi bi-lightning-charge-fill"></i> Kişiselleştirilmiş Öneriler</h5>
                     </div>
                     <div class="card-body">
                         <div class="recommendation-content">
@@ -123,44 +312,44 @@
                     </div>
                 </div>
 
-                <div class="alert alert-info">
-                    <i class="bi bi-info-circle"></i>
+                <div class="alert-custom">
+                    <i class="bi bi-info-circle me-2"></i>
                     <strong>Not:</strong> Bu öneriler genel bilgi amaçlıdır. Detaylı program için antrenörlerimize danışmanızı öneririz.
-                    <a asp-controller="Trainer" asp-action="Index" class="alert-link">Antrenörlerimizi inceleyin</a>
+                    <a asp-controller="Trainer" asp-action="Index">Antrenörlerimizi inceleyin →</a>
                 </div>
             }
             else
             {
-                <div class="card shadow-sm h-100">
-                    <div class="card-body d-flex flex-column justify-content-center align-items-center text-center py-5">
-                        <i class="bi bi-robot display-1 text-muted mb-4"></i>
-                        <h4 class="text-muted">Kişiselleştirilmiş Öneriler</h4>
-                        <p class="text-muted">
+                <div class="result-card">
+                    <div class="card-body empty-result">
+                        <i class="bi bi-robot"></i>
+                        <h4 class="text-white mb-3">Kişiselleştirilmiş Öneriler</h4>
+                        <p class="text-white-50 mb-4">
                             Soldaki formu doldurarak yapay zeka destekli kişiselleştirilmiş 
                             egzersiz ve beslenme önerilerinizi alabilirsiniz.
                         </p>
-                        <div class="row mt-4 text-start w-100">
-                            <div class="col-md-6 mb-3">
-                                <div class="d-flex align-items-center">
-                                    <i class="bi bi-check-circle-fill text-success me-2 fs-4"></i>
+                        <div class="row text-start mt-4">
+                            <div class="col-md-6">
+                                <div class="feature-item">
+                                    <i class="bi bi-check-circle-fill"></i>
                                     <span>Vücut tipinize özel egzersizler</span>
                                 </div>
                             </div>
-                            <div class="col-md-6 mb-3">
-                                <div class="d-flex align-items-center">
-                                    <i class="bi bi-check-circle-fill text-success me-2 fs-4"></i>
+                            <div class="col-md-6">
+                                <div class="feature-item">
+                                    <i class="bi bi-check-circle-fill"></i>
                                     <span>Hedeflerinize yönelik program</span>
                                 </div>
                             </div>
-                            <div class="col-md-6 mb-3">
-                                <div class="d-flex align-items-center">
-                                    <i class="bi bi-check-circle-fill text-success me-2 fs-4"></i>
+                            <div class="col-md-6">
+                                <div class="feature-item">
+                                    <i class="bi bi-check-circle-fill"></i>
                                     <span>Kişiselleştirilmiş beslenme planı</span>
                                 </div>
                             </div>
-                            <div class="col-md-6 mb-3">
-                                <div class="d-flex align-items-center">
-                                    <i class="bi bi-check-circle-fill text-success me-2 fs-4"></i>
+                            <div class="col-md-6">
+                                <div class="feature-item">
+                                    <i class="bi bi-check-circle-fill"></i>
                                     <span>Günlük kalori hesaplama</span>
                                 </div>
                             </div>
@@ -180,7 +369,7 @@
         const bmiResult = document.getElementById('bmiResult');
 
         function calculateBMI() {
-            const height = parseFloat(heightInput.value) / 100; // cm to m
+            const height = parseFloat(heightInput.value) / 100;
             const weight = parseFloat(weightInput.value);
 
             if (height > 0 && weight > 0) {
@@ -192,7 +381,7 @@
                     colorClass = 'text-info';
                 } else if (bmi < 25) {
                     category = 'Normal';
-                    colorClass = 'text-success';
+                    colorClass = 'text-primary-custom';
                 } else if (bmi < 30) {
                     category = 'Fazla Kilolu';
                     colorClass = 'text-warning';
@@ -202,18 +391,15 @@
                 }
 
                 bmiResult.innerHTML = `
-                    <h2 class="${colorClass}">${bmi.toFixed(1)}</h2>
-                    <p class="${colorClass} mb-0"><strong>${category}</strong></p>
-                    <div class="progress mt-3" style="height: 10px;">
-                        <div class="progress-bar bg-info" style="width: 18.5%"></div>
-                        <div class="progress-bar bg-success" style="width: 6.5%"></div>
-                        <div class="progress-bar bg-warning" style="width: 5%"></div>
-                        <div class="progress-bar bg-danger" style="width: 70%"></div>
+                    <h2 class="${colorClass}" style="font-size: 2.5rem; font-weight: 800;">${bmi.toFixed(1)}</h2>
+                    <p class="${colorClass} mb-3"><strong>${category}</strong></p>
+                    <div class="progress mt-3">
+                        <div class="progress-bar" style="width: ${Math.min(bmi * 2, 100)}%; background: linear-gradient(135deg, #00d26a 0%, #00ff88 100%);"></div>
                     </div>
-                    <div class="d-flex justify-content-between mt-1">
+                    <div class="d-flex justify-content-between mt-2 text-white-50" style="font-size: 0.8rem;">
                         <small>18.5</small>
                         <small>25</small>
-                        <small>30</small>
+                        <small>30+</small>
                     </div>
                 `;
             }
@@ -222,7 +408,6 @@
         heightInput.addEventListener('input', calculateBMI);
         weightInput.addEventListener('input', calculateBMI);
 
-        // Form submit loading
         document.getElementById('aiForm').addEventListener('submit', function() {
             const btn = document.getElementById('submitBtn');
             btn.disabled = true;
@@ -230,12 +415,3 @@
         });
     </script>
 }
-
-<style>
-    .recommendation-content {
-        line-height: 1.8;
-    }
-    .recommendation-content br {
-        margin-bottom: 0.5rem;
-    }
-</style>

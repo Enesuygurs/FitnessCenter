@@ -3,41 +3,262 @@
     ViewData["Title"] = "Randevularım";
 }
 
-<div class="container py-5">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2><i class="bi bi-calendar-check"></i> Randevularım</h2>
-        <a asp-action="Create" class="btn btn-primary">
-            <i class="bi bi-plus-lg"></i> Yeni Randevu
-        </a>
-    </div>
+<style>
+    .page-header {
+        background: linear-gradient(135deg, rgba(0, 210, 106, 0.1) 0%, rgba(0, 255, 136, 0.05) 100%);
+        padding: 60px 0;
+        margin-bottom: 50px;
+        border-bottom: 1px solid rgba(0, 210, 106, 0.2);
+    }
 
-    <!-- Filtre -->
-    <div class="card shadow-sm mb-4">
-        <div class="card-body">
-            <form method="get" class="row g-3">
-                <div class="col-md-4">
-                    <label class="form-label">Durum</label>
-                    <select name="status" class="form-select">
-                        <option value="">Tümü</option>
-                        <option value="Pending">Beklemede</option>
-                        <option value="Confirmed">Onaylandı</option>
-                        <option value="Cancelled">İptal Edildi</option>
-                        <option value="Completed">Tamamlandı</option>
-                    </select>
-                </div>
-                <div class="col-md-3">
-                    <label class="form-label">Başlangıç Tarihi</label>
-                    <input type="date" name="startDate" class="form-control">
-                </div>
-                <div class="col-md-3">
-                    <label class="form-label">Bitiş Tarihi</label>
-                    <input type="date" name="endDate" class="form-control">
-                </div>
-                <div class="col-md-2 d-flex align-items-end">
-                    <button type="submit" class="btn btn-secondary w-100">Filtrele</button>
-                </div>
-            </form>
+    .page-header h1 {
+        font-size: 3rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, #00d26a 0%, #00ff88 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .filter-card {
+        background: rgba(26, 26, 46, 0.8);
+        border: 1px solid rgba(0, 210, 106, 0.1);
+        border-radius: 20px;
+        padding: 25px;
+        margin-bottom: 40px;
+    }
+
+    .filter-card .form-label {
+        color: #b8b8b8;
+        font-weight: 500;
+    }
+
+    .filter-card .form-control,
+    .filter-card .form-select {
+        background: rgba(15, 15, 26, 0.8);
+        border: 1px solid rgba(0, 210, 106, 0.2);
+        color: #fff;
+        border-radius: 10px;
+        padding: 12px 15px;
+    }
+
+    .filter-card .form-control:focus,
+    .filter-card .form-select:focus {
+        border-color: #00d26a;
+        box-shadow: 0 0 0 3px rgba(0, 210, 106, 0.1);
+    }
+
+    .filter-card .form-select option {
+        background: #1a1a2e;
+    }
+
+    .appointment-card {
+        background: rgba(26, 26, 46, 0.8);
+        border: 1px solid rgba(0, 210, 106, 0.2);
+        border-radius: 20px;
+        overflow: hidden;
+        transition: all 0.3s ease;
+    }
+
+    .appointment-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 30px rgba(0, 210, 106, 0.15);
+    }
+
+    .appointment-card.confirmed {
+        border-left: 4px solid #00d26a;
+    }
+
+    .appointment-card.pending {
+        border-left: 4px solid #ffc107;
+    }
+
+    .appointment-card .card-body {
+        padding: 25px;
+    }
+
+    .appointment-card .card-title {
+        color: #fff;
+        font-weight: 700;
+        font-size: 1.2rem;
+    }
+
+    .appointment-card .card-footer {
+        background: transparent;
+        border-top: 1px solid rgba(0, 210, 106, 0.1);
+        padding: 15px 25px;
+    }
+
+    .section-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 25px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .section-title.active { color: #00d26a; }
+    .section-title.pending { color: #ffc107; }
+    .section-title.past { color: #6c757d; }
+
+    .appointment-info {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: #b8b8b8;
+        margin-bottom: 8px;
+    }
+
+    .appointment-info i {
+        color: #00d26a;
+        width: 20px;
+    }
+
+    .price-tag {
+        font-size: 1.5rem;
+        font-weight: 800;
+        color: #00d26a;
+    }
+
+    .status-badge {
+        padding: 8px 15px;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 0.85rem;
+    }
+
+    .status-badge.confirmed { background: rgba(0, 210, 106, 0.2); color: #00d26a; }
+    .status-badge.pending { background: rgba(255, 193, 7, 0.2); color: #ffc107; }
+    .status-badge.cancelled { background: rgba(220, 53, 69, 0.2); color: #dc3545; }
+    .status-badge.completed { background: rgba(0, 210, 106, 0.3); color: #00d26a; }
+
+    .btn-new-appointment {
+        background: linear-gradient(135deg, #00d26a 0%, #00ff88 100%);
+        border: none;
+        color: #000;
+        font-weight: 600;
+        padding: 12px 30px;
+        border-radius: 30px;
+        transition: all 0.3s ease;
+    }
+
+    .btn-new-appointment:hover {
+        transform: scale(1.05);
+        box-shadow: 0 10px 30px rgba(0, 210, 106, 0.4);
+        color: #000;
+    }
+
+    .btn-action {
+        padding: 8px 15px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        transition: all 0.3s ease;
+    }
+
+    .btn-action.view {
+        background: transparent;
+        border: 1px solid rgba(0, 210, 106, 0.5);
+        color: #00d26a;
+    }
+
+    .btn-action.view:hover {
+        background: rgba(0, 210, 106, 0.1);
+    }
+
+    .btn-action.cancel {
+        background: transparent;
+        border: 1px solid rgba(220, 53, 69, 0.5);
+        color: #dc3545;
+    }
+
+    .btn-action.cancel:hover {
+        background: rgba(220, 53, 69, 0.1);
+    }
+
+    .table-custom {
+        background: rgba(26, 26, 46, 0.8);
+        border-radius: 15px;
+        overflow: hidden;
+    }
+
+    .table-custom thead {
+        background: rgba(0, 210, 106, 0.1);
+    }
+
+    .table-custom th {
+        color: #00d26a;
+        font-weight: 600;
+        padding: 15px;
+        border: none;
+    }
+
+    .table-custom td {
+        color: #b8b8b8;
+        padding: 15px;
+        border-bottom: 1px solid rgba(0, 210, 106, 0.1);
+        vertical-align: middle;
+    }
+
+    .table-custom tbody tr:hover {
+        background: rgba(0, 210, 106, 0.05);
+    }
+
+    .empty-state {
+        background: rgba(26, 26, 46, 0.8);
+        border: 1px solid rgba(0, 210, 106, 0.1);
+        border-radius: 20px;
+        padding: 60px 30px;
+        text-align: center;
+    }
+
+    .empty-state i {
+        color: #00d26a;
+        font-size: 4rem;
+        margin-bottom: 20px;
+    }
+</style>
+
+<!-- Page Header -->
+<div class="page-header text-center" data-aos="fade-down">
+    <div class="container">
+        <div class="d-flex justify-content-center align-items-center gap-3 flex-wrap">
+            <h1><i class="bi bi-calendar-check"></i> Randevularım</h1>
+            <a asp-action="Create" class="btn btn-new-appointment">
+                <i class="bi bi-plus-lg"></i> Yeni Randevu
+            </a>
         </div>
+    </div>
+</div>
+
+<div class="container pb-5">
+    <!-- Filtre -->
+    <div class="filter-card" data-aos="fade-up">
+        <form method="get" class="row g-3">
+            <div class="col-md-4">
+                <label class="form-label">Durum</label>
+                <select name="status" class="form-select">
+                    <option value="">Tümü</option>
+                    <option value="Pending">Beklemede</option>
+                    <option value="Confirmed">Onaylandı</option>
+                    <option value="Cancelled">İptal Edildi</option>
+                    <option value="Completed">Tamamlandı</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Başlangıç Tarihi</label>
+                <input type="date" name="startDate" class="form-control">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Bitiş Tarihi</label>
+                <input type="date" name="endDate" class="form-control">
+            </div>
+            <div class="col-md-2 d-flex align-items-end">
+                <button type="submit" class="btn btn-new-appointment w-100">
+                    <i class="bi bi-funnel"></i> Filtrele
+                </button>
+            </div>
+        </form>
     </div>
 
     @if (Model.Any())
@@ -47,46 +268,52 @@
                                                    && a.AppointmentDate >= DateTime.Today).ToList();
         if (activeAppointments.Any())
         {
-            <div class="mb-4">
-                <h4 class="text-success"><i class="bi bi-check-circle"></i> Aktif Randevular</h4>
+            <div class="mb-5" data-aos="fade-up">
+                <h4 class="section-title active"><i class="bi bi-check-circle-fill"></i> Aktif Randevular</h4>
                 <div class="row">
                     @foreach (var apt in activeAppointments.OrderBy(a => a.AppointmentDate))
                     {
-                        <div class="col-md-6 mb-3">
-                            <div class="card border-success">
+                        <div class="col-md-6 mb-4">
+                            <div class="appointment-card confirmed">
                                 <div class="card-body">
                                     <div class="d-flex justify-content-between align-items-start">
                                         <div>
                                             <h5 class="card-title">@apt.Service?.Name</h5>
-                                            <p class="text-muted mb-1">
-                                                <i class="bi bi-person"></i> @apt.Trainer?.FullName
-                                            </p>
-                                            <p class="mb-1">
-                                                <i class="bi bi-calendar"></i> @apt.AppointmentDate.ToString("dd MMMM yyyy")
-                                            </p>
-                                            <p class="mb-1">
-                                                <i class="bi bi-clock"></i> @apt.AppointmentTime.ToString(@"hh\:mm") - @apt.EndTime.ToString(@"hh\:mm")
-                                            </p>
-                                            <p class="mb-0">
-                                                <i class="bi bi-building"></i> @apt.Trainer?.Gym?.Name
-                                            </p>
+                                            <div class="appointment-info">
+                                                <i class="bi bi-person"></i>
+                                                <span>@apt.Trainer?.FullName</span>
+                                            </div>
+                                            <div class="appointment-info">
+                                                <i class="bi bi-calendar"></i>
+                                                <span>@apt.AppointmentDate.ToString("dd MMMM yyyy")</span>
+                                            </div>
+                                            <div class="appointment-info">
+                                                <i class="bi bi-clock"></i>
+                                                <span>@apt.AppointmentTime.ToString(@"hh\:mm") - @apt.EndTime.ToString(@"hh\:mm")</span>
+                                            </div>
+                                            <div class="appointment-info">
+                                                <i class="bi bi-building"></i>
+                                                <span>@apt.Trainer?.Gym?.Name</span>
+                                            </div>
                                         </div>
                                         <div class="text-end">
-                                            <span class="badge bg-success fs-6">Onaylandı</span>
-                                            <p class="h5 text-primary mt-2 mb-0">@apt.TotalPrice ₺</p>
+                                            <span class="status-badge confirmed">Onaylandı</span>
+                                            <p class="price-tag mt-3 mb-0">@apt.TotalPrice ₺</p>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="card-footer bg-transparent">
-                                    <a asp-action="Details" asp-route-id="@apt.Id" class="btn btn-outline-primary btn-sm">
-                                        <i class="bi bi-eye"></i> Detay
-                                    </a>
-                                    <form asp-action="Cancel" asp-route-id="@apt.Id" method="post" style="display:inline;"
-                                          onsubmit="return confirm('Randevuyu iptal etmek istediğinizden emin misiniz?')">
-                                        <button type="submit" class="btn btn-outline-danger btn-sm">
-                                            <i class="bi bi-x-lg"></i> İptal Et
-                                        </button>
-                                    </form>
+                                <div class="card-footer">
+                                    <div class="d-flex gap-2">
+                                        <a asp-action="Details" asp-route-id="@apt.Id" class="btn btn-action view">
+                                            <i class="bi bi-eye"></i> Detay
+                                        </a>
+                                        <form asp-action="Cancel" asp-route-id="@apt.Id" method="post" style="display:inline;"
+                                              onsubmit="return confirm('Randevuyu iptal etmek istediğinizden emin misiniz?')">
+                                            <button type="submit" class="btn btn-action cancel">
+                                                <i class="bi bi-x-lg"></i> İptal Et
+                                            </button>
+                                        </form>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -99,11 +326,11 @@
         var pendingAppointments = Model.Where(a => a.Status == FitnessCenter.Models.AppointmentStatus.Pending).ToList();
         if (pendingAppointments.Any())
         {
-            <div class="mb-4">
-                <h4 class="text-warning"><i class="bi bi-hourglass-split"></i> Bekleyen Randevular</h4>
-                <div class="table-responsive">
-                    <table class="table table-hover">
-                        <thead class="table-light">
+            <div class="mb-5" data-aos="fade-up">
+                <h4 class="section-title pending"><i class="bi bi-hourglass-split"></i> Bekleyen Randevular</h4>
+                <div class="table-custom">
+                    <table class="table table-borderless mb-0">
+                        <thead>
                             <tr>
                                 <th>Hizmet</th>
                                 <th>Antrenör</th>
@@ -117,18 +344,18 @@
                             @foreach (var apt in pendingAppointments.OrderBy(a => a.AppointmentDate))
                             {
                                 <tr>
-                                    <td>@apt.Service?.Name</td>
+                                    <td class="text-white">@apt.Service?.Name</td>
                                     <td>@apt.Trainer?.FullName</td>
                                     <td>@apt.AppointmentDate.ToString("dd.MM.yyyy")</td>
                                     <td>@apt.AppointmentTime.ToString(@"hh\:mm") - @apt.EndTime.ToString(@"hh\:mm")</td>
-                                    <td><span class="badge bg-info">@apt.TotalPrice ₺</span></td>
+                                    <td><span class="price-tag" style="font-size: 1rem;">@apt.TotalPrice ₺</span></td>
                                     <td>
-                                        <a asp-action="Details" asp-route-id="@apt.Id" class="btn btn-sm btn-outline-primary">
+                                        <a asp-action="Details" asp-route-id="@apt.Id" class="btn btn-action view btn-sm">
                                             <i class="bi bi-eye"></i>
                                         </a>
                                         <form asp-action="Cancel" asp-route-id="@apt.Id" method="post" style="display:inline;"
                                               onsubmit="return confirm('İptal etmek istediğinizden emin misiniz?')">
-                                            <button type="submit" class="btn btn-sm btn-outline-danger">
+                                            <button type="submit" class="btn btn-action cancel btn-sm">
                                                 <i class="bi bi-x-lg"></i>
                                             </button>
                                         </form>
@@ -147,11 +374,11 @@
                                                 || a.AppointmentDate < DateTime.Today).ToList();
         if (pastAppointments.Any())
         {
-            <div class="mb-4">
-                <h4 class="text-secondary"><i class="bi bi-clock-history"></i> Geçmiş Randevular</h4>
-                <div class="table-responsive">
-                    <table class="table table-hover">
-                        <thead class="table-light">
+            <div class="mb-4" data-aos="fade-up">
+                <h4 class="section-title past"><i class="bi bi-clock-history"></i> Geçmiş Randevular</h4>
+                <div class="table-custom">
+                    <table class="table table-borderless mb-0">
+                        <thead>
                             <tr>
                                 <th>Hizmet</th>
                                 <th>Antrenör</th>
@@ -164,23 +391,23 @@
                         <tbody>
                             @foreach (var apt in pastAppointments.OrderByDescending(a => a.AppointmentDate))
                             {
-                                <tr class="@(apt.Status == FitnessCenter.Models.AppointmentStatus.Cancelled ? "table-secondary" : "")">
-                                    <td>@apt.Service?.Name</td>
+                                <tr>
+                                    <td class="text-white">@apt.Service?.Name</td>
                                     <td>@apt.Trainer?.FullName</td>
                                     <td>@apt.AppointmentDate.ToString("dd.MM.yyyy")</td>
                                     <td>@apt.AppointmentTime.ToString(@"hh\:mm") - @apt.EndTime.ToString(@"hh\:mm")</td>
                                     <td>
                                         @if (apt.Status == FitnessCenter.Models.AppointmentStatus.Completed)
                                         {
-                                            <span class="badge bg-success">Tamamlandı</span>
+                                            <span class="status-badge completed">Tamamlandı</span>
                                         }
                                         else if (apt.Status == FitnessCenter.Models.AppointmentStatus.Cancelled)
                                         {
-                                            <span class="badge bg-danger">İptal Edildi</span>
+                                            <span class="status-badge cancelled">İptal Edildi</span>
                                         }
                                         else
                                         {
-                                            <span class="badge bg-secondary">Geçmiş</span>
+                                            <span class="status-badge" style="background: rgba(108, 117, 125, 0.2); color: #6c757d;">Geçmiş</span>
                                         }
                                     </td>
                                     <td>@apt.TotalPrice ₺</td>
@@ -194,11 +421,11 @@
     }
     else
     {
-        <div class="alert alert-info text-center py-5">
-            <i class="bi bi-calendar-x display-4"></i>
-            <h4 class="mt-3">Henüz randevunuz bulunmuyor</h4>
-            <p class="text-muted">Hemen yeni bir randevu oluşturun!</p>
-            <a asp-action="Create" class="btn btn-primary btn-lg">
+        <div class="empty-state" data-aos="fade-up">
+            <i class="bi bi-calendar-x"></i>
+            <h4 class="text-white mt-3">Henüz randevunuz bulunmuyor</h4>
+            <p class="text-white-50 mb-4">Hemen yeni bir randevu oluşturun ve fitness yolculuğunuza başlayın!</p>
+            <a asp-action="Create" class="btn btn-new-appointment btn-lg">
                 <i class="bi bi-plus-lg"></i> Randevu Oluştur
             </a>
         </div>

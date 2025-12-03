@@ -4,75 +4,186 @@
     var categories = Model.Select(s => s.Category).Distinct().ToList();
 }
 
-<div class="container py-5">
-    <div class="text-center mb-5">
-        <h1 class="fw-bold"><i class="bi bi-list-stars text-primary-custom"></i> Hizmetlerimiz</h1>
-        <p class="text-muted lead">Size en uygun fitness programını seçin</p>
-    </div>
+<style>
+    .page-header {
+        background: linear-gradient(135deg, rgba(0, 210, 106, 0.1) 0%, rgba(0, 255, 136, 0.05) 100%);
+        padding: 60px 0;
+        margin-bottom: 50px;
+        border-bottom: 1px solid rgba(0, 210, 106, 0.2);
+    }
 
+    .page-header h1 {
+        font-size: 3rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, #00d26a 0%, #00ff88 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .filter-btn {
+        background: rgba(0, 210, 106, 0.1);
+        border: 1px solid rgba(0, 210, 106, 0.3);
+        color: #00d26a;
+        padding: 10px 25px;
+        border-radius: 30px;
+        transition: all 0.3s ease;
+        margin: 5px;
+    }
+
+    .filter-btn:hover, .filter-btn.active {
+        background: linear-gradient(135deg, #00d26a 0%, #00ff88 100%);
+        color: #000;
+        border-color: transparent;
+        transform: translateY(-2px);
+    }
+
+    .service-card {
+        background: rgba(26, 26, 46, 0.8);
+        border: 1px solid rgba(0, 210, 106, 0.1);
+        border-radius: 20px;
+        overflow: hidden;
+        transition: all 0.4s ease;
+    }
+
+    .service-card:hover {
+        transform: translateY(-10px);
+        border-color: rgba(0, 210, 106, 0.5);
+        box-shadow: 0 20px 40px rgba(0, 210, 106, 0.2);
+    }
+
+    .service-card .card-header {
+        background: linear-gradient(135deg, #00d26a 0%, #00ff88 100%);
+        padding: 20px;
+        border: none;
+    }
+
+    .service-card .card-header h5 {
+        color: #000;
+        font-weight: 700;
+    }
+
+    .service-card .card-body {
+        padding: 25px;
+    }
+
+    .service-card .card-text {
+        color: #b8b8b8;
+    }
+
+    .service-card .badge {
+        background: rgba(0, 210, 106, 0.2) !important;
+        color: #00d26a;
+        padding: 8px 15px;
+        border-radius: 20px;
+    }
+
+    .service-card hr {
+        border-color: rgba(0, 210, 106, 0.2);
+    }
+
+    .service-card .price {
+        font-size: 1.8rem;
+        font-weight: 800;
+        color: #00d26a;
+    }
+
+    .service-card .card-footer {
+        background: transparent;
+        border-top: 1px solid rgba(0, 210, 106, 0.1);
+        padding: 20px 25px;
+    }
+
+    .btn-book {
+        background: linear-gradient(135deg, #00d26a 0%, #00ff88 100%);
+        border: none;
+        color: #000;
+        font-weight: 600;
+        padding: 12px 30px;
+        border-radius: 30px;
+        transition: all 0.3s ease;
+    }
+
+    .btn-book:hover {
+        transform: scale(1.05);
+        box-shadow: 0 10px 30px rgba(0, 210, 106, 0.4);
+        color: #000;
+    }
+</style>
+
+<!-- Page Header -->
+<div class="page-header text-center" data-aos="fade-down">
+    <div class="container">
+        <h1><i class="bi bi-grid-1x2-fill"></i> Hizmetlerimiz</h1>
+        <p class="lead text-white-50 mt-3">Size en uygun fitness programını seçin ve dönüşümünüze başlayın</p>
+    </div>
+</div>
+
+<div class="container pb-5">
     <!-- Kategori Filtreleri -->
-    <div class="text-center mb-4">
-        <div class="btn-group" role="group" id="categoryFilter">
-            <button type="button" class="btn btn-outline-primary active" data-category="all">Tümü</button>
-            @foreach (var category in categories)
-            {
-                <button type="button" class="btn btn-outline-primary" data-category="@category">@category</button>
-            }
-        </div>
+    <div class="text-center mb-5" data-aos="fade-up">
+        <button type="button" class="filter-btn active" data-category="all">
+            <i class="bi bi-grid-3x3-gap"></i> Tümü
+        </button>
+        @foreach (var category in categories)
+        {
+            <button type="button" class="filter-btn" data-category="@category">@category</button>
+        }
     </div>
 
     <div class="row" id="serviceList">
+        @{ var delay = 0; }
         @foreach (var service in Model)
         {
-            <div class="col-md-4 mb-4 service-item" data-category="@service.Category">
-                <div class="card h-100 shadow-sm service-card">
-                    <div class="card-header bg-primary text-white">
+            <div class="col-lg-4 col-md-6 mb-4 service-item" data-category="@service.Category" data-aos="fade-up" data-aos-delay="@delay">
+                <div class="card h-100 service-card">
+                    <div class="card-header">
                         <h5 class="mb-0 text-center">@service.Name</h5>
                     </div>
                     <div class="card-body d-flex flex-column">
                         <div class="text-center mb-3">
-                            <span class="badge bg-secondary fs-6">@service.Category</span>
+                            <span class="badge">@service.Category</span>
                         </div>
-                        <p class="card-text text-muted flex-grow-1">
+                        <p class="card-text flex-grow-1">
                             @(service.Description?.Length > 150 ? service.Description.Substring(0, 150) + "..." : service.Description)
                         </p>
                         <hr>
                         <div class="d-flex justify-content-between align-items-center mb-3">
-                            <div>
-                                <i class="bi bi-clock text-primary"></i>
+                            <div class="text-white-50">
+                                <i class="bi bi-clock text-primary-custom"></i>
                                 <span>@service.DurationMinutes Dakika</span>
                             </div>
                             <div class="text-end">
-                                <h4 class="text-success mb-0">@service.Price ₺</h4>
-                                <small class="text-muted">/ seans</small>
+                                <div class="price">@service.Price ₺</div>
+                                <small class="text-white-50">/ seans</small>
                             </div>
                         </div>
                         @if (service.Gym != null)
                         {
-                            <p class="text-muted small mb-3">
+                            <p class="text-white-50 small mb-0">
                                 <i class="bi bi-building"></i> @service.Gym.Name
                             </p>
                         }
                     </div>
-                    <div class="card-footer bg-transparent">
+                    <div class="card-footer">
                         <a asp-controller="Appointment" asp-action="Create" asp-route-serviceId="@service.Id" 
-                           class="btn btn-primary w-100">
+                           class="btn btn-book w-100">
                             <i class="bi bi-calendar-plus"></i> Randevu Al
                         </a>
                     </div>
                 </div>
             </div>
+            delay += 100;
+            if (delay > 300) { delay = 0; }
         }
     </div>
 </div>
 
 @section Scripts {
     <script>
-        document.querySelectorAll('#categoryFilter button').forEach(button => {
+        document.querySelectorAll('.filter-btn').forEach(button => {
             button.addEventListener('click', function() {
-                // Remove active class from all buttons
-                document.querySelectorAll('#categoryFilter button').forEach(b => b.classList.remove('active'));
-                // Add active class to clicked button
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
                 this.classList.add('active');
                 
                 const category = this.dataset.category;
@@ -80,6 +191,7 @@
                 document.querySelectorAll('.service-item').forEach(item => {
                     if (category === 'all' || item.dataset.category === category) {
                         item.style.display = 'block';
+                        item.style.animation = 'fadeInUp 0.5s ease';
                     } else {
                         item.style.display = 'none';
                     }
