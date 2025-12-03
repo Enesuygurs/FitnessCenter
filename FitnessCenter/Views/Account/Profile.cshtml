@@ -1,0 +1,127 @@
+@model FitnessCenter.Models.ViewModels.ProfileViewModel
+@{
+    ViewData["Title"] = "Profilim";
+}
+
+<div class="container py-5">
+    <div class="row">
+        <div class="col-md-4 mb-4">
+            <div class="card shadow">
+                <div class="card-body text-center p-4">
+                    <div class="mb-3">
+                        @if (!string.IsNullOrEmpty(Model.ProfileImageUrl))
+                        {
+                            <img src="@Model.ProfileImageUrl" alt="Profil" class="rounded-circle" style="width: 150px; height: 150px; object-fit: cover;">
+                        }
+                        else
+                        {
+                            <i class="bi bi-person-circle display-1 text-primary-custom"></i>
+                        }
+                    </div>
+                    <h4>@Model.FirstName @Model.LastName</h4>
+                    <p class="text-muted">@Model.Email</p>
+                    <hr>
+                    <div class="text-start">
+                        @if (Model.Height.HasValue)
+                        {
+                            <p><i class="bi bi-rulers"></i> Boy: @Model.Height cm</p>
+                        }
+                        @if (Model.Weight.HasValue)
+                        {
+                            <p><i class="bi bi-speedometer2"></i> Kilo: @Model.Weight kg</p>
+                        }
+                        @if (Model.Age.HasValue)
+                        {
+                            <p><i class="bi bi-calendar"></i> Yaş: @Model.Age</p>
+                        }
+                        @if (!string.IsNullOrEmpty(Model.Gender))
+                        {
+                            <p><i class="bi bi-gender-ambiguous"></i> Cinsiyet: @Model.Gender</p>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary-custom text-white">
+                    <h5 class="mb-0"><i class="bi bi-pencil"></i> Profili Düzenle</h5>
+                </div>
+                <div class="card-body p-4">
+                    <form asp-action="Profile" method="post">
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="FirstName" class="form-label"></label>
+                                <input asp-for="FirstName" class="form-control" />
+                                <span asp-validation-for="FirstName" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="LastName" class="form-label"></label>
+                                <input asp-for="LastName" class="form-control" />
+                                <span asp-validation-for="LastName" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="PhoneNumber" class="form-label"></label>
+                            <input asp-for="PhoneNumber" class="form-control" />
+                            <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                        </div>
+
+                        <hr>
+                        <h6 class="text-muted mb-3">Fiziksel Bilgiler (AI Öneri için)</h6>
+
+                        <div class="row">
+                            <div class="col-md-3 mb-3">
+                                <label asp-for="Height" class="form-label"></label>
+                                <input asp-for="Height" class="form-control" />
+                                <span asp-validation-for="Height" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <label asp-for="Weight" class="form-label"></label>
+                                <input asp-for="Weight" class="form-control" />
+                                <span asp-validation-for="Weight" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <label asp-for="Age" class="form-label"></label>
+                                <input asp-for="Age" class="form-control" />
+                                <span asp-validation-for="Age" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <label asp-for="Gender" class="form-label"></label>
+                                <select asp-for="Gender" class="form-select">
+                                    <option value="">Seçiniz</option>
+                                    <option value="Erkek">Erkek</option>
+                                    <option value="Kadın">Kadın</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="BodyType" class="form-label"></label>
+                            <select asp-for="BodyType" class="form-select">
+                                <option value="">Seçiniz</option>
+                                <option value="Ektomorf">Ektomorf (İnce yapılı)</option>
+                                <option value="Mezomorf">Mezomorf (Atletik yapılı)</option>
+                                <option value="Endomorf">Endomorf (Geniş yapılı)</option>
+                                <option value="Normal">Normal</option>
+                            </select>
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-check-lg"></i> Kaydet
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
