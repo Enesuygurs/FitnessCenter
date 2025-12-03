@@ -1,0 +1,156 @@
+@model FitnessCenter.Models.Appointment
+@{
+    ViewData["Title"] = "Randevu Detayları";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <nav aria-label="breadcrumb" class="mb-4">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a asp-action="Index">Randevularım</a></li>
+                    <li class="breadcrumb-item active">Randevu #@Model.Id</li>
+                </ol>
+            </nav>
+
+            <div class="card shadow">
+                <div class="card-header @(Model.Status == FitnessCenter.Models.AppointmentStatus.Confirmed ? "bg-success" : 
+                                          Model.Status == FitnessCenter.Models.AppointmentStatus.Pending ? "bg-warning" :
+                                          Model.Status == FitnessCenter.Models.AppointmentStatus.Cancelled ? "bg-danger" : "bg-secondary") text-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h4 class="mb-0"><i class="bi bi-calendar-check"></i> Randevu Detayları</h4>
+                        <span class="badge bg-light text-dark fs-6">
+                            @switch (Model.Status)
+                            {
+                                case FitnessCenter.Models.AppointmentStatus.Pending:
+                                    <text>Beklemede</text>
+                                    break;
+                                case FitnessCenter.Models.AppointmentStatus.Confirmed:
+                                    <text>Onaylandı</text>
+                                    break;
+                                case FitnessCenter.Models.AppointmentStatus.Cancelled:
+                                    <text>İptal Edildi</text>
+                                    break;
+                                case FitnessCenter.Models.AppointmentStatus.Completed:
+                                    <text>Tamamlandı</text>
+                                    break;
+                            }
+                        </span>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h5 class="border-bottom pb-2"><i class="bi bi-info-circle"></i> Genel Bilgiler</h5>
+                            <table class="table table-borderless">
+                                <tr>
+                                    <th width="40%">Randevu No:</th>
+                                    <td>#@Model.Id</td>
+                                </tr>
+                                <tr>
+                                    <th>Oluşturma Tarihi:</th>
+                                    <td>@Model.CreatedAt.ToString("dd.MM.yyyy HH:mm")</td>
+                                </tr>
+                                <tr>
+                                    <th>Randevu Tarihi:</th>
+                                    <td><strong>@Model.AppointmentDate.ToString("dd MMMM yyyy, dddd")</strong></td>
+                                </tr>
+                                <tr>
+                                    <th>Randevu Saati:</th>
+                                    <td><strong>@Model.AppointmentTime.ToString(@"hh\:mm") - @Model.EndTime.ToString(@"hh\:mm")</strong></td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <h5 class="border-bottom pb-2"><i class="bi bi-currency-lira"></i> Ödeme Bilgileri</h5>
+                            <table class="table table-borderless">
+                                <tr>
+                                    <th width="40%">Hizmet Ücreti:</th>
+                                    <td>@Model.TotalPrice ₺</td>
+                                </tr>
+                                <tr>
+                                    <th>Ödeme Durumu:</th>
+                                    <td>
+                                        <span class="badge bg-warning">Ödenmedi</span>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <div class="card bg-light">
+                                <div class="card-body">
+                                    <h6 class="card-title"><i class="bi bi-list-check text-primary"></i> Hizmet</h6>
+                                    <h5>@Model.Service?.Name</h5>
+                                    <p class="text-muted mb-1">@Model.Service?.Description</p>
+                                    <span class="badge bg-info">@Model.Service?.DurationMinutes Dakika</span>
+                                    <span class="badge bg-secondary">@Model.Service?.Category</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card bg-light">
+                                <div class="card-body">
+                                    <h6 class="card-title"><i class="bi bi-person text-primary"></i> Antrenör</h6>
+                                    <div class="d-flex align-items-center">
+                                        <img src="@(Model.Trainer?.ProfileImageUrl ?? "https://via.placeholder.com/60x60")" 
+                                             class="rounded-circle me-3" style="width:60px; height:60px; object-fit:cover;">
+                                        <div>
+                                            <h5 class="mb-0">@Model.Trainer?.FullName</h5>
+                                            <small class="text-muted">@Model.Trainer?.Specializations</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card bg-light mb-4">
+                        <div class="card-body">
+                            <h6 class="card-title"><i class="bi bi-building text-primary"></i> Spor Salonu</h6>
+                            <h5>@Model.Trainer?.Gym?.Name</h5>
+                            <p class="mb-1"><i class="bi bi-geo-alt"></i> @Model.Trainer?.Gym?.Address</p>
+                            @if (!string.IsNullOrEmpty(Model.Trainer?.Gym?.Phone))
+                            {
+                                <p class="mb-0"><i class="bi bi-telephone"></i> @Model.Trainer.Gym.Phone</p>
+                            }
+                        </div>
+                    </div>
+
+                    @if (!string.IsNullOrEmpty(Model.Notes))
+                    {
+                        <div class="card bg-light mb-4">
+                            <div class="card-body">
+                                <h6 class="card-title"><i class="bi bi-chat-left-text text-primary"></i> Notlar</h6>
+                                <p class="mb-0">@Model.Notes</p>
+                            </div>
+                        </div>
+                    }
+                </div>
+                <div class="card-footer">
+                    <div class="d-flex justify-content-between">
+                        <a asp-action="Index" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-left"></i> Geri
+                        </a>
+                        @if (Model.Status == FitnessCenter.Models.AppointmentStatus.Pending || 
+                             Model.Status == FitnessCenter.Models.AppointmentStatus.Confirmed)
+                        {
+                            @if (Model.AppointmentDate > DateTime.Today || 
+                                 (Model.AppointmentDate == DateTime.Today && Model.AppointmentTime > DateTime.Now.TimeOfDay))
+                            {
+                                <form asp-action="Cancel" asp-route-id="@Model.Id" method="post" style="display:inline;"
+                                      onsubmit="return confirm('Randevuyu iptal etmek istediğinizden emin misiniz?')">
+                                    <button type="submit" class="btn btn-danger">
+                                        <i class="bi bi-x-lg"></i> Randevuyu İptal Et
+                                    </button>
+                                </form>
+                            }
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

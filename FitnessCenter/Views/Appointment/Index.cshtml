@@ -1,0 +1,206 @@
+@model List<FitnessCenter.Models.Appointment>
+@{
+    ViewData["Title"] = "Randevularım";
+}
+
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="bi bi-calendar-check"></i> Randevularım</h2>
+        <a asp-action="Create" class="btn btn-primary">
+            <i class="bi bi-plus-lg"></i> Yeni Randevu
+        </a>
+    </div>
+
+    <!-- Filtre -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <form method="get" class="row g-3">
+                <div class="col-md-4">
+                    <label class="form-label">Durum</label>
+                    <select name="status" class="form-select">
+                        <option value="">Tümü</option>
+                        <option value="Pending">Beklemede</option>
+                        <option value="Confirmed">Onaylandı</option>
+                        <option value="Cancelled">İptal Edildi</option>
+                        <option value="Completed">Tamamlandı</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Başlangıç Tarihi</label>
+                    <input type="date" name="startDate" class="form-control">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Bitiş Tarihi</label>
+                    <input type="date" name="endDate" class="form-control">
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <button type="submit" class="btn btn-secondary w-100">Filtrele</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    @if (Model.Any())
+    {
+        <!-- Aktif Randevular -->
+        var activeAppointments = Model.Where(a => a.Status == FitnessCenter.Models.AppointmentStatus.Confirmed 
+                                                   && a.AppointmentDate >= DateTime.Today).ToList();
+        if (activeAppointments.Any())
+        {
+            <div class="mb-4">
+                <h4 class="text-success"><i class="bi bi-check-circle"></i> Aktif Randevular</h4>
+                <div class="row">
+                    @foreach (var apt in activeAppointments.OrderBy(a => a.AppointmentDate))
+                    {
+                        <div class="col-md-6 mb-3">
+                            <div class="card border-success">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <div>
+                                            <h5 class="card-title">@apt.Service?.Name</h5>
+                                            <p class="text-muted mb-1">
+                                                <i class="bi bi-person"></i> @apt.Trainer?.FullName
+                                            </p>
+                                            <p class="mb-1">
+                                                <i class="bi bi-calendar"></i> @apt.AppointmentDate.ToString("dd MMMM yyyy")
+                                            </p>
+                                            <p class="mb-1">
+                                                <i class="bi bi-clock"></i> @apt.AppointmentTime.ToString(@"hh\:mm") - @apt.EndTime.ToString(@"hh\:mm")
+                                            </p>
+                                            <p class="mb-0">
+                                                <i class="bi bi-building"></i> @apt.Trainer?.Gym?.Name
+                                            </p>
+                                        </div>
+                                        <div class="text-end">
+                                            <span class="badge bg-success fs-6">Onaylandı</span>
+                                            <p class="h5 text-primary mt-2 mb-0">@apt.TotalPrice ₺</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card-footer bg-transparent">
+                                    <a asp-action="Details" asp-route-id="@apt.Id" class="btn btn-outline-primary btn-sm">
+                                        <i class="bi bi-eye"></i> Detay
+                                    </a>
+                                    <form asp-action="Cancel" asp-route-id="@apt.Id" method="post" style="display:inline;"
+                                          onsubmit="return confirm('Randevuyu iptal etmek istediğinizden emin misiniz?')">
+                                        <button type="submit" class="btn btn-outline-danger btn-sm">
+                                            <i class="bi bi-x-lg"></i> İptal Et
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+
+        <!-- Bekleyen Randevular -->
+        var pendingAppointments = Model.Where(a => a.Status == FitnessCenter.Models.AppointmentStatus.Pending).ToList();
+        if (pendingAppointments.Any())
+        {
+            <div class="mb-4">
+                <h4 class="text-warning"><i class="bi bi-hourglass-split"></i> Bekleyen Randevular</h4>
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Hizmet</th>
+                                <th>Antrenör</th>
+                                <th>Tarih</th>
+                                <th>Saat</th>
+                                <th>Ücret</th>
+                                <th>İşlemler</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var apt in pendingAppointments.OrderBy(a => a.AppointmentDate))
+                            {
+                                <tr>
+                                    <td>@apt.Service?.Name</td>
+                                    <td>@apt.Trainer?.FullName</td>
+                                    <td>@apt.AppointmentDate.ToString("dd.MM.yyyy")</td>
+                                    <td>@apt.AppointmentTime.ToString(@"hh\:mm") - @apt.EndTime.ToString(@"hh\:mm")</td>
+                                    <td><span class="badge bg-info">@apt.TotalPrice ₺</span></td>
+                                    <td>
+                                        <a asp-action="Details" asp-route-id="@apt.Id" class="btn btn-sm btn-outline-primary">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                        <form asp-action="Cancel" asp-route-id="@apt.Id" method="post" style="display:inline;"
+                                              onsubmit="return confirm('İptal etmek istediğinizden emin misiniz?')">
+                                            <button type="submit" class="btn btn-sm btn-outline-danger">
+                                                <i class="bi bi-x-lg"></i>
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
+
+        <!-- Geçmiş Randevular -->
+        var pastAppointments = Model.Where(a => a.Status == FitnessCenter.Models.AppointmentStatus.Completed 
+                                                || a.Status == FitnessCenter.Models.AppointmentStatus.Cancelled
+                                                || a.AppointmentDate < DateTime.Today).ToList();
+        if (pastAppointments.Any())
+        {
+            <div class="mb-4">
+                <h4 class="text-secondary"><i class="bi bi-clock-history"></i> Geçmiş Randevular</h4>
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Hizmet</th>
+                                <th>Antrenör</th>
+                                <th>Tarih</th>
+                                <th>Saat</th>
+                                <th>Durum</th>
+                                <th>Ücret</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var apt in pastAppointments.OrderByDescending(a => a.AppointmentDate))
+                            {
+                                <tr class="@(apt.Status == FitnessCenter.Models.AppointmentStatus.Cancelled ? "table-secondary" : "")">
+                                    <td>@apt.Service?.Name</td>
+                                    <td>@apt.Trainer?.FullName</td>
+                                    <td>@apt.AppointmentDate.ToString("dd.MM.yyyy")</td>
+                                    <td>@apt.AppointmentTime.ToString(@"hh\:mm") - @apt.EndTime.ToString(@"hh\:mm")</td>
+                                    <td>
+                                        @if (apt.Status == FitnessCenter.Models.AppointmentStatus.Completed)
+                                        {
+                                            <span class="badge bg-success">Tamamlandı</span>
+                                        }
+                                        else if (apt.Status == FitnessCenter.Models.AppointmentStatus.Cancelled)
+                                        {
+                                            <span class="badge bg-danger">İptal Edildi</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-secondary">Geçmiş</span>
+                                        }
+                                    </td>
+                                    <td>@apt.TotalPrice ₺</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <div class="alert alert-info text-center py-5">
+            <i class="bi bi-calendar-x display-4"></i>
+            <h4 class="mt-3">Henüz randevunuz bulunmuyor</h4>
+            <p class="text-muted">Hemen yeni bir randevu oluşturun!</p>
+            <a asp-action="Create" class="btn btn-primary btn-lg">
+                <i class="bi bi-plus-lg"></i> Randevu Oluştur
+            </a>
+        </div>
+    }
+</div>
