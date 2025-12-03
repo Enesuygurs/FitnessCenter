@@ -1,0 +1,49 @@
+@model List<FitnessCenter.Models.Trainer>
+@{
+    ViewData["Title"] = "Antrenörlerimiz";
+}
+
+<div class="container py-5">
+    <div class="text-center mb-5">
+        <h1 class="fw-bold"><i class="bi bi-people-fill text-primary-custom"></i> Antrenörlerimiz</h1>
+        <p class="text-muted lead">Alanında uzman ve deneyimli eğitmenlerimizle tanışın</p>
+    </div>
+
+    <div class="row">
+        @foreach (var trainer in Model)
+        {
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 shadow-sm trainer-card">
+                    <img src="@(trainer.ProfileImageUrl ?? "https://via.placeholder.com/350x250?text=" + trainer.FirstName)" 
+                         class="card-img-top" alt="@trainer.FullName" style="height: 250px; object-fit: cover;">
+                    <div class="card-body">
+                        <h5 class="card-title">@trainer.FullName</h5>
+                        <p class="text-muted small mb-2">
+                            <i class="bi bi-award"></i> @trainer.ExperienceYears Yıl Deneyim
+                        </p>
+                        <p class="card-text">
+                            <span class="badge bg-secondary">@trainer.Specializations</span>
+                        </p>
+                        <p class="card-text small">
+                            <i class="bi bi-clock"></i> @trainer.WorkStartTime.ToString(@"hh\:mm") - @trainer.WorkEndTime.ToString(@"hh\:mm")
+                        </p>
+                        <p class="card-text small text-muted">
+                            @trainer.Gym?.Name
+                        </p>
+                    </div>
+                    <div class="card-footer bg-transparent">
+                        <div class="d-flex gap-2">
+                            <a asp-action="Details" asp-route-id="@trainer.Id" class="btn btn-outline-primary flex-fill">
+                                <i class="bi bi-info-circle"></i> Detaylar
+                            </a>
+                            <a asp-controller="Appointment" asp-action="Create" asp-route-trainerId="@trainer.Id" 
+                               class="btn btn-primary flex-fill">
+                                <i class="bi bi-calendar-plus"></i> Randevu
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
