@@ -77,11 +77,12 @@
         .nav-link {
             color: #ffffff !important;
             font-weight: 500;
-            margin: 0 5px;
-            padding: 10px 15px !important;
+            margin: 0 1px;
+            padding: 8px 10px !important;
             border-radius: 8px;
             transition: all 0.3s ease;
             position: relative;
+            font-size: 0.85rem;
         }
         
         .nav-link::after {
@@ -353,7 +354,7 @@
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav me-auto ms-5">
+                    <ul class="navbar-nav me-auto ms-3">
                         <li class="nav-item">
                             <a class="nav-link" asp-controller="Home" asp-action="Index">
                                 <i class="bi bi-house me-1"></i> Ana Sayfa
@@ -379,18 +380,18 @@
                                 <i class="bi bi-robot me-1"></i> AI Öneri
                             </a>
                         </li>
+                        @if (User.Identity?.IsAuthenticated == true && User.IsInRole("Admin"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Admin" asp-action="Index" style="color: var(--primary-color) !important;">
+                                    <i class="bi bi-gear me-1"></i> Admin Panel
+                                </a>
+                            </li>
+                        }
                     </ul>
                     <ul class="navbar-nav">
                         @if (User.Identity?.IsAuthenticated == true)
                         {
-                            @if (User.IsInRole("Admin"))
-                            {
-                                <li class="nav-item">
-                                    <a class="nav-link" asp-controller="Admin" asp-action="Index" style="color: var(--primary-color) !important;">
-                                        <i class="bi bi-gear me-1"></i> Admin Panel
-                                    </a>
-                                </li>
-                            }
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
                                     <i class="bi bi-person-circle me-1"></i> @User.Identity?.Name
