@@ -1,178 +1,463 @@
 @model FitnessCenter.Models.ViewModels.DashboardViewModel
 @{
     ViewData["Title"] = "Admin Panel";
+    ViewData["NoTopPadding"] = true;
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="container py-4">
-    <h2 class="mb-4"><i class="bi bi-speedometer2"></i> Admin Dashboard</h2>
+<style>
+    .admin-page {
+        min-height: 100vh;
+        padding-top: 100px;
+        padding-bottom: 60px;
+        background: linear-gradient(135deg, #0a0a14 0%, #0f0f1a 100%);
+    }
 
-    <!-- Stats Cards -->
-    <div class="row mb-4">
-        <div class="col-md-3 mb-3">
-            <div class="card bg-primary text-white shadow">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <h6 class="card-title">Toplam Üye</h6>
-                            <h2 class="mb-0">@Model.TotalMembers</h2>
-                        </div>
-                        <i class="bi bi-people-fill display-4 opacity-50"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3 mb-3">
-            <div class="card bg-success text-white shadow">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <h6 class="card-title">Antrenörler</h6>
-                            <h2 class="mb-0">@Model.TotalTrainers</h2>
-                        </div>
-                        <i class="bi bi-person-badge-fill display-4 opacity-50"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3 mb-3">
-            <div class="card bg-warning text-dark shadow">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <h6 class="card-title">Bekleyen Randevu</h6>
-                            <h2 class="mb-0">@Model.PendingAppointments</h2>
-                        </div>
-                        <i class="bi bi-clock-history display-4 opacity-50"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3 mb-3">
-            <div class="card bg-info text-white shadow">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <h6 class="card-title">Aylık Gelir</h6>
-                            <h2 class="mb-0">@Model.MonthlyRevenue.ToString("N0") ₺</h2>
-                        </div>
-                        <i class="bi bi-currency-lira display-4 opacity-50"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+    .page-header {
+        margin-bottom: 40px;
+    }
 
-    <!-- Quick Actions -->
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="card shadow">
-                <div class="card-header">
-                    <h5 class="mb-0"><i class="bi bi-lightning"></i> Hızlı İşlemler</h5>
-                </div>
-                <div class="card-body">
-                    <div class="d-flex flex-wrap gap-2">
-                        <a asp-action="Gyms" class="btn btn-outline-primary">
-                            <i class="bi bi-building"></i> Spor Salonları
-                        </a>
-                        <a asp-action="Services" class="btn btn-outline-success">
-                            <i class="bi bi-grid"></i> Hizmetler
-                        </a>
-                        <a asp-action="Trainers" class="btn btn-outline-info">
-                            <i class="bi bi-people"></i> Antrenörler
-                        </a>
-                        <a asp-action="Appointments" class="btn btn-outline-warning">
-                            <i class="bi bi-calendar-check"></i> Randevular
-                        </a>
-                        <a asp-action="Members" class="btn btn-outline-secondary">
-                            <i class="bi bi-person-lines-fill"></i> Üyeler
-                        </a>
+    .page-header h1 {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #fff;
+        margin-bottom: 5px;
+    }
+
+    .page-header h1 i {
+        color: #00d26a;
+        margin-right: 10px;
+    }
+
+    .page-header p {
+        color: #888;
+        margin: 0;
+    }
+
+    /* Stat Cards */
+    .stat-card {
+        background: linear-gradient(145deg, #12121c 0%, #0d0d14 100%);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 20px;
+        padding: 25px;
+        height: 100%;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .stat-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        border-radius: 20px 20px 0 0;
+    }
+
+    .stat-card.members::before { background: linear-gradient(90deg, #00d26a, #00ff88); }
+    .stat-card.trainers::before { background: linear-gradient(90deg, #3b82f6, #60a5fa); }
+    .stat-card.pending::before { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
+    .stat-card.revenue::before { background: linear-gradient(90deg, #8b5cf6, #a78bfa); }
+
+    .stat-card:hover {
+        transform: translateY(-5px);
+        border-color: rgba(0, 210, 106, 0.2);
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    }
+
+    .stat-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        margin-bottom: 15px;
+    }
+
+    .stat-card.members .stat-icon { background: rgba(0, 210, 106, 0.15); color: #00d26a; }
+    .stat-card.trainers .stat-icon { background: rgba(59, 130, 246, 0.15); color: #3b82f6; }
+    .stat-card.pending .stat-icon { background: rgba(245, 158, 11, 0.15); color: #f59e0b; }
+    .stat-card.revenue .stat-icon { background: rgba(139, 92, 246, 0.15); color: #8b5cf6; }
+
+    .stat-value {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #fff;
+        line-height: 1;
+        margin-bottom: 5px;
+    }
+
+    .stat-label {
+        color: #888;
+        font-size: 0.9rem;
+    }
+
+    /* Quick Actions */
+    .quick-actions-card {
+        background: linear-gradient(145deg, #12121c 0%, #0d0d14 100%);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 20px;
+        overflow: hidden;
+    }
+
+    .card-header-custom {
+        background: rgba(0, 210, 106, 0.05);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        padding: 20px 25px;
+    }
+
+    .card-header-custom h5 {
+        margin: 0;
+        color: #fff;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .card-header-custom h5 i {
+        color: #00d26a;
+    }
+
+    .card-body-custom {
+        padding: 25px;
+    }
+
+    .action-btn {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: #fff;
+        padding: 12px 20px;
+        border-radius: 12px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        text-decoration: none;
+    }
+
+    .action-btn:hover {
+        background: rgba(0, 210, 106, 0.1);
+        border-color: #00d26a;
+        color: #00d26a;
+        transform: translateY(-2px);
+    }
+
+    .action-btn i {
+        font-size: 1.1rem;
+    }
+
+    /* Table Styles */
+    .table-card {
+        background: linear-gradient(145deg, #12121c 0%, #0d0d14 100%);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 20px;
+        overflow: hidden;
+    }
+
+    .table-custom {
+        margin: 0;
+        color: #fff;
+    }
+
+    .table-custom thead {
+        background: rgba(0, 210, 106, 0.05);
+    }
+
+    .table-custom thead th {
+        border: none;
+        padding: 15px 20px;
+        font-weight: 600;
+        color: #b8b8b8;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .table-custom tbody tr {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        transition: all 0.3s ease;
+    }
+
+    .table-custom tbody tr:hover {
+        background: rgba(0, 210, 106, 0.03);
+    }
+
+    .table-custom tbody tr:last-child {
+        border-bottom: none;
+    }
+
+    .table-custom tbody td {
+        padding: 15px 20px;
+        vertical-align: middle;
+        border: none;
+        color: #e0e0e0;
+    }
+
+    .badge-status {
+        padding: 6px 12px;
+        border-radius: 8px;
+        font-weight: 500;
+        font-size: 0.8rem;
+    }
+
+    .badge-pending {
+        background: rgba(245, 158, 11, 0.15);
+        color: #f59e0b;
+    }
+
+    .badge-confirmed {
+        background: rgba(0, 210, 106, 0.15);
+        color: #00d26a;
+    }
+
+    .badge-cancelled {
+        background: rgba(239, 68, 68, 0.15);
+        color: #ef4444;
+    }
+
+    .badge-completed {
+        background: rgba(59, 130, 246, 0.15);
+        color: #3b82f6;
+    }
+
+    .btn-action {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border: none;
+        transition: all 0.3s ease;
+        margin-right: 5px;
+    }
+
+    .btn-action.confirm {
+        background: rgba(0, 210, 106, 0.15);
+        color: #00d26a;
+    }
+
+    .btn-action.confirm:hover {
+        background: #00d26a;
+        color: #0a0a14;
+    }
+
+    .btn-action.cancel {
+        background: rgba(239, 68, 68, 0.15);
+        color: #ef4444;
+    }
+
+    .btn-action.cancel:hover {
+        background: #ef4444;
+        color: #fff;
+    }
+
+    .btn-view-all {
+        background: transparent;
+        border: 1px solid rgba(0, 210, 106, 0.3);
+        color: #00d26a;
+        padding: 8px 16px;
+        border-radius: 10px;
+        font-size: 0.85rem;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        text-decoration: none;
+    }
+
+    .btn-view-all:hover {
+        background: #00d26a;
+        color: #0a0a14;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 40px;
+        color: #888;
+    }
+
+    .empty-state i {
+        font-size: 3rem;
+        color: rgba(0, 210, 106, 0.3);
+        margin-bottom: 15px;
+    }
+
+    @@media (max-width: 768px) {
+        .admin-page {
+            padding-top: 90px;
+        }
+
+        .stat-card {
+            padding: 20px;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+        }
+    }
+</style>
+
+<div class="admin-page">
+    <div class="container">
+        <!-- Page Header -->
+        <div class="page-header" data-aos="fade-down">
+            <h1><i class="bi bi-speedometer2"></i>Admin Dashboard</h1>
+            <p>Fitness merkezinizi yönetin</p>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="row g-4 mb-4">
+            <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="0">
+                <div class="stat-card members">
+                    <div class="stat-icon">
+                        <i class="bi bi-people-fill"></i>
                     </div>
+                    <div class="stat-value">@Model.TotalMembers</div>
+                    <div class="stat-label">Toplam Üye</div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="100">
+                <div class="stat-card trainers">
+                    <div class="stat-icon">
+                        <i class="bi bi-person-badge-fill"></i>
+                    </div>
+                    <div class="stat-value">@Model.TotalTrainers</div>
+                    <div class="stat-label">Antrenörler</div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="200">
+                <div class="stat-card pending">
+                    <div class="stat-icon">
+                        <i class="bi bi-clock-history"></i>
+                    </div>
+                    <div class="stat-value">@Model.PendingAppointments</div>
+                    <div class="stat-label">Bekleyen Randevu</div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="300">
+                <div class="stat-card revenue">
+                    <div class="stat-icon">
+                        <i class="bi bi-currency-lira"></i>
+                    </div>
+                    <div class="stat-value">@Model.MonthlyRevenue.ToString("N0")₺</div>
+                    <div class="stat-label">Aylık Gelir</div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Recent Appointments -->
-    <div class="row">
-        <div class="col-12">
-            <div class="card shadow">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0"><i class="bi bi-calendar3"></i> Son Randevular</h5>
-                    <a asp-action="Appointments" class="btn btn-sm btn-primary">Tümünü Gör</a>
+        <!-- Quick Actions -->
+        <div class="quick-actions-card mb-4" data-aos="fade-up" data-aos-delay="400">
+            <div class="card-header-custom">
+                <h5><i class="bi bi-lightning-charge-fill"></i> Hızlı İşlemler</h5>
+            </div>
+            <div class="card-body-custom">
+                <div class="d-flex flex-wrap gap-3">
+                    <a asp-action="Gyms" class="action-btn">
+                        <i class="bi bi-building"></i> Spor Salonları
+                    </a>
+                    <a asp-action="Services" class="action-btn">
+                        <i class="bi bi-grid-3x3-gap-fill"></i> Hizmetler
+                    </a>
+                    <a asp-action="Trainers" class="action-btn">
+                        <i class="bi bi-people-fill"></i> Antrenörler
+                    </a>
+                    <a asp-action="Appointments" class="action-btn">
+                        <i class="bi bi-calendar-check-fill"></i> Randevular
+                    </a>
+                    <a asp-action="Members" class="action-btn">
+                        <i class="bi bi-person-lines-fill"></i> Üyeler
+                    </a>
                 </div>
-                <div class="card-body">
-                    @if (Model.RecentAppointments?.Any() == true)
-                    {
-                        <div class="table-responsive">
-                            <table class="table table-hover">
-                                <thead>
+            </div>
+        </div>
+
+        <!-- Recent Appointments -->
+        <div class="table-card" data-aos="fade-up" data-aos-delay="500">
+            <div class="card-header-custom d-flex justify-content-between align-items-center">
+                <h5><i class="bi bi-calendar3"></i> Son Randevular</h5>
+                <a asp-action="Appointments" class="btn-view-all">
+                    <i class="bi bi-arrow-right me-1"></i> Tümünü Gör
+                </a>
+            </div>
+            <div class="card-body-custom p-0">
+                @if (Model.RecentAppointments?.Any() == true)
+                {
+                    <div class="table-responsive">
+                        <table class="table table-custom">
+                            <thead>
+                                <tr>
+                                    <th>Tarih</th>
+                                    <th>Saat</th>
+                                    <th>Üye</th>
+                                    <th>Antrenör</th>
+                                    <th>Hizmet</th>
+                                    <th>Durum</th>
+                                    <th>İşlem</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var apt in Model.RecentAppointments)
+                                {
                                     <tr>
-                                        <th>Tarih</th>
-                                        <th>Saat</th>
-                                        <th>Üye</th>
-                                        <th>Antrenör</th>
-                                        <th>Hizmet</th>
-                                        <th>Durum</th>
-                                        <th>İşlem</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach (var apt in Model.RecentAppointments)
-                                    {
-                                        <tr>
-                                            <td>@apt.AppointmentDate.ToString("dd.MM.yyyy")</td>
-                                            <td>@apt.AppointmentTime.ToString(@"hh\:mm")</td>
-                                            <td>@apt.User?.FullName</td>
-                                            <td>@apt.Trainer?.FullName</td>
-                                            <td>@apt.Service?.Name</td>
-                                            <td>
-                                                @{
-                                                    var badgeClass = apt.Status switch
-                                                    {
-                                                        FitnessCenter.Models.AppointmentStatus.Pending => "bg-warning text-dark",
-                                                        FitnessCenter.Models.AppointmentStatus.Confirmed => "bg-success",
-                                                        FitnessCenter.Models.AppointmentStatus.Cancelled => "bg-danger",
-                                                        FitnessCenter.Models.AppointmentStatus.Completed => "bg-info",
-                                                        _ => "bg-secondary"
-                                                    };
-                                                    var statusText = apt.Status switch
-                                                    {
-                                                        FitnessCenter.Models.AppointmentStatus.Pending => "Beklemede",
-                                                        FitnessCenter.Models.AppointmentStatus.Confirmed => "Onaylandı",
-                                                        FitnessCenter.Models.AppointmentStatus.Cancelled => "İptal",
-                                                        FitnessCenter.Models.AppointmentStatus.Completed => "Tamamlandı",
-                                                        _ => "Bilinmiyor"
-                                                    };
-                                                }
-                                                <span class="badge @badgeClass">@statusText</span>
-                                            </td>
-                                            <td>
-                                                @if (apt.Status == FitnessCenter.Models.AppointmentStatus.Pending)
+                                        <td>@apt.AppointmentDate.ToString("dd.MM.yyyy")</td>
+                                        <td>@apt.AppointmentTime.ToString(@"hh\:mm")</td>
+                                        <td>@apt.User?.FullName</td>
+                                        <td>@apt.Trainer?.FullName</td>
+                                        <td>@apt.Service?.Name</td>
+                                        <td>
+                                            @{
+                                                var badgeClass = apt.Status switch
                                                 {
-                                                    <form asp-action="ConfirmAppointment" asp-route-id="@apt.Id" method="post" class="d-inline">
-                                                        <button type="submit" class="btn btn-sm btn-success">
-                                                            <i class="bi bi-check"></i>
-                                                        </button>
-                                                    </form>
-                                                    <form asp-action="CancelAppointment" asp-route-id="@apt.Id" method="post" class="d-inline">
-                                                        <button type="submit" class="btn btn-sm btn-danger">
-                                                            <i class="bi bi-x"></i>
-                                                        </button>
-                                                    </form>
-                                                }
-                                            </td>
-                                        </tr>
-                                    }
-                                </tbody>
-                            </table>
-                        </div>
-                    }
-                    else
-                    {
-                        <p class="text-muted mb-0">Henüz randevu bulunmamaktadır.</p>
-                    }
-                </div>
+                                                    FitnessCenter.Models.AppointmentStatus.Pending => "badge-pending",
+                                                    FitnessCenter.Models.AppointmentStatus.Confirmed => "badge-confirmed",
+                                                    FitnessCenter.Models.AppointmentStatus.Cancelled => "badge-cancelled",
+                                                    FitnessCenter.Models.AppointmentStatus.Completed => "badge-completed",
+                                                    _ => ""
+                                                };
+                                                var statusText = apt.Status switch
+                                                {
+                                                    FitnessCenter.Models.AppointmentStatus.Pending => "Beklemede",
+                                                    FitnessCenter.Models.AppointmentStatus.Confirmed => "Onaylandı",
+                                                    FitnessCenter.Models.AppointmentStatus.Cancelled => "İptal",
+                                                    FitnessCenter.Models.AppointmentStatus.Completed => "Tamamlandı",
+                                                    _ => "Bilinmiyor"
+                                                };
+                                            }
+                                            <span class="badge-status @badgeClass">@statusText</span>
+                                        </td>
+                                        <td>
+                                            @if (apt.Status == FitnessCenter.Models.AppointmentStatus.Pending)
+                                            {
+                                                <form asp-action="ConfirmAppointment" asp-route-id="@apt.Id" method="post" class="d-inline">
+                                                    <button type="submit" class="btn-action confirm" title="Onayla">
+                                                        <i class="bi bi-check-lg"></i>
+                                                    </button>
+                                                </form>
+                                                <form asp-action="CancelAppointment" asp-route-id="@apt.Id" method="post" class="d-inline">
+                                                    <button type="submit" class="btn-action cancel" title="İptal Et">
+                                                        <i class="bi bi-x-lg"></i>
+                                                    </button>
+                                                </form>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <div class="empty-state">
+                        <i class="bi bi-calendar-x"></i>
+                        <p class="mb-0">Henüz randevu bulunmamaktadır.</p>
+                    </div>
+                }
             </div>
         </div>
     </div>

@@ -1,20 +1,175 @@
 @model List<FitnessCenter.Models.Trainer>
 @{
     ViewData["Title"] = "Antrenör Yönetimi";
+    ViewData["NoTopPadding"] = true;
 }
 
-<div class="container py-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2><i class="bi bi-people"></i> Antrenör Yönetimi</h2>
-        <a asp-action="CreateTrainer" class="btn btn-primary">
-            <i class="bi bi-plus-lg"></i> Yeni Antrenör
-        </a>
-    </div>
+<style>
+    .admin-page {
+        min-height: 100vh;
+        padding-top: 100px;
+        padding-bottom: 60px;
+        background: linear-gradient(135deg, #0a0a14 0%, #0f0f1a 100%);
+    }
 
-    <div class="card shadow">
-        <div class="card-body">
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+
+    .page-header h1 {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: #fff;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .page-header h1 i {
+        color: #00d26a;
+    }
+
+    .btn-add {
+        background: linear-gradient(135deg, #00d26a, #00ff88);
+        border: none;
+        color: #0a0a14;
+        font-weight: 600;
+        padding: 12px 24px;
+        border-radius: 12px;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.3s ease;
+        text-decoration: none;
+    }
+
+    .btn-add:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 30px rgba(0, 210, 106, 0.3);
+        color: #0a0a14;
+    }
+
+    .table-card {
+        background: linear-gradient(145deg, #12121c 0%, #0d0d14 100%);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 20px;
+        overflow: hidden;
+    }
+
+    .table-custom {
+        margin: 0;
+        color: #fff;
+    }
+
+    .table-custom thead {
+        background: rgba(0, 210, 106, 0.05);
+    }
+
+    .table-custom thead th {
+        border: none;
+        padding: 15px 20px;
+        font-weight: 600;
+        color: #b8b8b8;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .table-custom tbody tr {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        transition: all 0.3s ease;
+    }
+
+    .table-custom tbody tr:hover {
+        background: rgba(0, 210, 106, 0.03);
+    }
+
+    .table-custom tbody tr:last-child {
+        border-bottom: none;
+    }
+
+    .table-custom tbody td {
+        padding: 15px 20px;
+        vertical-align: middle;
+        border: none;
+        color: #e0e0e0;
+    }
+
+    .badge-active {
+        background: rgba(0, 210, 106, 0.15);
+        color: #00d26a;
+        padding: 6px 12px;
+        border-radius: 8px;
+        font-weight: 500;
+    }
+
+    .badge-inactive {
+        background: rgba(239, 68, 68, 0.15);
+        color: #ef4444;
+        padding: 6px 12px;
+        border-radius: 8px;
+        font-weight: 500;
+    }
+
+    .badge-spec {
+        background: rgba(139, 92, 246, 0.15);
+        color: #a78bfa;
+        padding: 4px 10px;
+        border-radius: 6px;
+        font-size: 0.8rem;
+    }
+
+    .btn-action {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border: none;
+        transition: all 0.3s ease;
+        margin-right: 5px;
+    }
+
+    .btn-action.edit {
+        background: rgba(59, 130, 246, 0.15);
+        color: #3b82f6;
+    }
+
+    .btn-action.edit:hover {
+        background: #3b82f6;
+        color: #fff;
+    }
+
+    .btn-action.delete {
+        background: rgba(239, 68, 68, 0.15);
+        color: #ef4444;
+    }
+
+    .btn-action.delete:hover {
+        background: #ef4444;
+        color: #fff;
+    }
+</style>
+
+<div class="admin-page">
+    <div class="container">
+        <div class="page-header" data-aos="fade-down">
+            <h1><i class="bi bi-people-fill"></i> Antrenör Yönetimi</h1>
+            <a asp-action="CreateTrainer" class="btn-add">
+                <i class="bi bi-plus-lg"></i> Yeni Antrenör
+            </a>
+        </div>
+
+        <div class="table-card" data-aos="fade-up">
             <div class="table-responsive">
-                <table class="table table-hover">
+                <table class="table table-custom">
                     <thead>
                         <tr>
                             <th>ID</th>
@@ -32,28 +187,28 @@
                         {
                             <tr>
                                 <td>@trainer.Id</td>
-                                <td>@trainer.FullName</td>
+                                <td><strong>@trainer.FullName</strong></td>
                                 <td>@trainer.Email</td>
                                 <td>@trainer.Phone</td>
-                                <td><small>@trainer.Specializations</small></td>
+                                <td><span class="badge-spec">@trainer.Specializations</span></td>
                                 <td>@trainer.WorkStartTime.ToString(@"hh\:mm") - @trainer.WorkEndTime.ToString(@"hh\:mm")</td>
                                 <td>
                                     @if (trainer.IsActive)
                                     {
-                                        <span class="badge bg-success">Aktif</span>
+                                        <span class="badge-active">Aktif</span>
                                     }
                                     else
                                     {
-                                        <span class="badge bg-danger">Pasif</span>
+                                        <span class="badge-inactive">Pasif</span>
                                     }
                                 </td>
                                 <td>
-                                    <a asp-action="EditTrainer" asp-route-id="@trainer.Id" class="btn btn-sm btn-outline-primary">
+                                    <a asp-action="EditTrainer" asp-route-id="@trainer.Id" class="btn-action edit" title="Düzenle">
                                         <i class="bi bi-pencil"></i>
                                     </a>
                                     <form asp-action="DeleteTrainer" asp-route-id="@trainer.Id" method="post" class="d-inline"
                                           onsubmit="return confirm('Bu antrenörü silmek istediğinize emin misiniz?');">
-                                        <button type="submit" class="btn btn-sm btn-outline-danger">
+                                        <button type="submit" class="btn-action delete" title="Sil">
                                             <i class="bi bi-trash"></i>
                                         </button>
                                     </form>

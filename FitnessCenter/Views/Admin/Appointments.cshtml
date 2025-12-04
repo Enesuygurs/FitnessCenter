@@ -1,37 +1,217 @@
 @model List<FitnessCenter.Models.Appointment>
 @{
     ViewData["Title"] = "Randevu Yönetimi";
+    ViewData["NoTopPadding"] = true;
     var currentStatus = ViewBag.CurrentStatus as FitnessCenter.Models.AppointmentStatus?;
 }
 
-<div class="container py-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2><i class="bi bi-calendar-check"></i> Randevu Yönetimi</h2>
-    </div>
+<style>
+    .admin-page {
+        min-height: 100vh;
+        padding-top: 100px;
+        padding-bottom: 60px;
+        background: linear-gradient(135deg, #0a0a14 0%, #0f0f1a 100%);
+    }
 
-    <!-- Filter Buttons -->
-    <div class="mb-4">
-        <a asp-action="Appointments" class="btn @(currentStatus == null ? "btn-primary" : "btn-outline-primary")">Tümü</a>
-        <a asp-action="Appointments" asp-route-status="@FitnessCenter.Models.AppointmentStatus.Pending" 
-           class="btn @(currentStatus == FitnessCenter.Models.AppointmentStatus.Pending ? "btn-warning" : "btn-outline-warning")">Beklemede</a>
-        <a asp-action="Appointments" asp-route-status="@FitnessCenter.Models.AppointmentStatus.Confirmed" 
-           class="btn @(currentStatus == FitnessCenter.Models.AppointmentStatus.Confirmed ? "btn-success" : "btn-outline-success")">Onaylı</a>
-        <a asp-action="Appointments" asp-route-status="@FitnessCenter.Models.AppointmentStatus.Completed" 
-           class="btn @(currentStatus == FitnessCenter.Models.AppointmentStatus.Completed ? "btn-info" : "btn-outline-info")">Tamamlanan</a>
-        <a asp-action="Appointments" asp-route-status="@FitnessCenter.Models.AppointmentStatus.Cancelled" 
-           class="btn @(currentStatus == FitnessCenter.Models.AppointmentStatus.Cancelled ? "btn-danger" : "btn-outline-danger")">İptal</a>
-    </div>
+    .page-header {
+        margin-bottom: 30px;
+    }
 
-    <div class="card shadow">
-        <div class="card-body">
+    .page-header h1 {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: #fff;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .page-header h1 i { color: #00d26a; }
+
+    .filter-card {
+        background: linear-gradient(145deg, #12121c 0%, #0d0d14 100%);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 15px;
+        padding: 20px;
+        margin-bottom: 25px;
+    }
+
+    .filter-btn {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: #b8b8b8;
+        padding: 10px 20px;
+        border-radius: 10px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-block;
+        margin-right: 8px;
+        margin-bottom: 8px;
+    }
+
+    .filter-btn:hover {
+        background: rgba(255, 255, 255, 0.08);
+        color: #fff;
+    }
+
+    .filter-btn.active-all {
+        background: rgba(0, 210, 106, 0.15);
+        border-color: #00d26a;
+        color: #00d26a;
+    }
+
+    .filter-btn.active-pending {
+        background: rgba(245, 158, 11, 0.15);
+        border-color: #f59e0b;
+        color: #f59e0b;
+    }
+
+    .filter-btn.active-confirmed {
+        background: rgba(0, 210, 106, 0.15);
+        border-color: #00d26a;
+        color: #00d26a;
+    }
+
+    .filter-btn.active-completed {
+        background: rgba(59, 130, 246, 0.15);
+        border-color: #3b82f6;
+        color: #3b82f6;
+    }
+
+    .filter-btn.active-cancelled {
+        background: rgba(239, 68, 68, 0.15);
+        border-color: #ef4444;
+        color: #ef4444;
+    }
+
+    .table-card {
+        background: linear-gradient(145deg, #12121c 0%, #0d0d14 100%);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 20px;
+        overflow: hidden;
+    }
+
+    .table-custom {
+        margin: 0;
+        color: #fff;
+    }
+
+    .table-custom thead {
+        background: rgba(0, 210, 106, 0.05);
+    }
+
+    .table-custom thead th {
+        border: none;
+        padding: 15px 20px;
+        font-weight: 600;
+        color: #b8b8b8;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .table-custom tbody tr {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        transition: all 0.3s ease;
+    }
+
+    .table-custom tbody tr:hover {
+        background: rgba(0, 210, 106, 0.03);
+    }
+
+    .table-custom tbody tr:last-child {
+        border-bottom: none;
+    }
+
+    .table-custom tbody td {
+        padding: 15px 20px;
+        vertical-align: middle;
+        border: none;
+        color: #e0e0e0;
+    }
+
+    .badge-pending { background: rgba(245, 158, 11, 0.15); color: #f59e0b; padding: 6px 12px; border-radius: 8px; font-weight: 500; }
+    .badge-confirmed { background: rgba(0, 210, 106, 0.15); color: #00d26a; padding: 6px 12px; border-radius: 8px; font-weight: 500; }
+    .badge-cancelled { background: rgba(239, 68, 68, 0.15); color: #ef4444; padding: 6px 12px; border-radius: 8px; font-weight: 500; }
+    .badge-completed { background: rgba(59, 130, 246, 0.15); color: #3b82f6; padding: 6px 12px; border-radius: 8px; font-weight: 500; }
+
+    .price-tag { color: #00d26a; font-weight: 600; }
+
+    .btn-action {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border: none;
+        transition: all 0.3s ease;
+        margin-right: 5px;
+    }
+
+    .btn-action.confirm { background: rgba(0, 210, 106, 0.15); color: #00d26a; }
+    .btn-action.confirm:hover { background: #00d26a; color: #0a0a14; }
+    .btn-action.cancel { background: rgba(239, 68, 68, 0.15); color: #ef4444; }
+    .btn-action.cancel:hover { background: #ef4444; color: #fff; }
+    .btn-action.complete { background: rgba(59, 130, 246, 0.15); color: #3b82f6; }
+    .btn-action.complete:hover { background: #3b82f6; color: #fff; }
+
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        color: #888;
+    }
+
+    .empty-state i {
+        font-size: 3rem;
+        color: rgba(0, 210, 106, 0.3);
+        margin-bottom: 15px;
+    }
+</style>
+
+<div class="admin-page">
+    <div class="container">
+        <div class="page-header" data-aos="fade-down">
+            <h1><i class="bi bi-calendar-check-fill"></i> Randevu Yönetimi</h1>
+        </div>
+
+        <!-- Filter Buttons -->
+        <div class="filter-card" data-aos="fade-up">
+            <a asp-action="Appointments" class="filter-btn @(currentStatus == null ? "active-all" : "")">
+                <i class="bi bi-grid-3x3-gap me-1"></i> Tümü
+            </a>
+            <a asp-action="Appointments" asp-route-status="@FitnessCenter.Models.AppointmentStatus.Pending" 
+               class="filter-btn @(currentStatus == FitnessCenter.Models.AppointmentStatus.Pending ? "active-pending" : "")">
+                <i class="bi bi-clock me-1"></i> Beklemede
+            </a>
+            <a asp-action="Appointments" asp-route-status="@FitnessCenter.Models.AppointmentStatus.Confirmed" 
+               class="filter-btn @(currentStatus == FitnessCenter.Models.AppointmentStatus.Confirmed ? "active-confirmed" : "")">
+                <i class="bi bi-check-circle me-1"></i> Onaylı
+            </a>
+            <a asp-action="Appointments" asp-route-status="@FitnessCenter.Models.AppointmentStatus.Completed" 
+               class="filter-btn @(currentStatus == FitnessCenter.Models.AppointmentStatus.Completed ? "active-completed" : "")">
+                <i class="bi bi-check-all me-1"></i> Tamamlanan
+            </a>
+            <a asp-action="Appointments" asp-route-status="@FitnessCenter.Models.AppointmentStatus.Cancelled" 
+               class="filter-btn @(currentStatus == FitnessCenter.Models.AppointmentStatus.Cancelled ? "active-cancelled" : "")">
+                <i class="bi bi-x-circle me-1"></i> İptal
+            </a>
+        </div>
+
+        <div class="table-card" data-aos="fade-up" data-aos-delay="100">
             @if (Model.Count == 0)
             {
-                <div class="alert alert-info">Randevu bulunamadı.</div>
+                <div class="empty-state">
+                    <i class="bi bi-calendar-x"></i>
+                    <p class="mb-0">Randevu bulunamadı.</p>
+                </div>
             }
             else
             {
                 <div class="table-responsive">
-                    <table class="table table-hover">
+                    <table class="table table-custom">
                         <thead>
                             <tr>
                                 <th>ID</th>
@@ -52,19 +232,19 @@
                                     <td>@apt.Id</td>
                                     <td>@apt.AppointmentDate.ToString("dd.MM.yyyy")</td>
                                     <td>@apt.AppointmentTime.ToString(@"hh\:mm") - @apt.EndTime.ToString(@"hh\:mm")</td>
-                                    <td>@apt.User?.FullName</td>
+                                    <td><strong>@apt.User?.FullName</strong></td>
                                     <td>@apt.Trainer?.FullName</td>
                                     <td>@apt.Service?.Name</td>
-                                    <td>@apt.TotalPrice.ToString("N0") ₺</td>
+                                    <td><span class="price-tag">@apt.TotalPrice.ToString("N0") ₺</span></td>
                                     <td>
                                         @{
                                             var badgeClass = apt.Status switch
                                             {
-                                                FitnessCenter.Models.AppointmentStatus.Pending => "bg-warning text-dark",
-                                                FitnessCenter.Models.AppointmentStatus.Confirmed => "bg-success",
-                                                FitnessCenter.Models.AppointmentStatus.Cancelled => "bg-danger",
-                                                FitnessCenter.Models.AppointmentStatus.Completed => "bg-info",
-                                                _ => "bg-secondary"
+                                                FitnessCenter.Models.AppointmentStatus.Pending => "badge-pending",
+                                                FitnessCenter.Models.AppointmentStatus.Confirmed => "badge-confirmed",
+                                                FitnessCenter.Models.AppointmentStatus.Cancelled => "badge-cancelled",
+                                                FitnessCenter.Models.AppointmentStatus.Completed => "badge-completed",
+                                                _ => ""
                                             };
                                             var statusText = apt.Status switch
                                             {
@@ -75,32 +255,32 @@
                                                 _ => "Bilinmiyor"
                                             };
                                         }
-                                        <span class="badge @badgeClass">@statusText</span>
+                                        <span class="@badgeClass">@statusText</span>
                                     </td>
                                     <td>
                                         @if (apt.Status == FitnessCenter.Models.AppointmentStatus.Pending)
                                         {
                                             <form asp-action="ConfirmAppointment" asp-route-id="@apt.Id" method="post" class="d-inline">
-                                                <button type="submit" class="btn btn-sm btn-success" title="Onayla">
-                                                    <i class="bi bi-check"></i>
+                                                <button type="submit" class="btn-action confirm" title="Onayla">
+                                                    <i class="bi bi-check-lg"></i>
                                                 </button>
                                             </form>
                                             <form asp-action="CancelAppointment" asp-route-id="@apt.Id" method="post" class="d-inline">
-                                                <button type="submit" class="btn btn-sm btn-danger" title="İptal Et">
-                                                    <i class="bi bi-x"></i>
+                                                <button type="submit" class="btn-action cancel" title="İptal Et">
+                                                    <i class="bi bi-x-lg"></i>
                                                 </button>
                                             </form>
                                         }
                                         @if (apt.Status == FitnessCenter.Models.AppointmentStatus.Confirmed)
                                         {
                                             <form asp-action="CompleteAppointment" asp-route-id="@apt.Id" method="post" class="d-inline">
-                                                <button type="submit" class="btn btn-sm btn-info" title="Tamamlandı">
+                                                <button type="submit" class="btn-action complete" title="Tamamlandı">
                                                     <i class="bi bi-check-all"></i>
                                                 </button>
                                             </form>
                                             <form asp-action="CancelAppointment" asp-route-id="@apt.Id" method="post" class="d-inline">
-                                                <button type="submit" class="btn btn-sm btn-danger" title="İptal Et">
-                                                    <i class="bi bi-x"></i>
+                                                <button type="submit" class="btn-action cancel" title="İptal Et">
+                                                    <i class="bi bi-x-lg"></i>
                                                 </button>
                                             </form>
                                         }

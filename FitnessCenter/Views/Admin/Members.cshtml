@@ -1,15 +1,126 @@
 @model List<(FitnessCenter.Models.ApplicationUser User, IList<string> Roles)>
 @{
     ViewData["Title"] = "Üye Yönetimi";
+    ViewData["NoTopPadding"] = true;
 }
 
-<div class="container py-4">
-    <h2 class="mb-4"><i class="bi bi-person-lines-fill"></i> Üye Yönetimi</h2>
+<style>
+    .admin-page {
+        min-height: 100vh;
+        padding-top: 100px;
+        padding-bottom: 60px;
+        background: linear-gradient(135deg, #0a0a14 0%, #0f0f1a 100%);
+    }
 
-    <div class="card shadow">
-        <div class="card-body">
+    .page-header {
+        margin-bottom: 30px;
+    }
+
+    .page-header h1 {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: #fff;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .page-header h1 i { color: #00d26a; }
+
+    .table-card {
+        background: linear-gradient(145deg, #12121c 0%, #0d0d14 100%);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 20px;
+        overflow: hidden;
+    }
+
+    .table-custom {
+        margin: 0;
+        color: #fff;
+    }
+
+    .table-custom thead {
+        background: rgba(0, 210, 106, 0.05);
+    }
+
+    .table-custom thead th {
+        border: none;
+        padding: 15px 20px;
+        font-weight: 600;
+        color: #b8b8b8;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .table-custom tbody tr {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        transition: all 0.3s ease;
+    }
+
+    .table-custom tbody tr:hover {
+        background: rgba(0, 210, 106, 0.03);
+    }
+
+    .table-custom tbody tr:last-child {
+        border-bottom: none;
+    }
+
+    .table-custom tbody td {
+        padding: 15px 20px;
+        vertical-align: middle;
+        border: none;
+        color: #e0e0e0;
+    }
+
+    .badge-admin {
+        background: rgba(239, 68, 68, 0.15);
+        color: #ef4444;
+        padding: 6px 12px;
+        border-radius: 8px;
+        font-weight: 500;
+    }
+
+    .badge-member {
+        background: rgba(59, 130, 246, 0.15);
+        color: #3b82f6;
+        padding: 6px 12px;
+        border-radius: 8px;
+        font-weight: 500;
+    }
+
+    .btn-action {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border: none;
+        transition: all 0.3s ease;
+    }
+
+    .btn-action.delete {
+        background: rgba(239, 68, 68, 0.15);
+        color: #ef4444;
+    }
+
+    .btn-action.delete:hover {
+        background: #ef4444;
+        color: #fff;
+    }
+</style>
+
+<div class="admin-page">
+    <div class="container">
+        <div class="page-header" data-aos="fade-down">
+            <h1><i class="bi bi-person-lines-fill"></i> Üye Yönetimi</h1>
+        </div>
+
+        <div class="table-card" data-aos="fade-up">
             <div class="table-responsive">
-                <table class="table table-hover">
+                <table class="table table-custom">
                     <thead>
                         <tr>
                             <th>Ad Soyad</th>
@@ -24,14 +135,14 @@
                         @foreach (var (user, roles) in Model)
                         {
                             <tr>
-                                <td>@user.FullName</td>
+                                <td><strong>@user.FullName</strong></td>
                                 <td>@user.Email</td>
-                                <td>@user.PhoneNumber</td>
+                                <td>@(user.PhoneNumber ?? "-")</td>
                                 <td>@user.RegistrationDate.ToString("dd.MM.yyyy")</td>
                                 <td>
                                     @foreach (var role in roles)
                                     {
-                                        <span class="badge @(role == "Admin" ? "bg-danger" : "bg-primary")">@role</span>
+                                        <span class="@(role == "Admin" ? "badge-admin" : "badge-member")">@role</span>
                                     }
                                 </td>
                                 <td>
@@ -39,7 +150,7 @@
                                     {
                                         <form asp-action="DeleteMember" asp-route-id="@user.Id" method="post" class="d-inline"
                                               onsubmit="return confirm('Bu üyeyi silmek istediğinize emin misiniz?');">
-                                            <button type="submit" class="btn btn-sm btn-outline-danger">
+                                            <button type="submit" class="btn-action delete" title="Sil">
                                                 <i class="bi bi-trash"></i>
                                             </button>
                                         </form>
