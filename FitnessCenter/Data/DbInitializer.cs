@@ -206,7 +206,7 @@ namespace FitnessCenter.Data
                     GymId = gym.Id,
                     IsActive = true,
                     ExperienceYears = 10,
-                    ProfileImageUrl = "/images/trainers/trainer1.jpg"
+                    ProfileImageUrl = "https://images.unsplash.com/photo-1567013127542-490d757e51fc?w=400"
                 },
                 new Trainer
                 {
@@ -221,7 +221,7 @@ namespace FitnessCenter.Data
                     GymId = gym.Id,
                     IsActive = true,
                     ExperienceYears = 8,
-                    ProfileImageUrl = "/images/trainers/trainer2.jpg"
+                    ProfileImageUrl = "https://images.unsplash.com/photo-1594381898411-846e7d193883?w=400"
                 },
                 new Trainer
                 {
@@ -236,7 +236,7 @@ namespace FitnessCenter.Data
                     GymId = gym.Id,
                     IsActive = true,
                     ExperienceYears = 6,
-                    ProfileImageUrl = "/images/trainers/trainer3.jpg"
+                    ProfileImageUrl = "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=400"
                 },
                 new Trainer
                 {
@@ -251,7 +251,7 @@ namespace FitnessCenter.Data
                     GymId = gym.Id,
                     IsActive = true,
                     ExperienceYears = 7,
-                    ProfileImageUrl = "/images/trainers/trainer4.jpg"
+                    ProfileImageUrl = "https://images.unsplash.com/photo-1518611012118-696072aa579a?w=400"
                 }
             };
 
