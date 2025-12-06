@@ -179,31 +179,50 @@
     }
 
     .table-custom {
-        background: rgba(26, 26, 46, 0.8);
-        border-radius: 15px;
+        background: linear-gradient(145deg, rgba(12, 12, 20, 0.95) 0%, rgba(14, 16, 28, 0.9) 100%);
+        border-radius: 16px;
+        border: 1px solid rgba(0, 210, 106, 0.15);
         overflow: hidden;
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+    }
+
+    .table-custom .table {
+        --bs-table-bg: transparent;
+        --bs-table-striped-bg: rgba(0, 210, 106, 0.04);
+        --bs-table-striped-color: #e7fdf1;
+        --bs-table-hover-bg: rgba(0, 210, 106, 0.08);
+        --bs-table-hover-color: #ffffff;
+        color: #e5e5e5;
+        margin-bottom: 0;
     }
 
     .table-custom thead {
-        background: rgba(0, 210, 106, 0.1);
+        background: linear-gradient(135deg, rgba(0, 210, 106, 0.18), rgba(0, 255, 136, 0.15));
+        border-bottom: 1px solid rgba(0, 210, 106, 0.25);
     }
 
     .table-custom th {
-        color: #00d26a;
-        font-weight: 600;
-        padding: 15px;
+        color: #00ff88;
+        font-weight: 700;
+        padding: 16px;
         border: none;
+        letter-spacing: 0.3px;
     }
 
     .table-custom td {
-        color: #b8b8b8;
-        padding: 15px;
-        border-bottom: 1px solid rgba(0, 210, 106, 0.1);
+        color: #d6d6d6;
+        padding: 14px 16px;
+        border-bottom: 1px solid rgba(0, 210, 106, 0.12);
         vertical-align: middle;
+        background: transparent;
+    }
+
+    .table-custom tbody tr:last-child td {
+        border-bottom: none;
     }
 
     .table-custom tbody tr:hover {
-        background: rgba(0, 210, 106, 0.05);
+        background: rgba(0, 210, 106, 0.06);
     }
 
     .empty-state {
