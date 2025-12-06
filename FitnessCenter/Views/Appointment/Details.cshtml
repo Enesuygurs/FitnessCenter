@@ -3,46 +3,217 @@
     ViewData["Title"] = "Randevu Detayları";
 }
 
+<style>
+    .details-shell {
+        background: linear-gradient(160deg, rgba(8, 10, 18, 0.92) 0%, rgba(12, 16, 28, 0.9) 100%);
+        border: 1px solid rgba(0, 210, 106, 0.18);
+        border-radius: 18px;
+        box-shadow: 0 18px 45px rgba(0, 0, 0, 0.45);
+        overflow: hidden;
+    }
+
+    .details-header {
+        padding: 20px 24px;
+        border-bottom: 1px solid rgba(0, 210, 106, 0.2);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: linear-gradient(135deg, rgba(0, 210, 106, 0.18), rgba(0, 255, 136, 0.15));
+    }
+
+    .details-header h4 {
+        color: #ffffff;
+        font-weight: 800;
+        letter-spacing: 0.3px;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .status-pill {
+        padding: 10px 14px;
+        border-radius: 14px;
+        font-weight: 700;
+        letter-spacing: 0.2px;
+        border: 1px solid transparent;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 0.95rem;
+    }
+
+    .status-pending { background: rgba(255, 193, 7, 0.15); color: #ffdf7a; border-color: rgba(255, 193, 7, 0.35); }
+    .status-confirmed { background: rgba(0, 210, 106, 0.18); color: #00ff9a; border-color: rgba(0, 210, 106, 0.45); }
+    .status-cancelled { background: rgba(220, 53, 69, 0.18); color: #ff8fa3; border-color: rgba(220, 53, 69, 0.4); }
+    .status-completed { background: rgba(0, 210, 106, 0.25); color: #a8ffd7; border-color: rgba(0, 210, 106, 0.45); }
+
+    .details-body {
+        padding: 26px 26px 10px;
+        background: radial-gradient(circle at 20% 20%, rgba(0, 210, 106, 0.05), transparent 25%),
+                    radial-gradient(circle at 80% 10%, rgba(0, 255, 136, 0.04), transparent 28%),
+                    rgba(8, 10, 18, 0.9);
+    }
+
+    .section-title-sm {
+        color: #e9fcef;
+        font-weight: 700;
+        border-bottom: 1px solid rgba(0, 210, 106, 0.15);
+        padding-bottom: 10px;
+        margin-bottom: 18px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .info-table {
+        --bs-table-bg: transparent;
+        color: #dcdcdc;
+        margin-bottom: 0;
+    }
+
+    .info-table th {
+        color: #9fb6c9;
+        font-weight: 600;
+        width: 42%;
+        border: none;
+        padding: 10px 0;
+    }
+
+    .info-table td {
+        color: #f2f2f2;
+        border: none;
+        padding: 10px 0;
+    }
+
+    .info-table strong { color: #ffffff; }
+
+    .sub-card {
+        background: linear-gradient(150deg, rgba(14, 16, 26, 0.95), rgba(10, 12, 22, 0.92));
+        border: 1px solid rgba(0, 210, 106, 0.12);
+        border-radius: 14px;
+        padding: 18px 18px 16px;
+        color: #e8e8e8;
+        box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35);
+    }
+
+    .sub-card .card-title {
+        color: #9de8c2;
+        font-weight: 700;
+        margin-bottom: 10px;
+    }
+
+    .chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 8px 12px;
+        border-radius: 999px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        background: rgba(0, 210, 106, 0.12);
+        color: #9de8c2;
+        border: 1px solid rgba(0, 210, 106, 0.2);
+    }
+
+    .chip.secondary { background: rgba(111, 126, 150, 0.18); color: #c7d4e3; border-color: rgba(111, 126, 150, 0.35); }
+
+    .trainer-block img {
+        width: 64px;
+        height: 64px;
+        object-fit: cover;
+        border-radius: 50%;
+        border: 2px solid rgba(0, 210, 106, 0.35);
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+    }
+
+    .location-line { color: #cfd7e2; }
+
+    .details-footer {
+        padding: 16px 22px;
+        background: rgba(10, 12, 20, 0.92);
+        border-top: 1px solid rgba(0, 210, 106, 0.15);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .btn-ghost {
+        border: 1px solid rgba(255, 255, 255, 0.25);
+        color: #e9e9e9;
+        background: transparent;
+        padding: 10px 16px;
+        border-radius: 12px;
+        transition: all 0.25s ease;
+    }
+
+    .btn-ghost:hover {
+        border-color: rgba(0, 255, 136, 0.65);
+        color: #00ff88;
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.35);
+    }
+
+    .btn-cancel {
+        border: 1px solid rgba(220, 53, 69, 0.65);
+        color: #ff9fb0;
+        background: rgba(220, 53, 69, 0.12);
+        padding: 10px 18px;
+        border-radius: 12px;
+        transition: all 0.25s ease;
+    }
+
+    .btn-cancel:hover {
+        color: #ffe3e8;
+        background: rgba(220, 53, 69, 0.2);
+        transform: translateY(-2px);
+        box-shadow: 0 12px 24px rgba(220, 53, 69, 0.25);
+    }
+
+    .custom-breadcrumb .breadcrumb-item a { color: #8fd9b8; text-decoration: none; }
+    .custom-breadcrumb .breadcrumb-item a:hover { color: #00ff88; }
+    .custom-breadcrumb .breadcrumb-item.active { color: #cfd7e2; }
+    .custom-breadcrumb .breadcrumb { background: transparent; margin-bottom: 0; padding: 0; }
+
+    .highlight-text { color: #00ff88; font-weight: 700; }
+</style>
+
 <div class="container py-5">
     <div class="row justify-content-center">
-        <div class="col-md-8">
-            <nav aria-label="breadcrumb" class="mb-4">
+        <div class="col-lg-9 col-xl-8">
+            <nav aria-label="breadcrumb" class="mb-4 custom-breadcrumb">
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a asp-action="Index">Randevularım</a></li>
                     <li class="breadcrumb-item active">Randevu #@Model.Id</li>
                 </ol>
             </nav>
 
-            <div class="card shadow">
-                <div class="card-header @(Model.Status == FitnessCenter.Models.AppointmentStatus.Confirmed ? "bg-success" : 
-                                          Model.Status == FitnessCenter.Models.AppointmentStatus.Pending ? "bg-warning" :
-                                          Model.Status == FitnessCenter.Models.AppointmentStatus.Cancelled ? "bg-danger" : "bg-secondary") text-white">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <h4 class="mb-0"><i class="bi bi-calendar-check"></i> Randevu Detayları</h4>
-                        <span class="badge bg-light text-dark fs-6">
-                            @switch (Model.Status)
-                            {
-                                case FitnessCenter.Models.AppointmentStatus.Pending:
-                                    <text>Beklemede</text>
-                                    break;
-                                case FitnessCenter.Models.AppointmentStatus.Confirmed:
-                                    <text>Onaylandı</text>
-                                    break;
-                                case FitnessCenter.Models.AppointmentStatus.Cancelled:
-                                    <text>İptal Edildi</text>
-                                    break;
-                                case FitnessCenter.Models.AppointmentStatus.Completed:
-                                    <text>Tamamlandı</text>
-                                    break;
-                            }
-                        </span>
-                    </div>
+            <div class="details-shell">
+                <div class="details-header">
+                    <h4><i class="bi bi-calendar-check"></i> Randevu Detayları</h4>
+                    <span class="status-pill status-@Model.Status.ToString().ToLower()">
+                        @switch (Model.Status)
+                        {
+                            case FitnessCenter.Models.AppointmentStatus.Pending:
+                                <text><i class="bi bi-hourglass-split"></i> Beklemede</text>
+                                break;
+                            case FitnessCenter.Models.AppointmentStatus.Confirmed:
+                                <text><i class="bi bi-check2-circle"></i> Onaylandı</text>
+                                break;
+                            case FitnessCenter.Models.AppointmentStatus.Cancelled:
+                                <text><i class="bi bi-x-octagon"></i> İptal Edildi</text>
+                                break;
+                            case FitnessCenter.Models.AppointmentStatus.Completed:
+                                <text><i class="bi bi-flag"></i> Tamamlandı</text>
+                                break;
+                        }
+                    </span>
                 </div>
-                <div class="card-body">
-                    <div class="row mb-4">
+                <div class="details-body">
+                    <div class="row mb-4 g-4">
                         <div class="col-md-6">
-                            <h5 class="border-bottom pb-2"><i class="bi bi-info-circle"></i> Genel Bilgiler</h5>
-                            <table class="table table-borderless">
+                            <h5 class="section-title-sm"><i class="bi bi-info-circle"></i> Genel Bilgiler</h5>
+                            <table class="table info-table">
                                 <tr>
                                     <th width="40%">Randevu No:</th>
                                     <td>#@Model.Id</td>
@@ -62,8 +233,8 @@
                             </table>
                         </div>
                         <div class="col-md-6">
-                            <h5 class="border-bottom pb-2"><i class="bi bi-currency-lira"></i> Ödeme Bilgileri</h5>
-                            <table class="table table-borderless">
+                            <h5 class="section-title-sm"><i class="bi bi-currency-lira"></i> Ödeme Bilgileri</h5>
+                            <table class="table info-table">
                                 <tr>
                                     <th width="40%">Hizmet Ücreti:</th>
                                     <td>@Model.TotalPrice ₺</td>
@@ -71,84 +242,75 @@
                                 <tr>
                                     <th>Ödeme Durumu:</th>
                                     <td>
-                                        <span class="badge bg-warning">Ödenmedi</span>
+                                        <span class="chip secondary"><i class="bi bi-wallet2"></i> Ödenmedi</span>
                                     </td>
                                 </tr>
                             </table>
                         </div>
                     </div>
 
-                    <div class="row mb-4">
+                    <div class="row mb-4 g-4">
                         <div class="col-md-6">
-                            <div class="card bg-light">
-                                <div class="card-body">
-                                    <h6 class="card-title"><i class="bi bi-list-check text-primary"></i> Hizmet</h6>
-                                    <h5>@Model.Service?.Name</h5>
-                                    <p class="text-muted mb-1">@Model.Service?.Description</p>
-                                    <span class="badge bg-info">@Model.Service?.DurationMinutes Dakika</span>
-                                    <span class="badge bg-secondary">@Model.Service?.Category</span>
+                            <div class="sub-card">
+                                <h6 class="card-title"><i class="bi bi-list-check text-success"></i> Hizmet</h6>
+                                <h5 class="mb-1">@Model.Service?.Name</h5>
+                                <p class="text-white-50 mb-2">@Model.Service?.Description</p>
+                                <div class="d-flex gap-2 flex-wrap">
+                                    <span class="chip"><i class="bi bi-stopwatch"></i> @Model.Service?.DurationMinutes Dakika</span>
+                                    <span class="chip secondary"><i class="bi bi-tag"></i> @Model.Service?.Category</span>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-6">
-                            <div class="card bg-light">
-                                <div class="card-body">
-                                    <h6 class="card-title"><i class="bi bi-person text-primary"></i> Antrenör</h6>
-                                    <div class="d-flex align-items-center">
-                                        <img src="@(Model.Trainer?.ProfileImageUrl ?? "https://via.placeholder.com/60x60")" 
-                                             class="rounded-circle me-3" style="width:60px; height:60px; object-fit:cover;">
-                                        <div>
-                                            <h5 class="mb-0">@Model.Trainer?.FullName</h5>
-                                            <small class="text-muted">@Model.Trainer?.Specializations</small>
-                                        </div>
+                            <div class="sub-card">
+                                <h6 class="card-title"><i class="bi bi-person text-success"></i> Antrenör</h6>
+                                <div class="d-flex align-items-center trainer-block">
+                                    <img src="@(Model.Trainer?.ProfileImageUrl ?? "https://via.placeholder.com/60x60")" class="me-3">
+                                    <div>
+                                        <h5 class="mb-1">@Model.Trainer?.FullName</h5>
+                                        <small class="text-white-50">@Model.Trainer?.Specializations</small>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="card bg-light mb-4">
-                        <div class="card-body">
-                            <h6 class="card-title"><i class="bi bi-building text-primary"></i> Spor Salonu</h6>
-                            <h5>@Model.Trainer?.Gym?.Name</h5>
-                            <p class="mb-1"><i class="bi bi-geo-alt"></i> @Model.Trainer?.Gym?.Address</p>
-                            @if (!string.IsNullOrEmpty(Model.Trainer?.Gym?.Phone))
-                            {
-                                <p class="mb-0"><i class="bi bi-telephone"></i> @Model.Trainer.Gym.Phone</p>
-                            }
-                        </div>
+                    <div class="sub-card mb-4">
+                        <h6 class="card-title"><i class="bi bi-building text-success"></i> Spor Salonu</h6>
+                        <h5 class="mb-1">@Model.Trainer?.Gym?.Name</h5>
+                        <p class="mb-1 location-line"><i class="bi bi-geo-alt"></i> @Model.Trainer?.Gym?.Address</p>
+                        @if (!string.IsNullOrEmpty(Model.Trainer?.Gym?.Phone))
+                        {
+                            <p class="mb-0 location-line"><i class="bi bi-telephone"></i> @Model.Trainer.Gym.Phone</p>
+                        }
                     </div>
 
                     @if (!string.IsNullOrEmpty(Model.Notes))
                     {
-                        <div class="card bg-light mb-4">
-                            <div class="card-body">
-                                <h6 class="card-title"><i class="bi bi-chat-left-text text-primary"></i> Notlar</h6>
-                                <p class="mb-0">@Model.Notes</p>
-                            </div>
+                        <div class="sub-card mb-4">
+                            <h6 class="card-title"><i class="bi bi-chat-left-text text-success"></i> Notlar</h6>
+                            <p class="mb-0 text-white-70">@Model.Notes</p>
                         </div>
                     }
                 </div>
-                <div class="card-footer">
-                    <div class="d-flex justify-content-between">
-                        <a asp-action="Index" class="btn btn-outline-secondary">
-                            <i class="bi bi-arrow-left"></i> Geri
-                        </a>
-                        @if (Model.Status == FitnessCenter.Models.AppointmentStatus.Pending || 
-                             Model.Status == FitnessCenter.Models.AppointmentStatus.Confirmed)
+                <div class="details-footer">
+                    <a asp-action="Index" class="btn-ghost">
+                        <i class="bi bi-arrow-left"></i> Geri
+                    </a>
+                    @if (Model.Status == FitnessCenter.Models.AppointmentStatus.Pending || 
+                         Model.Status == FitnessCenter.Models.AppointmentStatus.Confirmed)
+                    {
+                        @if (Model.AppointmentDate > DateTime.Today || 
+                             (Model.AppointmentDate == DateTime.Today && Model.AppointmentTime > DateTime.Now.TimeOfDay))
                         {
-                            @if (Model.AppointmentDate > DateTime.Today || 
-                                 (Model.AppointmentDate == DateTime.Today && Model.AppointmentTime > DateTime.Now.TimeOfDay))
-                            {
-                                <form asp-action="Cancel" asp-route-id="@Model.Id" method="post" style="display:inline;"
-                                      onsubmit="return confirm('Randevuyu iptal etmek istediğinizden emin misiniz?')">
-                                    <button type="submit" class="btn btn-danger">
-                                        <i class="bi bi-x-lg"></i> Randevuyu İptal Et
-                                    </button>
-                                </form>
-                            }
+                            <form asp-action="Cancel" asp-route-id="@Model.Id" method="post" style="display:inline;"
+                                  onsubmit="return confirm('Randevuyu iptal etmek istediğinizden emin misiniz?')">
+                                <button type="submit" class="btn-cancel">
+                                    <i class="bi bi-x-lg"></i> Randevuyu İptal Et
+                                </button>
+                            </form>
                         }
-                    </div>
+                    }
                 </div>
             </div>
         </div>
