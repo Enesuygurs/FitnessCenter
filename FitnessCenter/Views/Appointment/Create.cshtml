@@ -275,9 +275,7 @@
                             </label>
                             <input asp-for="AppointmentDate" type="date" class="form-control" id="dateSelect"
                                    min="@DateTime.Today.ToString("yyyy-MM-dd")" 
-                                   max="@DateTime.Today.AddMonths(1).ToString("yyyy-MM-dd")"
-                                   oninvalid="this.setCustomValidity('Lütfen ' + this.min + ' ile ' + this.max + ' arasında bir tarih seçin.')"
-                                   oninput="this.setCustomValidity('')">
+                                   max="@DateTime.Today.AddMonths(1).ToString("yyyy-MM-dd")">
                             <span asp-validation-for="AppointmentDate" class="text-danger"></span>
                         </div>
 
