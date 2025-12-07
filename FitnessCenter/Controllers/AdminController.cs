@@ -440,7 +440,7 @@ namespace FitnessCenter.Controllers
                 await _context.SaveChangesAsync();
                 TempData["Success"] = "Randevu onaylandı.";
             }
-            return RedirectToAction(nameof(Appointments));
+            return RedirectToLocalRefererOrAppointments();
         }
 
         // POST: /Admin/CancelAppointment/5
@@ -455,7 +455,7 @@ namespace FitnessCenter.Controllers
                 await _context.SaveChangesAsync();
                 TempData["Success"] = "Randevu iptal edildi.";
             }
-            return RedirectToAction(nameof(Appointments));
+            return RedirectToLocalRefererOrAppointments();
         }
 
         // POST: /Admin/CompleteAppointment/5
@@ -470,6 +470,21 @@ namespace FitnessCenter.Controllers
                 await _context.SaveChangesAsync();
                 TempData["Success"] = "Randevu tamamlandı olarak işaretlendi.";
             }
+            return RedirectToLocalRefererOrAppointments();
+        }
+
+        private IActionResult RedirectToLocalRefererOrAppointments()
+        {
+            var referer = Request.Headers["Referer"].ToString();
+            if (!string.IsNullOrEmpty(referer) && Uri.TryCreate(referer, UriKind.Absolute, out var uri))
+            {
+                var localPath = uri.PathAndQuery;
+                if (Url.IsLocalUrl(localPath))
+                {
+                    return Redirect(localPath);
+                }
+            }
+
             return RedirectToAction(nameof(Appointments));
         }
 
