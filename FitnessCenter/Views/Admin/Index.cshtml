@@ -263,6 +263,16 @@
         color: #fff;
     }
 
+    .btn-action.complete {
+        background: rgba(59, 130, 246, 0.15);
+        color: #3b82f6;
+    }
+
+    .btn-action.complete:hover {
+        background: #3b82f6;
+        color: #fff;
+    }
+
     .btn-view-all {
         background: transparent;
         border: 1px solid rgba(0, 210, 106, 0.3);
@@ -446,6 +456,14 @@
                                                 <form asp-action="CancelAppointment" asp-route-id="@apt.Id" method="post" class="d-inline">
                                                     <button type="submit" class="btn-action cancel" title="İptal Et">
                                                         <i class="bi bi-x-lg"></i>
+                                                    </button>
+                                                </form>
+                                            }
+                                            else if (apt.Status == FitnessCenter.Models.AppointmentStatus.Confirmed)
+                                            {
+                                                <form asp-action="CompleteAppointment" asp-route-id="@apt.Id" method="post" class="d-inline">
+                                                    <button type="submit" class="btn-action complete" title="Tamamlandı">
+                                                        <i class="bi bi-check-all"></i>
                                                     </button>
                                                 </form>
                                             }
