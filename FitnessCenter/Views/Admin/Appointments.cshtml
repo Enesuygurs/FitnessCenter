@@ -160,6 +160,8 @@
     .btn-action.cancel:hover { background: #ef4444; color: #fff; }
     .btn-action.complete { background: rgba(59, 130, 246, 0.15); color: #3b82f6; }
     .btn-action.complete:hover { background: #3b82f6; color: #fff; }
+    .btn-action.revert { background: rgba(245, 158, 11, 0.15); color: #f59e0b; }
+    .btn-action.revert:hover { background: #f59e0b; color: #0a0a14; }
 
     .empty-state {
         text-align: center;
@@ -275,16 +277,29 @@
                                                 </button>
                                             </form>
                                         }
-                                        @if (apt.Status == FitnessCenter.Models.AppointmentStatus.Confirmed)
+                                        else if (apt.Status == FitnessCenter.Models.AppointmentStatus.Confirmed)
                                         {
                                             <form asp-action="CompleteAppointment" asp-route-id="@apt.Id" method="post" class="d-inline">
                                                 <button type="submit" class="btn-action complete" title="Tamamlandı">
                                                     <i class="bi bi-check-all"></i>
                                                 </button>
                                             </form>
+                                            <form asp-action="RevertAppointmentToPending" asp-route-id="@apt.Id" method="post" class="d-inline">
+                                                <button type="submit" class="btn-action revert" title="Beklemede Yap">
+                                                    <i class="bi bi-arrow-counterclockwise"></i>
+                                                </button>
+                                            </form>
                                             <form asp-action="CancelAppointment" asp-route-id="@apt.Id" method="post" class="d-inline">
                                                 <button type="submit" class="btn-action cancel" title="İptal Et">
                                                     <i class="bi bi-x-lg"></i>
+                                                </button>
+                                            </form>
+                                        }
+                                        else if (apt.Status == FitnessCenter.Models.AppointmentStatus.Completed)
+                                        {
+                                            <form asp-action="RevertAppointmentToConfirmed" asp-route-id="@apt.Id" method="post" class="d-inline">
+                                                <button type="submit" class="btn-action revert" title="Onaylandı Yap">
+                                                    <i class="bi bi-arrow-counterclockwise"></i>
                                                 </button>
                                             </form>
                                         }

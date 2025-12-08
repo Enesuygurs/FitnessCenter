@@ -273,6 +273,16 @@
         color: #fff;
     }
 
+    .btn-action.revert {
+        background: rgba(245, 158, 11, 0.15);
+        color: #f59e0b;
+    }
+
+    .btn-action.revert:hover {
+        background: #f59e0b;
+        color: #0a0a14;
+    }
+
     .btn-view-all {
         background: transparent;
         border: 1px solid rgba(0, 210, 106, 0.3);
@@ -464,6 +474,19 @@
                                                 <form asp-action="CompleteAppointment" asp-route-id="@apt.Id" method="post" class="d-inline">
                                                     <button type="submit" class="btn-action complete" title="Tamamlandı">
                                                         <i class="bi bi-check-all"></i>
+                                                    </button>
+                                                </form>
+                                                <form asp-action="RevertAppointmentToPending" asp-route-id="@apt.Id" method="post" class="d-inline">
+                                                    <button type="submit" class="btn-action revert" title="Beklemede Yap">
+                                                        <i class="bi bi-arrow-counterclockwise"></i>
+                                                    </button>
+                                                </form>
+                                            }
+                                            else if (apt.Status == FitnessCenter.Models.AppointmentStatus.Completed)
+                                            {
+                                                <form asp-action="RevertAppointmentToConfirmed" asp-route-id="@apt.Id" method="post" class="d-inline">
+                                                    <button type="submit" class="btn-action revert" title="Onaylandı Yap">
+                                                        <i class="bi bi-arrow-counterclockwise"></i>
                                                     </button>
                                                 </form>
                                             }

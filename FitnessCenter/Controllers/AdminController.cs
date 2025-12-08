@@ -473,6 +473,36 @@ namespace FitnessCenter.Controllers
             return RedirectToLocalRefererOrAppointments();
         }
 
+        // POST: /Admin/RevertAppointmentToPending/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RevertAppointmentToPending(int id)
+        {
+            var appointment = await _context.Appointments.FindAsync(id);
+            if (appointment != null && appointment.Status == AppointmentStatus.Confirmed)
+            {
+                appointment.Status = AppointmentStatus.Pending;
+                await _context.SaveChangesAsync();
+                TempData["Success"] = "Randevu beklemede olarak işaretlendi.";
+            }
+            return RedirectToLocalRefererOrAppointments();
+        }
+
+        // POST: /Admin/RevertAppointmentToConfirmed/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RevertAppointmentToConfirmed(int id)
+        {
+            var appointment = await _context.Appointments.FindAsync(id);
+            if (appointment != null && appointment.Status == AppointmentStatus.Completed)
+            {
+                appointment.Status = AppointmentStatus.Confirmed;
+                await _context.SaveChangesAsync();
+                TempData["Success"] = "Randevu onaylandı olarak geri alındı.";
+            }
+            return RedirectToLocalRefererOrAppointments();
+        }
+
         private IActionResult RedirectToLocalRefererOrAppointments()
         {
             var referer = Request.Headers["Referer"].ToString();
