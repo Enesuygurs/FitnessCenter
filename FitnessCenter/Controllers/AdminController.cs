@@ -503,6 +503,21 @@ namespace FitnessCenter.Controllers
             return RedirectToLocalRefererOrAppointments();
         }
 
+        // POST: /Admin/RevertCancelledToPending/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RevertCancelledToPending(int id)
+        {
+            var appointment = await _context.Appointments.FindAsync(id);
+            if (appointment != null && appointment.Status == AppointmentStatus.Cancelled)
+            {
+                appointment.Status = AppointmentStatus.Pending;
+                await _context.SaveChangesAsync();
+                TempData["Success"] = "İptal edilen randevu beklemede olarak geri alındı.";
+            }
+            return RedirectToLocalRefererOrAppointments();
+        }
+
         private IActionResult RedirectToLocalRefererOrAppointments()
         {
             var referer = Request.Headers["Referer"].ToString();

@@ -506,6 +506,14 @@
                                                     </button>
                                                 </form>
                                             }
+                                            else if (apt.Status == FitnessCenter.Models.AppointmentStatus.Cancelled)
+                                            {
+                                                <form asp-action="RevertCancelledToPending" asp-route-id="@apt.Id" method="post" class="d-inline">
+                                                    <button type="submit" class="btn-action revert" title="İşlemi Geri Al">
+                                                        <i class="bi bi-arrow-counterclockwise"></i>
+                                                    </button>
+                                                </form>
+                                            }
                                         </td>
                                     </tr>
                                 }
