@@ -13,25 +13,27 @@
     }
 
     .page-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 30px;
-        flex-wrap: wrap;
-        gap: 15px;
+        margin-top: 20px;
+        margin-bottom: 40px;
     }
 
     .page-header h1 {
-        font-size: 1.8rem;
+        font-size: 2rem;
         font-weight: 700;
         color: #fff;
-        margin: 0;
-        display: flex;
-        align-items: center;
-        gap: 10px;
+        margin-bottom: 5px;
     }
 
-    .page-header h1 i { color: #00d26a; }
+    .page-header h1 i { color: #00d26a; margin-right: 10px; }
+
+    .page-header p {
+        color: #888;
+        margin: 0;
+    }
+
+    .header-actions {
+        margin-top: 20px;
+    }
 
     .btn-add {
         background: linear-gradient(135deg, #00d26a, #00ff88);
@@ -174,6 +176,10 @@
     <div class="container">
         <div class="page-header" data-aos="fade-down">
             <h1><i class="bi bi-building"></i> Spor Salonu Yönetimi</h1>
+            <p>Spor salonlarını yönetin</p>
+        </div>
+
+        <div class="header-actions mb-4" data-aos="fade-up">
             <a asp-action="CreateGym" class="btn-add">
                 <i class="bi bi-plus-lg"></i> Yeni Salon
             </a>
