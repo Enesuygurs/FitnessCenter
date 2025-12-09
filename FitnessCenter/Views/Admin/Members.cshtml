@@ -38,6 +38,15 @@
     .table-custom {
         margin: 0;
         color: #fff;
+        --bs-table-color: #e0e0e0;
+        --bs-table-bg: transparent;
+        --bs-table-border-color: rgba(255, 255, 255, 0.05);
+        --bs-table-striped-bg: rgba(255, 255, 255, 0.02);
+        --bs-table-striped-color: #e0e0e0;
+        --bs-table-active-bg: rgba(0, 210, 106, 0.03);
+        --bs-table-active-color: #fff;
+        --bs-table-hover-bg: rgba(0, 210, 106, 0.03);
+        --bs-table-hover-color: #fff;
     }
 
     .table-custom thead {
@@ -48,7 +57,8 @@
         border: none;
         padding: 15px 20px;
         font-weight: 600;
-        color: #b8b8b8;
+        color: #b8b8b8 !important;
+        background-color: rgba(0, 210, 106, 0.05) !important;
         font-size: 0.85rem;
         text-transform: uppercase;
         letter-spacing: 0.5px;
@@ -60,7 +70,7 @@
     }
 
     .table-custom tbody tr:hover {
-        background: rgba(0, 210, 106, 0.03);
+        background: rgba(0, 210, 106, 0.03) !important;
     }
 
     .table-custom tbody tr:last-child {
@@ -71,7 +81,8 @@
         padding: 15px 20px;
         vertical-align: middle;
         border: none;
-        color: #e0e0e0;
+        color: #e0e0e0 !important;
+        background-color: transparent !important;
     }
 
     .badge-admin {
