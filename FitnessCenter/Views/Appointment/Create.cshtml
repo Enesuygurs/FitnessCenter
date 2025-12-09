@@ -5,51 +5,72 @@
 }
 
 <style>
+    .create-page {
+        min-height: 100vh;
+        padding-top: 120px;
+        padding-bottom: 80px;
+        background: linear-gradient(135deg, #0a0a14 0%, #0f0f1a 100%);
+    }
+
     .page-header {
-        background: linear-gradient(135deg, rgba(0, 210, 106, 0.1) 0%, rgba(0, 255, 136, 0.05) 100%);
-        padding: 60px 0;
-        padding-top: 140px;
+        text-align: center;
         margin-bottom: 50px;
-        border-bottom: 1px solid rgba(0, 210, 106, 0.2);
     }
 
     .page-header h1 {
-        font-size: 3rem;
-        font-weight: 800;
-        background: linear-gradient(135deg, #00d26a 0%, #00ff88 100%);
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #fff;
+        margin-bottom: 15px;
+    }
+
+    .page-header h1 i {
+        background: linear-gradient(135deg, #00d26a, #00ff88);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
     }
 
-    .create-card {
-        background: rgba(26, 26, 46, 0.9);
-        border: 1px solid rgba(0, 210, 106, 0.2);
-        border-radius: 25px;
+    .page-header p {
+        color: #b8b8b8;
+        font-size: 1.1rem;
+    }
+
+    .edit-card {
+        background: linear-gradient(145deg, #12121c 0%, #0d0d14 100%);
+        border: 1px solid rgba(0, 210, 106, 0.1);
+        border-radius: 20px;
         overflow: hidden;
-        backdrop-filter: blur(20px);
     }
 
-    .create-card .card-header {
-        background: linear-gradient(135deg, #00d26a 0%, #00ff88 100%);
-        color: #000;
+    .edit-card-header {
+        background: linear-gradient(135deg, rgba(0, 210, 106, 0.15) 0%, rgba(0, 210, 106, 0.05) 100%);
         padding: 25px 30px;
-        border: none;
+        border-bottom: 1px solid rgba(0, 210, 106, 0.1);
     }
 
-    .create-card .card-header h4 {
-        font-weight: 700;
+    .edit-card-header h5 {
         margin: 0;
+        color: #fff;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 10px;
     }
 
-    .create-card .card-body {
-        padding: 40px;
+    .edit-card-header h5 i {
+        color: #00d26a;
+    }
+
+    .edit-card-body {
+        padding: 30px;
     }
 
     .form-label {
-        color: #fff;
-        font-weight: 600;
-        margin-bottom: 10px;
+        color: #b8b8b8;
+        font-weight: 500;
+        margin-bottom: 8px;
+        font-size: 0.9rem;
         display: flex;
         align-items: center;
         gap: 8px;
@@ -60,33 +81,34 @@
     }
 
     .form-control, .form-select {
-        background: rgba(15, 15, 26, 0.8);
-        border: 1px solid rgba(0, 210, 106, 0.2);
-        color: #fff;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.1);
         border-radius: 12px;
-        padding: 14px 18px;
+        color: #fff;
+        padding: 12px 16px;
+        font-size: 0.95rem;
         transition: all 0.3s ease;
     }
 
     .form-select:disabled {
-        background-color: #18182b;
+        background-color: rgba(24, 24, 43, 0.5);
         color: #6c757d;
     }
 
     .form-control:focus, .form-select:focus {
+        background: rgba(0, 210, 106, 0.05);
         border-color: #00d26a;
         box-shadow: 0 0 0 3px rgba(0, 210, 106, 0.1);
-        background: rgba(15, 15, 26, 0.9);
         color: #fff;
     }
 
     .form-select option {
-        background: #1a1a2e;
+        background: #12121c;
         color: #fff;
     }
 
     .form-control::placeholder {
-        color: #6c757d;
+        color: #666;
     }
 
     textarea.form-control {
@@ -97,9 +119,29 @@
         color: #888 !important;
     }
 
+    .section-divider {
+        border: none;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        margin: 30px 0;
+    }
+
+    .section-title {
+        color: #00d26a;
+        font-size: 1rem;
+        font-weight: 600;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .section-title i {
+        font-size: 1.2rem;
+    }
+
     .summary-card {
-        background: rgba(0, 210, 106, 0.1);
-        border: 1px solid rgba(0, 210, 106, 0.3);
+        background: rgba(0, 210, 106, 0.08);
+        border: 1px solid rgba(0, 210, 106, 0.2);
         border-radius: 15px;
         padding: 25px;
         margin-bottom: 25px;
@@ -109,6 +151,9 @@
         color: #00d26a;
         font-weight: 700;
         margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
     }
 
     .summary-card hr {
@@ -130,35 +175,43 @@
         color: #00d26a !important;
     }
 
-    .btn-submit {
-        background: linear-gradient(135deg, #00d26a 0%, #00ff88 100%);
+    .btn-save {
+        background: linear-gradient(135deg, #00d26a, #00ff88);
         border: none;
-        color: #000;
-        font-weight: 700;
-        padding: 15px 30px;
-        border-radius: 30px;
-        font-size: 1.1rem;
+        color: #0a0a14;
+        font-weight: 600;
+        padding: 14px 30px;
+        border-radius: 12px;
+        font-size: 1rem;
         transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
     }
 
-    .btn-submit:hover {
-        transform: scale(1.03);
-        box-shadow: 0 10px 30px rgba(0, 210, 106, 0.4);
-        color: #000;
+    .btn-save:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 30px rgba(0, 210, 106, 0.3);
+        color: #0a0a14;
     }
 
     .btn-cancel {
         background: transparent;
-        border: 2px solid rgba(255, 255, 255, 0.2);
+        border: 1px solid rgba(255, 255, 255, 0.2);
         color: #b8b8b8;
         font-weight: 600;
         padding: 14px 30px;
-        border-radius: 30px;
+        border-radius: 12px;
+        font-size: 1rem;
         transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        text-decoration: none;
     }
 
     .btn-cancel:hover {
-        background: rgba(255, 255, 255, 0.1);
+        background: rgba(255, 255, 255, 0.05);
         border-color: rgba(255, 255, 255, 0.3);
         color: #fff;
     }
@@ -166,79 +219,52 @@
     .alert-danger {
         background: rgba(220, 53, 69, 0.1);
         border: 1px solid rgba(220, 53, 69, 0.3);
-        color: #ff6b7a;
-        border-radius: 15px;
+        border-radius: 12px;
+        color: #ff6b6b;
     }
 
-    .alert-danger h5 {
-        color: #ff6b7a;
+    .text-danger {
+        color: #ff6b6b !important;
+        font-size: 0.85rem;
+        margin-top: 5px;
     }
 
-    .step-indicator {
-        display: flex;
-        justify-content: center;
-        gap: 15px;
-        margin-bottom: 30px;
-    }
-
-    .step {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        background: rgba(0, 210, 106, 0.1);
-        border: 2px solid rgba(0, 210, 106, 0.3);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: #00d26a;
-        font-weight: 700;
-        transition: all 0.3s ease;
-    }
-
-    .step.active {
-        background: linear-gradient(135deg, #00d26a 0%, #00ff88 100%);
-        color: #000;
-        border-color: transparent;
-    }
-
-    .step.completed {
-        background: #00d26a;
-        color: #000;
-        border-color: transparent;
+    @@media (max-width: 991px) {
+        .create-page {
+            padding-top: 100px;
+        }
     }
 </style>
 
-<!-- Page Header -->
-<div class="page-header text-center" data-aos="fade-down">
+<div class="create-page">
     <div class="container">
-        <h1><i class="bi bi-calendar-plus me-2"></i> Randevu Oluştur</h1>
-        <p class="lead text-white-50 mt-3">Antrenörünüzü ve hizmetinizi seçerek randevunuzu oluşturun</p>
-    </div>
-</div>
+        <!-- Page Header -->
+        <div class="page-header" data-aos="fade-down">
+            <h1><i class="bi bi-calendar-plus me-2"></i>Randevu Oluştur</h1>
+            <p>Antrenörünüzü ve hizmetinizi seçerek randevunuzu oluşturun</p>
+        </div>
 
-<div class="container pb-5">
-    <div class="row justify-content-center">
-        <div class="col-lg-8" data-aos="fade-up">
-            <div class="create-card">
-                <div class="card-header">
-                    <h4><i class="bi bi-calendar-check me-2"></i> Randevu Bilgileri</h4>
-                </div>
-                <div class="card-body">
-                    @if (!ViewData.ModelState.IsValid)
-                    {
-                        <div class="alert alert-danger">
-                            <h5><i class="bi bi-exclamation-triangle me-2"></i> Hata!</h5>
-                            <ul class="mb-0">
-                                @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
-                                {
-                                    <li>@error.ErrorMessage</li>
-                                }
-                            </ul>
-                        </div>
-                    }
+        <div class="row justify-content-center">
+            <div class="col-lg-8" data-aos="fade-up">
+                <div class="edit-card">
+                    <div class="edit-card-header">
+                        <h5><i class="bi bi-calendar-check"></i> Randevu Bilgileri</h5>
+                    </div>
+                    <div class="edit-card-body">
+                        @if (!ViewData.ModelState.IsValid)
+                        {
+                            <div class="alert alert-danger">
+                                <ul class="mb-0">
+                                    @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                                    {
+                                        <li>@error.ErrorMessage</li>
+                                    }
+                                </ul>
+                            </div>
+                        }
 
-                    <form asp-action="Create" method="post" id="appointmentForm">
-                        @Html.AntiForgeryToken()
+                        <form asp-action="Create" method="post" id="appointmentForm">
+                            @Html.AntiForgeryToken()
                         
                         <!-- Antrenör Seçimi -->
                         <div class="mb-4">
@@ -330,15 +356,16 @@
                             </div>
                         </div>
 
-                        <div class="d-grid gap-3">
-                            <button type="submit" class="btn btn-submit">
-                                <i class="bi bi-check-lg me-2"></i> Randevu Oluştur
-                            </button>
-                            <a asp-action="Index" class="btn btn-cancel text-center">
-                                <i class="bi bi-arrow-left me-2"></i> Geri Dön
-                            </a>
-                        </div>
-                    </form>
+                            <div class="d-grid gap-3">
+                                <button type="submit" class="btn-save">
+                                    <i class="bi bi-check-lg"></i> Randevu Oluştur
+                                </button>
+                                <a asp-action="Index" class="btn-cancel text-center">
+                                    <i class="bi bi-arrow-left"></i> Geri Dön
+                                </a>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
