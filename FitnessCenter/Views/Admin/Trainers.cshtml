@@ -138,6 +138,9 @@
         padding: 4px 10px;
         border-radius: 6px;
         font-size: 0.8rem;
+        display: inline-block;
+        margin-right: 6px;
+        margin-bottom: 4px;
     }
 
     .btn-action {
@@ -214,7 +217,16 @@
                                 <td><strong>@trainer.FullName</strong></td>
                                 <td>@trainer.Email</td>
                                 <td>@trainer.Phone</td>
-                                <td><span class="badge-spec">@trainer.Specializations</span></td>
+                                <td>
+                                    @if (!string.IsNullOrEmpty(trainer.Specializations))
+                                    {
+                                        var specs = trainer.Specializations.Split(',');
+                                        foreach (var spec in specs)
+                                        {
+                                            <span class="badge-spec">@spec.Trim()</span>
+                                        }
+                                    }
+                                </td>
                                 <td>@trainer.WorkStartTime.ToString(@"hh\:mm") - @trainer.WorkEndTime.ToString(@"hh\:mm")</td>
                                 <td>
                                     @if (trainer.IsActive)
