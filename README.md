@@ -8,8 +8,8 @@ Modern bir spor salonu yönetim sistemi. ASP.NET Core MVC ile geliştirilmiştir
 - **Randevu Sistemi:** Online randevu oluşturma ve yönetimi
 - **Trainer Yönetimi:** Eğitmen listesi ve detayları
 - **Hizmet Kataloğu:** Fitness hizmetlerinin listelenmesi
-- **Admin Paneli:** Trainer, servis ve randevu CRUD işlemleri
-- **AI Önerileri:** Gemini API ile kişiselleştirilmiş fitness/diyet önerileri
+- **Admin Paneli:** Trainer, servis, hizmetler ve randevu CRUD işlemleri
+- **AI Önerileri:** Gemini API ile kişiselleştirilmiş beslenme ve egzersiz önerileri
 
 ## 🛠️ Teknolojiler
 
