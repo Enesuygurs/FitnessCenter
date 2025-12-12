@@ -113,15 +113,29 @@
         border-top-left-radius: 20px;
         border-top-right-radius: 20px;
         border: none;
-    }
-
-    .ai-card .card-header h5, .bmi-card .card-header h6, .result-card .card-header h5 {
         font-weight: 600;
-        margin: 0;
-        color: #fff;
         display: flex;
         align-items: center;
         gap: 10px;
+        font-size: 1.25rem; /* match Profile edit-card header */
+    }
+
+    /* Ensure header elements inside cards follow Profile edit-card header sizing */
+    .ai-card .card-header h5, .bmi-card .card-header h6, .result-card .card-header h5 {
+        margin: 0;
+        color: inherit;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        font-size: inherit; /* inherit 1.25rem from parent */
+        font-weight: inherit;
+    }
+
+    .ai-card .card-header i, .bmi-card .card-header i, .result-card .card-header i,
+    .edit-card-header i {
+        font-size: 1.25rem; /* match icon size */
+        color: #00d26a; /* theme green for icons */
+        line-height: 1;
     }
 
     .ai-card .card-body, .bmi-card .card-body, .result-card .card-body {
