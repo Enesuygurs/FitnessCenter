@@ -3,6 +3,56 @@
     ViewData["Title"] = Model.FullName + " - Antrenör Detayları";
 }
 
+<style>
+    .profile-card {
+        background: linear-gradient(145deg, #12121c 0%, #0d0d14 100%);
+        border: 1px solid rgba(0, 210, 106, 0.1);
+        border-radius: 20px;
+        overflow: hidden;
+        height: 100%;
+    }
+
+    .profile-header {
+        background: linear-gradient(135deg, rgba(0, 210, 106, 0.15) 0%, rgba(0, 210, 106, 0.05) 100%);
+        padding: 30px 20px;
+        text-align: center;
+        border-bottom: 1px solid rgba(0, 210, 106, 0.1);
+    }
+
+    .profile-avatar {
+        width: 140px;
+        height: 140px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #00d26a, #00ff88);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 15px;
+        font-size: 3rem;
+        color: #0a0a14;
+        box-shadow: 0 10px 40px rgba(0, 210, 106, 0.2);
+        overflow: hidden;
+    }
+
+    .profile-avatar img { width:100%; height:100%; object-fit:cover; }
+
+    .profile-name { font-size: 1.25rem; font-weight: 700; color: #fff; margin-bottom:6px; }
+    .profile-email { color: #00d26a; font-size: 0.95rem; }
+
+    .profile-stats { padding: 20px; }
+
+    .stat-item { display:flex; align-items:center; gap:12px; padding:12px; background: rgba(255,255,255,0.02); border-radius:12px; margin-bottom:10px; border:1px solid rgba(255,255,255,0.03); }
+    .stat-icon { width:44px; height:44px; border-radius:10px; display:flex; align-items:center; justify-content:center; background: linear-gradient(135deg, rgba(0,210,106,0.15), rgba(0,210,106,0.08)); color:#00d26a; }
+    .stat-label { font-size:0.8rem; color:#888; text-transform:uppercase; }
+    .stat-value { font-size:1.05rem; font-weight:700; color:#fff; }
+
+    .edit-card { background: linear-gradient(145deg, #12121c 0%, #0d0d14 100%); border:1px solid rgba(0,210,106,0.1); border-radius:20px; overflow:hidden; }
+    .edit-card-header { background: linear-gradient(135deg, rgba(0,210,106,0.12), rgba(0,210,106,0.04)); padding:16px 20px; border-bottom:1px solid rgba(0,210,106,0.08); }
+    .edit-card-body { padding:18px; color:#e6e6e6; }
+
+    .section-title { color:#00d26a; font-weight:600; display:flex; align-items:center; gap:8px; }
+</style>
+
 <div class="container py-5">
     <nav aria-label="breadcrumb" class="mb-4">
         <ol class="breadcrumb">
@@ -13,31 +63,43 @@
 
     <div class="row">
         <div class="col-md-4">
-            <div class="card shadow-sm">
-                <img src="@(Model.ProfileImageUrl ?? "https://via.placeholder.com/400x400?text=" + Model.FirstName)" 
-                     class="card-img-top" alt="@Model.FullName" style="height: 350px; object-fit: cover;">
-                <div class="card-body text-center">
-                    <h3 class="card-title">@Model.FullName</h3>
-                    <p class="text-muted">@Model.Specializations</p>
-                    <div class="d-flex justify-content-around mb-3">
-                        <div>
-                            <h5 class="mb-0 text-primary">@(Model.ExperienceYears ?? 0)</h5>
-                            <small class="text-muted">Yıl Deneyim</small>
+            <div class="profile-card">
+                <div class="profile-header">
+                    <div class="profile-avatar">
+                        @if (!string.IsNullOrEmpty(Model.ProfileImageUrl))
+                        {
+                            <img src="@Model.ProfileImageUrl" alt="@Model.FullName" />
+                        }
+                        else
+                        {
+                            <i class="bi bi-person-fill"></i>
+                        }
+                    </div>
+                    <h4 class="profile-name">@Model.FullName</h4>
+                    <p class="profile-email">@Model.Specializations</p>
+                </div>
+                <div class="profile-stats">
+                    <div class="stat-item">
+                        <div class="stat-icon"><i class="bi bi-calendar2-check"></i></div>
+                        <div class="stat-info">
+                            <div class="stat-label">Deneyim</div>
+                            <div class="stat-value">@((Model.ExperienceYears ?? 0)) Yıl</div>
                         </div>
                     </div>
-                    <a asp-controller="Appointment" asp-action="Create" asp-route-trainerId="@Model.Id" 
-                       class="btn btn-primary btn-lg w-100">
-                        <i class="bi bi-calendar-plus"></i> Randevu Al
-                    </a>
+                    <div class="d-grid mt-2">
+                        <a asp-controller="Appointment" asp-action="Create" asp-route-trainerId="@Model.Id" class="btn btn-primary btn-lg">
+                            <i class="bi bi-calendar-plus"></i> Randevu Al
+                        </a>
+                    </div>
                 </div>
             </div>
 
             <!-- İletişim Bilgileri -->
-            <div class="card shadow-sm mt-4">
-                <div class="card-header">
+            <div class="edit-card mt-4">
+                <div class="edit-card-header">
                     <h5 class="mb-0"><i class="bi bi-envelope"></i> İletişim</h5>
                 </div>
-                <div class="card-body">
+                <div class="edit-card-body">
                     @if (!string.IsNullOrEmpty(Model.Email))
                     {
                         <p class="mb-2">
@@ -58,11 +120,11 @@
 
         <div class="col-md-8">
             <!-- Hakkında -->
-            <div class="card shadow-sm mb-4">
-                <div class="card-header">
+            <div class="edit-card mb-4">
+                <div class="edit-card-header">
                     <h5 class="mb-0"><i class="bi bi-person"></i> Hakkında</h5>
                 </div>
-                <div class="card-body">
+                <div class="edit-card-body">
                     <p>@(Model.Biography ?? "Bu antrenör henüz bir biyografi eklememiştir.")</p>
                 </div>
             </div>
