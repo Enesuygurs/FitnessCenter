@@ -73,6 +73,16 @@
     .profile-email {
         color: #b8b8b8 !important;
     }
+    /* Services and gym item styles to match Profile.stat-item */
+    .service-item {
+        display:flex; align-items:flex-start; gap:12px; padding:12px; background: rgba(255,255,255,0.02); border-radius:12px; margin-bottom:12px; border:1px solid rgba(255,255,255,0.03);
+    }
+    .service-icon { width:56px; height:56px; border-radius:10px; background: linear-gradient(135deg, rgba(0,210,106,0.18), rgba(0,210,106,0.08)); display:flex; align-items:center; justify-content:center; color:#00d26a; font-size:1.25rem; }
+    .service-info { flex:1; }
+    .service-title { font-weight:700; color:#fff; margin-bottom:6px; }
+    .service-desc { color:#dfe6e9; font-size:0.95rem; }
+    .gym-item { display:flex; gap:12px; align-items:center; padding:12px; background: rgba(255,255,255,0.02); border-radius:12px; border:1px solid rgba(255,255,255,0.03); }
+    .gym-item img { width:80px; height:80px; object-fit:cover; border-radius:8px; }
 
     .section-title { font-size:1rem; font-weight:600; color:#00d26a; display:flex; align-items:center; gap:8px; margin-bottom:12px; }
         .trainer-left { display:flex; flex-direction:column; gap:16px; }
@@ -231,11 +241,12 @@
                             @foreach (var ts in Model.TrainerServices)
                             {
                                 <div class="col-md-6 mb-3">
-                                    <div class="card border bg-transparent">
-                                        <div class="card-body">
-                                            <h6 class="card-title">@ts.Service?.Name</h6>
-                                            <p class="card-text small text-muted">@ts.Service?.Description</p>
-                                            <div class="d-flex justify-content-between">
+                                    <div class="service-item">
+                                        <div class="service-icon"><i class="bi bi-briefcase-fill"></i></div>
+                                        <div class="service-info">
+                                            <div class="service-title">@ts.Service?.Name</div>
+                                            <div class="service-desc">@ts.Service?.Description</div>
+                                            <div class="d-flex justify-content-between mt-2">
                                                 <span class="badge bg-info">@ts.Service?.DurationMinutes dk</span>
                                                 <span class="badge bg-success">@ts.Service?.Price ₺</span>
                                             </div>
@@ -254,12 +265,12 @@
                 <div class="edit-card">
                     <div class="edit-card-header"><h5><i class="bi bi-building"></i> Spor Salonu</h5></div>
                     <div class="edit-card-body">
-                        <div class="d-flex align-items-center">
-                            <img src="@(Model.Gym.ImageUrl ?? "https://via.placeholder.com/100x100?text=Gym")" class="rounded me-3" style="width: 80px; height: 80px; object-fit: cover;">
-                            <div>
-                                <h6 class="mb-1">@Model.Gym.Name</h6>
-                                <p class="text-muted small mb-0"><i class="bi bi-geo-alt"></i> @Model.Gym.Address</p>
-                                <p class="text-muted small mb-0"><i class="bi bi-clock"></i> @Model.Gym.OpeningTime.ToString(@"hh\:mm") - @Model.Gym.ClosingTime.ToString(@"hh\:mm")</p>
+                        <div class="gym-item">
+                            <img src="@(Model.Gym.ImageUrl ?? "https://via.placeholder.com/100x100?text=Gym")" alt="Gym">
+                            <div class="service-info">
+                                <div class="service-title">@Model.Gym.Name</div>
+                                <div class="service-desc"><i class="bi bi-geo-alt"></i> @Model.Gym.Address</div>
+                                <div class="service-desc"><i class="bi bi-clock"></i> @Model.Gym.OpeningTime.ToString(@"hh\:mm") - @Model.Gym.ClosingTime.ToString(@"hh\:mm")</div>
                             </div>
                         </div>
                     </div>
