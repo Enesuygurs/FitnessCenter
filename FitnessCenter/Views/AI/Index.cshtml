@@ -96,6 +96,15 @@
         overflow: hidden;
     }
 
+    /* Improved text contrast to match Profile page styles */
+    .ai-card, .bmi-card, .result-card { color: #d6d6d6; }
+    .ai-card .card-body, .bmi-card .card-body, .result-card .card-body { color: #dfe6e9; }
+    .ai-card .card-header h5, .bmi-card .card-header h6, .result-card .card-header h5 { color: #fff; }
+    .recommendation-content p, .recommendation-content .rec-list, .feature-item { color: #dfe6e9; }
+    .recommendation-content h3, .recommendation-content h4 { color: #fff; }
+    .recommendation-content h4 { color: #00d26a; }
+    .alert-custom { color: #00d26a; }
+
     .ai-card .card-header, .bmi-card .card-header, .result-card .card-header {
         background: linear-gradient(135deg, rgba(0, 210, 106, 0.15) 0%, rgba(0, 210, 106, 0.05) 100%);
         color: #fff;
@@ -140,6 +149,22 @@
         border-color: #00d26a;
         box-shadow: 0 0 0 3px rgba(0, 210, 106, 0.1);
         color: #fff;
+    }
+
+    /* Lighter placeholder / passive text so it's visible on dark backgrounds */
+    .form-control::placeholder,
+    .form-select::placeholder {
+        color: #666666; /* darker but still visible */
+        opacity: 1; /* ensure consistent visibility across browsers */
+    }
+    .form-control:-ms-input-placeholder { color: #666666; }
+    .form-control::-ms-input-placeholder { color: #666666; }
+
+    /* Make readonly/disabled inputs slightly lighter as well */
+    .form-control[readonly], .form-control[disabled], .form-select[disabled] {
+        color: #d6d6d6;
+        background: rgba(255,255,255,0.02);
+        border-color: rgba(255,255,255,0.06);
     }
 
     .form-select option {
