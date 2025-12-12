@@ -1,4 +1,71 @@
 @model FitnessCenter.Models.ViewModels.AIRecommendationViewModel
+@using System.Text
+@using System.Text.RegularExpressions
+
+@functions {
+    private string ProcessInline(string s)
+    {
+        if (string.IsNullOrEmpty(s)) return string.Empty;
+        s = System.Net.WebUtility.HtmlEncode(s);
+        s = Regex.Replace(s, "\\*\\*(.+?)\\*\\*", "<strong>$1</strong>");
+        s = Regex.Replace(s, "\\*(.+?)\\*", "<em>$1</em>");
+        return s;
+    }
+
+    public string RenderMarkdown(string md)
+    {
+        if (string.IsNullOrWhiteSpace(md)) return string.Empty;
+        var sb = new StringBuilder();
+        var lines = md.Replace("\r", "").Split('\n');
+        bool inUl = false, inOl = false;
+
+        foreach (var raw in lines)
+        {
+            var line = raw.TrimEnd();
+
+            if (Regex.IsMatch(line, "^###\\s"))
+            {
+                if (inUl) { sb.AppendLine("</ul>"); inUl = false; }
+                if (inOl) { sb.AppendLine("</ol>"); inOl = false; }
+                sb.AppendLine($"<h4>{ProcessInline(line.Substring(4))}</h4>");
+            }
+            else if (Regex.IsMatch(line, "^##\\s"))
+            {
+                if (inUl) { sb.AppendLine("</ul>"); inUl = false; }
+                if (inOl) { sb.AppendLine("</ol>"); inOl = false; }
+                sb.AppendLine($"<h3>{ProcessInline(line.Substring(3))}</h3>");
+            }
+            else if (Regex.IsMatch(line, "^\\d+\\.\\s"))
+            {
+                if (inUl) { sb.AppendLine("</ul>"); inUl = false; }
+                if (!inOl) { sb.AppendLine("<ol class=\"rec-list\">"); inOl = true; }
+                var item = Regex.Replace(line, "^\\d+\\.\\s", "");
+                sb.AppendLine($"<li>{ProcessInline(item.Trim())}</li>");
+            }
+            else if (line.TrimStart().StartsWith("- "))
+            {
+                if (inOl) { sb.AppendLine("</ol>"); inOl = false; }
+                if (!inUl) { sb.AppendLine("<ul class=\"rec-list\">"); inUl = true; }
+                sb.AppendLine($"<li>{ProcessInline(line.Trim().Substring(2))}</li>");
+            }
+            else if (string.IsNullOrWhiteSpace(line))
+            {
+                if (inUl) { sb.AppendLine("</ul>"); inUl = false; }
+                if (inOl) { sb.AppendLine("</ol>"); inOl = false; }
+                sb.AppendLine("<p></p>");
+            }
+            else
+            {
+                sb.AppendLine($"<p>{ProcessInline(line)}</p>");
+            }
+        }
+
+        if (inUl) sb.AppendLine("</ul>");
+        if (inOl) sb.AppendLine("</ol>");
+
+        return sb.ToString();
+    }
+}
 @{
     ViewData["Title"] = "Yapay Zeka Önerileri";
     ViewData["NoTopPadding"] = true;
@@ -115,6 +182,45 @@
     .recommendation-content {
         line-height: 1.9;
         color: #e0e0e0;
+    }
+
+    .recommendation-content h3, .recommendation-content h4 {
+        color: #fff;
+        margin: 0 0 10px 0;
+        font-weight: 700;
+    }
+
+    .recommendation-content h3 {
+        font-size: 1.25rem;
+    }
+
+    .recommendation-content h4 {
+        font-size: 1.05rem;
+        color: #00d26a;
+    }
+
+    .recommendation-content p {
+        margin: 8px 0;
+        color: #dfe6e9;
+    }
+
+    .recommendation-content .rec-list {
+        margin: 8px 0 16px 1.25rem;
+        color: #e0e0e0;
+    }
+
+    .recommendation-content .rec-list li {
+        margin-bottom: 6px;
+    }
+
+    .recommendation-content strong {
+        color: #fff;
+    }
+
+    .recommendation-note {
+        color: #bdbdbd;
+        font-style: italic;
+        margin-top: 12px;
     }
 
     .recommendation-content strong {
@@ -294,7 +400,7 @@
                     </div>
                     <div class="card-body">
                         <div class="recommendation-content">
-                            @Html.Raw(Model.Recommendation?.Replace("\n", "<br>"))
+                            @Html.Raw(RenderMarkdown(Model.Recommendation))
                         </div>
                     </div>
                 </div>
