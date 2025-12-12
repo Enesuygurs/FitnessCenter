@@ -130,11 +130,11 @@
             </div>
 
             <!-- Çalışma Saatleri -->
-            <div class="card shadow-sm mb-4">
-                <div class="card-header">
+            <div class="edit-card mb-4">
+                <div class="edit-card-header">
                     <h5 class="mb-0"><i class="bi bi-clock"></i> Çalışma Saatleri</h5>
                 </div>
-                <div class="card-body">
+                <div class="edit-card-body">
                     <p>
                         <strong>Günlük Çalışma Saati:</strong> 
                         @Model.WorkStartTime.ToString(@"hh\:mm") - @Model.WorkEndTime.ToString(@"hh\:mm")
@@ -173,25 +173,25 @@
                     <div class="card-header">
                         <h5 class="mb-0"><i class="bi bi-list-check"></i> Sunduğu Hizmetler</h5>
                     </div>
-                    <div class="card-body">
-                        <div class="row">
-                            @foreach (var ts in Model.TrainerServices)
-                            {
-                                <div class="col-md-6 mb-3">
-                                    <div class="card border">
-                                        <div class="card-body">
-                                            <h6 class="card-title">@ts.Service?.Name</h6>
-                                            <p class="card-text small text-muted">@ts.Service?.Description</p>
-                                            <div class="d-flex justify-content-between">
-                                                <span class="badge bg-info">@ts.Service?.DurationMinutes dk</span>
-                                                <span class="badge bg-success">@ts.Service?.Price ₺</span>
+                    <div class="edit-card-body">
+                            <div class="row">
+                                @foreach (var ts in Model.TrainerServices)
+                                {
+                                    <div class="col-md-6 mb-3">
+                                        <div class="card border">
+                                            <div class="card-body">
+                                                <h6 class="card-title">@ts.Service?.Name</h6>
+                                                <p class="card-text small text-muted">@ts.Service?.Description</p>
+                                                <div class="d-flex justify-content-between">
+                                                    <span class="badge bg-info">@ts.Service?.DurationMinutes dk</span>
+                                                    <span class="badge bg-success">@ts.Service?.Price ₺</span>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                            }
+                                }
+                            </div>
                         </div>
-                    </div>
                 </div>
             }
 
@@ -202,10 +202,10 @@
                     <div class="card-header">
                         <h5 class="mb-0"><i class="bi bi-building"></i> Spor Salonu</h5>
                     </div>
-                    <div class="card-body">
+                    <div class="edit-card-body">
                         <div class="d-flex align-items-center">
                             <img src="@(Model.Gym.ImageUrl ?? "https://via.placeholder.com/100x100?text=Gym")" 
-                                 class="rounded me-3" style="width: 80px; height: 80px; object-fit: cover;">
+                                     class="rounded me-3" style="width: 80px; height: 80px; object-fit: cover;">
                             <div>
                                 <h6 class="mb-1">@Model.Gym.Name</h6>
                                 <p class="text-muted small mb-0">
