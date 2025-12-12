@@ -83,6 +83,15 @@
     .service-desc { color:#dfe6e9; font-size:0.95rem; }
     .gym-item { display:flex; gap:12px; align-items:center; padding:12px; background: rgba(255,255,255,0.02); border-radius:12px; border:1px solid rgba(255,255,255,0.03); }
     .gym-item img { width:80px; height:80px; object-fit:cover; border-radius:8px; }
+    /* Contact card - refined theme style */
+    .contact-card { background: linear-gradient(145deg, #12121c 0%, #0d0d14 100%); border:1px solid rgba(0,210,106,0.08); border-radius:16px; overflow:hidden; }
+    .contact-list { padding:12px 0; display:flex; flex-direction:column; gap:10px; }
+    .contact-item { display:flex; gap:12px; align-items:center; padding:12px; background: rgba(255,255,255,0.02); border-radius:12px; border:1px solid rgba(255,255,255,0.03); }
+    .contact-icon { width:52px; height:52px; border-radius:12px; display:flex; align-items:center; justify-content:center; background: linear-gradient(135deg, rgba(0,210,106,0.18), rgba(0,210,106,0.08)); color:#000; font-size:1.25rem; }
+    .contact-info { display:flex; flex-direction:column; }
+    .contact-label { font-size:0.75rem; color:#b8b8b8; text-transform:uppercase; letter-spacing:0.6px; }
+    .contact-link { font-weight:600; color:#dfe6e9; text-decoration:none; }
+    .contact-link:hover { color:#fff; text-decoration:underline; }
 
     .section-title { font-size:1rem; font-weight:600; color:#00d26a; display:flex; align-items:center; gap:8px; margin-bottom:12px; }
         .trainer-left { display:flex; flex-direction:column; gap:16px; }
@@ -169,26 +178,35 @@
             </div>
 
                 <!-- İletişim Bilgileri -->
-                <div class="edit-card mt-0">
-                <div class="edit-card-header">
-                    <h5><i class="bi bi-envelope"></i> İletişim</h5>
-                </div>
-                <div class="edit-card-body">
-                    @if (!string.IsNullOrEmpty(Model.Email))
-                    {
-                        <p class="mb-2">
-                            <i class="bi bi-envelope text-primary"></i>
-                            <a href="mailto:@Model.Email">@Model.Email</a>
-                        </p>
-                    }
-                    @if (!string.IsNullOrEmpty(Model.Phone))
-                    {
-                        <p class="mb-0">
-                            <i class="bi bi-telephone text-primary"></i>
-                            <a href="tel:@Model.Phone">@Model.Phone</a>
-                        </p>
-                    }
-                </div>
+                <div class="contact-card mt-4">
+                    <div class="edit-card-header">
+                        <h5><i class="bi bi-envelope"></i> İletişim</h5>
+                    </div>
+                    <div class="edit-card-body">
+                        <div class="contact-list">
+                            @if (!string.IsNullOrEmpty(Model.Email))
+                            {
+                                <div class="contact-item">
+                                    <div class="contact-icon"><i class="bi bi-envelope"></i></div>
+                                    <div class="contact-info">
+                                        <div class="contact-label">E-posta</div>
+                                        <a class="contact-link" href="mailto:@Model.Email">@Model.Email</a>
+                                    </div>
+                                </div>
+                            }
+
+                            @if (!string.IsNullOrEmpty(Model.Phone))
+                            {
+                                <div class="contact-item">
+                                    <div class="contact-icon"><i class="bi bi-telephone"></i></div>
+                                    <div class="contact-info">
+                                        <div class="contact-label">Telefon</div>
+                                        <a class="contact-link" href="tel:@Model.Phone">@Model.Phone</a>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
