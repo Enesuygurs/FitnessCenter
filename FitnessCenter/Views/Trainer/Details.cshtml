@@ -51,6 +51,29 @@
     .edit-card-header h5 { margin:0; color:#fff; font-weight:600; display:flex; align-items:center; gap:8px; }
     .edit-card-body { padding:18px 20px; color:#d6d6d6; }
 
+    /* Ensure card text colors match Profile page */
+    .edit-card-body, .profile-stats, .profile-header, .profile-card, .trainer-left {
+        color: #d6d6d6;
+    }
+
+    .edit-card .card-title,
+    .edit-card-header h5,
+    .profile-name {
+        color: #fff;
+    }
+
+    .edit-card .card-text,
+    .edit-card-body p,
+    .profile-stats .stat-value {
+        color: #dfe6e9;
+    }
+
+    .edit-card .text-muted,
+    .profile-header p,
+    .profile-email {
+        color: #b8b8b8 !important;
+    }
+
     .section-title { font-size:1rem; font-weight:600; color:#00d26a; display:flex; align-items:center; gap:8px; margin-bottom:12px; }
         .trainer-left { display:flex; flex-direction:column; gap:16px; }
     .btn-ai {
