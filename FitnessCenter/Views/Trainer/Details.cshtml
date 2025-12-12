@@ -92,6 +92,32 @@
     .contact-label { font-size:0.75rem; color:#b8b8b8; text-transform:uppercase; letter-spacing:0.6px; }
     .contact-link { font-weight:600; color:#dfe6e9; text-decoration:none; }
     .contact-link:hover { color:#fff; text-decoration:underline; }
+    /* Themed breadcrumb */
+    .breadcrumb {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 12px;
+        background: linear-gradient(145deg, #0f1118 0%, #0b0b10 100%);
+        border: 1px solid rgba(0,210,106,0.06);
+        border-radius: 12px;
+        color: #dfe6e9;
+        font-weight: 600;
+    }
+
+    .breadcrumb .breadcrumb-item + .breadcrumb-item::before { content: '/'; color: rgba(255,255,255,0.12); padding: 0 8px; }
+
+    .breadcrumb a {
+        color: #dfe6e9;
+        text-decoration: none;
+    }
+
+    .breadcrumb a:hover { color: #fff; text-decoration: underline; }
+
+    .breadcrumb .active {
+        color: #b8b8b8;
+        text-decoration: none;
+    }
 
     .section-title { font-size:1rem; font-weight:600; color:#00d26a; display:flex; align-items:center; gap:8px; margin-bottom:12px; }
         .trainer-left { display:flex; flex-direction:column; gap:16px; }
