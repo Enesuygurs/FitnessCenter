@@ -68,10 +68,27 @@
             <div class="trainer-left">
                 <div class="profile-card">
                 <div class="profile-header">
-                    <div class="profile-avatar">
-                        @if (!string.IsNullOrEmpty(Model.ProfileImageUrl))
+                    @{ 
+                        var trainerImages = new[] {
+                            "https://images.unsplash.com/photo-1567013127542-490d757e51fc?w=400",
+                            "https://images.unsplash.com/photo-1594381898411-846e7d193883?w=400",
+                            "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=400",
+                            "https://images.unsplash.com/photo-1518611012118-696072aa579a?w=400"
+                        };
+                        var imgUrl = Model.ProfileImageUrl;
+                        if (string.IsNullOrEmpty(imgUrl) || imgUrl.StartsWith("/images/") || imgUrl.StartsWith("~/"))
                         {
-                            <img src="@Model.ProfileImageUrl" alt="Profil">
+                            imgUrl = trainerImages[(Model.Id - 1) % trainerImages.Length];
+                        }
+                        else if (imgUrl.StartsWith("~"))
+                        {
+                            imgUrl = Url.Content(imgUrl);
+                        }
+                    }
+                    <div class="profile-avatar">
+                        @if (!string.IsNullOrEmpty(imgUrl))
+                        {
+                            <img src="@imgUrl" alt="Profil">
                         }
                         else
                         {
