@@ -95,7 +95,7 @@
     /* Breadcrumb items as separate cards */
     .breadcrumb {
         display: flex;
-        gap: 10px;
+        gap: 6px;
         padding: 0;
         background: transparent;
         border: none;
@@ -105,18 +105,34 @@
     .breadcrumb .breadcrumb-item {
         background: linear-gradient(145deg, #0f1118 0%, #0b0b10 100%);
         border: 1px solid rgba(0,210,106,0.06);
-        border-radius: 12px;
+        border-radius: 10px;
         color: #dfe6e9;
         font-weight: 600;
-        padding: 8px 12px;
+        padding: 6px 10px;
         display: inline-flex;
         align-items: center;
-        gap: 8px;
-        box-shadow: 0 6px 20px rgba(0,0,0,0.45);
+        gap: 6px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.45);
+        font-size: 0.95rem;
     }
 
-    /* Remove default separator */
+    /* Remove pseudo separator - we'll use a dedicated separator element */
     .breadcrumb .breadcrumb-item + .breadcrumb-item::before { display: none; }
+
+    /* Plain separator between breadcrumb items */
+    .breadcrumb .breadcrumb-sep {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: transparent;
+        border: none;
+        padding: 0 6px;
+        border-radius: 0;
+        color: rgba(255,255,255,0.6);
+        font-weight: 700;
+        box-shadow: none;
+        font-size: 1rem;
+    }
 
     .breadcrumb .breadcrumb-item a {
         color: #dfe6e9;
@@ -161,6 +177,7 @@
     <nav aria-label="breadcrumb" class="mb-4">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a asp-action="Index">Antrenörler</a></li>
+            <li class="breadcrumb-sep">/</li>
             <li class="breadcrumb-item active">@Model.FullName</li>
         </ol>
     </nav>
