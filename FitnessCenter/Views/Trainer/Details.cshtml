@@ -92,31 +92,43 @@
     .contact-label { font-size:0.75rem; color:#b8b8b8; text-transform:uppercase; letter-spacing:0.6px; }
     .contact-link { font-weight:600; color:#dfe6e9; text-decoration:none; }
     .contact-link:hover { color:#fff; text-decoration:underline; }
-    /* Themed breadcrumb */
+    /* Breadcrumb items as separate cards */
     .breadcrumb {
-        display: inline-flex;
+        display: flex;
+        gap: 10px;
+        padding: 0;
+        background: transparent;
+        border: none;
         align-items: center;
-        gap: 8px;
-        padding: 8px 12px;
+    }
+
+    .breadcrumb .breadcrumb-item {
         background: linear-gradient(145deg, #0f1118 0%, #0b0b10 100%);
         border: 1px solid rgba(0,210,106,0.06);
         border-radius: 12px;
         color: #dfe6e9;
         font-weight: 600;
+        padding: 8px 12px;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        box-shadow: 0 6px 20px rgba(0,0,0,0.45);
     }
 
-    .breadcrumb .breadcrumb-item + .breadcrumb-item::before { content: '/'; color: rgba(255,255,255,0.12); padding: 0 8px; }
+    /* Remove default separator */
+    .breadcrumb .breadcrumb-item + .breadcrumb-item::before { display: none; }
 
-    .breadcrumb a {
+    .breadcrumb .breadcrumb-item a {
         color: #dfe6e9;
         text-decoration: none;
     }
 
-    .breadcrumb a:hover { color: #fff; text-decoration: underline; }
+    .breadcrumb .breadcrumb-item a:hover { color: #fff; text-decoration: none; }
 
-    .breadcrumb .active {
-        color: #b8b8b8;
-        text-decoration: none;
+    .breadcrumb .breadcrumb-item.active {
+        background: linear-gradient(145deg, rgba(0,210,106,0.08), rgba(0,210,106,0.02));
+        border-color: rgba(0,210,106,0.12);
+        color: #fff;
     }
 
     .section-title { font-size:1rem; font-weight:600; color:#00d26a; display:flex; align-items:center; gap:8px; margin-bottom:12px; }
