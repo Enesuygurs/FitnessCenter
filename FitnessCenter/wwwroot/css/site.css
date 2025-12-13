@@ -279,8 +279,9 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* Footer */
+/* Footer */
 footer {
-    background: var(--dark-color);
+    background: linear-gradient(145deg, #12121c 0%, #0d0d14 100%) !important;
     color: white;
     padding: 40px 0 20px;
 }
