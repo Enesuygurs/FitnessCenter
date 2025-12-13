@@ -83,7 +83,24 @@
     }
     .appointment-card .card-text i {
         color: #00d26a;
-        margin-right: 6px;
+    }
+    .appointment-card .card-text .line-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    .appointment-card .card-text .line-item i {
+        flex: 0 0 28px;
+        width: 28px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        color: #00d26a;
+        font-size: 1.1rem;
+    }
+    .appointment-card .card-text .line-item span {
+        flex: 1 1 auto;
+        display: inline-block;
     }
     .appointment-card .card-footer {
         background: transparent;
@@ -169,10 +186,10 @@
                         <div class="card-body">
                             <h5 class="card-title">@appointment.Service?.Name</h5>
                             <p class="card-text">
-                                <i class="bi bi-clock"></i> @appointment.AppointmentTime.ToString(@"hh\:mm") - @appointment.EndTime.ToString(@"hh\:mm")<br>
-                                <i class="bi bi-person"></i> Antrenör: @appointment.Trainer?.FullName<br>
-                                <i class="bi bi-geo-alt"></i> @appointment.Service?.Gym?.Name<br>
-                                <i class="bi bi-cash-stack"></i> <i class="bi bi-currency-lira"></i> @appointment.TotalPrice.ToString("N0") ₺
+                                <span class="line-item"><i class="bi bi-clock"></i><span>@appointment.AppointmentTime.ToString(@"hh\:mm") - @appointment.EndTime.ToString(@"hh\:mm")</span></span>
+                                <span class="line-item"><i class="bi bi-person"></i><span>Antrenör: @appointment.Trainer?.FullName</span></span>
+                                <span class="line-item"><i class="bi bi-geo-alt"></i><span>@appointment.Service?.Gym?.Name</span></span>
+                                <span class="line-item"><i class="bi bi-cash-stack"></i><span>@appointment.TotalPrice.ToString("N0") ₺</span></span>
                             </p>
                             @if (!string.IsNullOrEmpty(appointment.Notes))
                             {
