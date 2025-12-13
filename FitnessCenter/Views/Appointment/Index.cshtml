@@ -22,13 +22,34 @@
         background-clip: text;
     }
 
+    /* Filter Card styled like Admin Quick Actions */
     .filter-card {
-        background: linear-gradient(145deg, rgba(12, 12, 20, 0.95) 0%, rgba(14, 16, 28, 0.9) 100%);
-        border: 1px solid rgba(0, 210, 106, 0.2);
+        background: linear-gradient(145deg, #12121c 0%, #0d0d14 100%);
+        border: 1px solid rgba(255, 255, 255, 0.05);
         border-radius: 20px;
-        padding: 25px;
+        overflow: hidden;
+        padding: 0; /* header/body padding applied separately */
         margin-bottom: 40px;
-        box-shadow: 0 12px 35px rgba(0, 0, 0, 0.35);
+    }
+
+    .filter-card .card-header-custom {
+        background: rgba(0, 210, 106, 0.05);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        padding: 16px 20px;
+    }
+
+    .filter-card .card-header-custom h5 {
+        margin: 0;
+        color: #fff;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 1rem;
+    }
+
+    .filter-card .card-body-custom {
+        padding: 20px;
     }
 
     .filter-card .form-label {
@@ -39,12 +60,19 @@
 
     .filter-card .form-control,
     .filter-card .form-select {
-        background: rgba(10, 12, 20, 0.9);
-        border: 1px solid rgba(0, 210, 106, 0.25);
-        color: #f5f5f5;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: #fff;
         border-radius: 12px;
-        padding: 12px 15px;
-        box-shadow: inset 0 1px 6px rgba(0, 0, 0, 0.25);
+        padding: 10px 14px;
+    }
+
+    .filter-card .btn-new-appointment {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 18px;
+        border-radius: 12px;
     }
 
     /* Tarih ikonunu beyaza çevir */
@@ -282,7 +310,8 @@
 <div class="container pb-5">
     <!-- Filtre -->
     <div class="filter-card" data-aos="fade-up">
-        <form method="get" class="row g-3">
+        <div class="card-body-custom">
+            <form method="get" class="row g-3">
             <div class="col-md-4">
                 <label class="form-label">Durum</label>
                 <select name="status" class="form-select">
@@ -306,7 +335,8 @@
                     <i class="bi bi-funnel"></i> Filtrele
                 </button>
             </div>
-        </form>
+            </form>
+        </div>
     </div>
 
     @if (Model.Any())
