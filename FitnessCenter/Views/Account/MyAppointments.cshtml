@@ -172,7 +172,7 @@
                                 <i class="bi bi-clock"></i> @appointment.AppointmentTime.ToString(@"hh\:mm") - @appointment.EndTime.ToString(@"hh\:mm")<br>
                                 <i class="bi bi-person"></i> Antrenör: @appointment.Trainer?.FullName<br>
                                 <i class="bi bi-geo-alt"></i> @appointment.Service?.Gym?.Name<br>
-                                <i class="bi bi-currency-lira"></i> @appointment.TotalPrice.ToString("N0") ₺
+                                <i class="bi bi-cash-stack"></i> <i class="bi bi-currency-lira"></i> @appointment.TotalPrice.ToString("N0") ₺
                             </p>
                             @if (!string.IsNullOrEmpty(appointment.Notes))
                             {
