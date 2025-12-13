@@ -181,18 +181,18 @@
                                 </p>
                             }
                         </div>
-                        <div class="card-footer">
-                            @if (appointment.Status == FitnessCenter.Models.AppointmentStatus.Pending || 
-                                 appointment.Status == FitnessCenter.Models.AppointmentStatus.Confirmed)
-                            {
+                        @if (appointment.Status == FitnessCenter.Models.AppointmentStatus.Pending || 
+                             appointment.Status == FitnessCenter.Models.AppointmentStatus.Confirmed)
+                        {
+                            <div class="card-footer">
                                 <form asp-controller="Appointment" asp-action="Cancel" asp-route-id="@appointment.Id" method="post" 
                                       onsubmit="return confirm('Randevuyu iptal etmek istediğinize emin misiniz?');">
                                     <button type="submit" class="btn btn-outline-danger btn-sm">
                                         <i class="bi bi-x-circle"></i> İptal Et
                                     </button>
                                 </form>
-                            }
-                        </div>
+                            </div>
+                        }
                     </div>
                 </div>
             }
