@@ -113,14 +113,13 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Service Cards */
 .service-card {
-    background: linear-gradient(135deg, rgba(18, 18, 28, 0.95) 0%, rgba(13, 13, 20, 0.95) 100%);
-    border: 1px solid rgba(0, 210, 106, 0.1);
+    background: linear-gradient(135deg, rgba(0, 210, 106, 0.12) 0%, rgba(0, 255, 136, 0.06) 100%);
+    border: 1px solid rgba(0, 210, 106, 0.25);
     border-radius: 16px;
     padding: 2px;
     position: relative;
     overflow: hidden;
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
 }
 
 .service-card::before {
@@ -260,7 +259,9 @@ h1, h2, h3, h4, h5, h6 {
     font-size: 1rem;
     padding: 14px 20px;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    background: transparent;
+    background: linear-gradient(135deg, rgba(0, 210, 106, 0.12) 0%, rgba(0, 255, 136, 0.06) 100%);
+    border-color: rgba(0, 210, 106, 0.25);
+    box-shadow: 0 6px 16px rgba(0, 210, 106, 0.12);
     position: relative;
     overflow: hidden;
     text-transform: uppercase;
