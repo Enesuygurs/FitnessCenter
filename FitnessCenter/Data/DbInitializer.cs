@@ -41,8 +41,8 @@ namespace FitnessCenter.Data
 
         private static async Task SeedAdminUserAsync(UserManager<ApplicationUser> userManager)
         {
-            // Admin kullanıcısı: ogrencinumarasi@sakarya.edu.tr / sau
-            var adminEmail = "ogrencinumarasi@sakarya.edu.tr";
+            // Admin kullanıcısı: g231210302@sakarya.edu.tr / sau
+            var adminEmail = "g231210302@sakarya.edu.tr";
             var adminUser = await userManager.FindByEmailAsync(adminEmail);
 
             if (adminUser == null)
