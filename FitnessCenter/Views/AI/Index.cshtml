@@ -177,17 +177,6 @@
         box-shadow: 0 0 0 3px rgba(255, 71, 87, 0.1);
     }
 
-    .invalid-feedback {
-        color: #ff4757;
-        font-size: 0.85rem;
-        margin-top: 5px;
-        display: none;
-    }
-
-    .invalid-feedback.d-block {
-        display: block;
-    }
-
     /* Placeholder / passive text color aligned with Profile page */
     .form-control::placeholder,
     .form-select::placeholder {
@@ -350,61 +339,62 @@
                     <h5 class="mb-0"><i class="bi bi-person-lines-fill me-2"></i>Bilgilerinizi Girin</h5>
                 </div>
                 <div class="card-body">
-                    <form asp-action="GetRecommendation" method="post" id="aiForm" novalidate>
+                    <form asp-action="GetRecommendation" method="post" id="aiForm">
                         <div class="mb-4">
                             <label asp-for="Height" class="form-label">Boy (cm) <span class="text-danger">*</span></label>
                             <div class="input-group">
-                                <input asp-for="Height" type="number" class="form-control" placeholder="175" min="100" max="250" required>
+                                <input asp-for="Height" type="number" class="form-control" placeholder="175" min="100" max="250" required
+                                       data-val="true" data-val-required="Boy (cm) alanı zorunludur.">
                                 <span class="input-group-text">cm</span>
                             </div>
-                            <span asp-validation-for="Height" class="text-danger"></span>
-                            <div class="invalid-feedback d-block" id="heightError"></div>
+                            <span asp-validation-for="Height" class="text-danger small"></span>
                         </div>
 
                         <div class="mb-4">
                             <label asp-for="Weight" class="form-label">Kilo (kg) <span class="text-danger">*</span></label>
                             <div class="input-group">
-                                <input asp-for="Weight" type="number" step="0.1" class="form-control" placeholder="70" min="30" max="300" required>
+                                <input asp-for="Weight" type="number" step="0.1" class="form-control" placeholder="70" min="30" max="300" required
+                                       data-val="true" data-val-required="Kilo (kg) alanı zorunludur.">
                                 <span class="input-group-text">kg</span>
                             </div>
-                            <span asp-validation-for="Weight" class="text-danger"></span>
-                            <div class="invalid-feedback d-block" id="weightError"></div>
+                            <span asp-validation-for="Weight" class="text-danger small"></span>
                         </div>
 
                         <div class="mb-4">
                             <label asp-for="Age" class="form-label">Yaş <span class="text-danger">*</span></label>
-                            <input asp-for="Age" type="number" class="form-control" placeholder="25" min="10" max="100" required>
-                            <span asp-validation-for="Age" class="text-danger"></span>
-                            <div class="invalid-feedback d-block" id="ageError"></div>
+                            <input asp-for="Age" type="number" class="form-control" placeholder="25" min="10" max="100" required
+                                   data-val="true" data-val-required="Yaş alanı zorunludur.">
+                            <span asp-validation-for="Age" class="text-danger small"></span>
                         </div>
 
                         <div class="mb-4">
                             <label asp-for="Gender" class="form-label">Cinsiyet <span class="text-danger">*</span></label>
-                            <select asp-for="Gender" class="form-select" required>
+                            <select asp-for="Gender" class="form-select" required
+                                    data-val="true" data-val-required="Cinsiyet alanı zorunludur.">
                                 <option value="">Seçin...</option>
                                 <option value="Erkek">Erkek</option>
                                 <option value="Kadın">Kadın</option>
                             </select>
-                            <span asp-validation-for="Gender" class="text-danger"></span>
-                            <div class="invalid-feedback d-block" id="genderError"></div>
+                            <span asp-validation-for="Gender" class="text-danger small"></span>
                         </div>
 
                         <div class="mb-4">
                             <label asp-for="BodyType" class="form-label">Vücut Tipi <span class="text-danger">*</span></label>
-                            <select asp-for="BodyType" class="form-select" required>
+                            <select asp-for="BodyType" class="form-select" required
+                                    data-val="true" data-val-required="Vücut Tipi alanı zorunludur.">
                                 <option value="">Seçin...</option>
                                 <option value="Ektomorf">Ektomorf (İnce yapılı)</option>
                                 <option value="Mezomorf">Mezomorf (Atletik)</option>
                                 <option value="Endomorf">Endomorf (Geniş yapılı)</option>
                                 <option value="Normal">Normal</option>
                             </select>
-                            <span asp-validation-for="BodyType" class="text-danger"></span>
-                            <div class="invalid-feedback d-block" id="bodyTypeError"></div>
+                            <span asp-validation-for="BodyType" class="text-danger small"></span>
                         </div>
 
                         <div class="mb-4">
                             <label asp-for="FitnessGoal" class="form-label">Fitness Hedefiniz <span class="text-danger">*</span></label>
-                            <select asp-for="FitnessGoal" class="form-select" required>
+                            <select asp-for="FitnessGoal" class="form-select" required
+                                    data-val="true" data-val-required="Fitness Hedefiniz alanı zorunludur.">
                                 <option value="">Seçin...</option>
                                 <option value="WeightLoss">Kilo Vermek</option>
                                 <option value="MuscleGain">Kas Kazanmak</option>
@@ -412,13 +402,13 @@
                                 <option value="Flexibility">Esneklik Geliştirmek</option>
                                 <option value="GeneralFitness">Genel Fitness</option>
                             </select>
-                            <span asp-validation-for="FitnessGoal" class="text-danger"></span>
-                            <div class="invalid-feedback d-block" id="fitnessGoalError"></div>
+                            <span asp-validation-for="FitnessGoal" class="text-danger small"></span>
                         </div>
 
                         <div class="mb-4">
                             <label asp-for="ActivityLevel" class="form-label">Aktivite Seviyesi <span class="text-danger">*</span></label>
-                            <select asp-for="ActivityLevel" class="form-select" required>
+                            <select asp-for="ActivityLevel" class="form-select" required
+                                    data-val="true" data-val-required="Aktivite Seviyesi alanı zorunludur.">
                                 <option value="">Seçin...</option>
                                 <option value="Sedentary">Hareketsiz (Masa başı iş)</option>
                                 <option value="LightlyActive">Az Aktif (Hafif egzersiz)</option>
@@ -426,8 +416,7 @@
                                 <option value="VeryActive">Çok Aktif (Günlük spor)</option>
                                 <option value="ExtremelyActive">Aşırı Aktif (Profesyonel sporcu)</option>
                             </select>
-                            <span asp-validation-for="ActivityLevel" class="text-danger"></span>
-                            <div class="invalid-feedback d-block" id="activityLevelError"></div>
+                            <span asp-validation-for="ActivityLevel" class="text-danger small"></span>
                         </div>
 
                         <div class="mb-4">
@@ -528,72 +517,9 @@
     <script>
         const heightInput = document.getElementById('Height');
         const weightInput = document.getElementById('Weight');
-        const ageInput = document.getElementById('Age');
-        const genderInput = document.getElementById('Gender');
-        const bodyTypeInput = document.getElementById('BodyType');
-        const fitnessGoalInput = document.getElementById('FitnessGoal');
-        const activityLevelInput = document.getElementById('ActivityLevel');
         const bmiResult = document.getElementById('bmiResult');
-        const aiForm = document.getElementById('aiForm');
         const submitBtn = document.getElementById('submitBtn');
-
-        // Zorunlu alanlar
-        const requiredFields = [
-            { input: heightInput, name: 'Boy', errorId: 'heightError' },
-            { input: weightInput, name: 'Kilo', errorId: 'weightError' },
-            { input: ageInput, name: 'Yaş', errorId: 'ageError' },
-            { input: genderInput, name: 'Cinsiyet', errorId: 'genderError' },
-            { input: bodyTypeInput, name: 'Vücut Tipi', errorId: 'bodyTypeError' },
-            { input: fitnessGoalInput, name: 'Fitness Hedefiniz', errorId: 'fitnessGoalError' },
-            { input: activityLevelInput, name: 'Aktivite Seviyesi', errorId: 'activityLevelError' }
-        ];
-
-        function validateForm() {
-            let isValid = true;
-            let firstInvalidField = null;
-
-            requiredFields.forEach(field => {
-                const errorEl = document.getElementById(field.errorId);
-                const value = field.input.value.trim();
-
-                if (!value) {
-                    errorEl.textContent = `${field.name} alanı zorunludur.`;
-                    field.input.classList.add('is-invalid');
-                    isValid = false;
-                    if (!firstInvalidField) firstInvalidField = field.input;
-                } else {
-                    errorEl.textContent = '';
-                    field.input.classList.remove('is-invalid');
-                }
-            });
-
-            // Focus on first invalid field
-            if (firstInvalidField) {
-                firstInvalidField.focus();
-                firstInvalidField.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }
-
-            return isValid;
-        }
-
-        // Real-time validation - clear error when user starts typing
-        requiredFields.forEach(field => {
-            field.input.addEventListener('input', function() {
-                if (this.value.trim()) {
-                    const errorEl = document.getElementById(field.errorId);
-                    errorEl.textContent = '';
-                    this.classList.remove('is-invalid');
-                }
-            });
-
-            field.input.addEventListener('change', function() {
-                if (!this.value.trim()) {
-                    const errorEl = document.getElementById(field.errorId);
-                    errorEl.textContent = `${field.name} alanı zorunludur.`;
-                    this.classList.add('is-invalid');
-                }
-            });
-        });
+        const aiForm = document.getElementById('aiForm');
 
         function calculateBMI() {
             const height = parseFloat(heightInput.value) / 100;
@@ -643,14 +569,8 @@
         heightInput.addEventListener('input', calculateBMI);
         weightInput.addEventListener('input', calculateBMI);
 
-        // Form gönderildiğinde validasyon kontrol et
-        aiForm.addEventListener('submit', function(e) {
-            if (!validateForm()) {
-                e.preventDefault();
-                return false;
-            }
-
-            // Validasyon başarılı - buton durumunu değiştir
+        // Form gönderildiğinde buton durumunu değiştir
+        aiForm.addEventListener('submit', function() {
             submitBtn.disabled = true;
             submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Analiz Ediliyor...';
         });
