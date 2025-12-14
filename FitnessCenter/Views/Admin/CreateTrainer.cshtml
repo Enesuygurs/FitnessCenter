@@ -229,12 +229,12 @@
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label asp-for="FirstName" class="form-label">Ad</label>
-                                    <input asp-for="FirstName" class="form-control" placeholder="Örn: Ahmet" />
+                                    <input asp-for="FirstName" class="form-control" placeholder="Örn: Ahmet" required data-val="true" data-val-required="Ad zorunludur." />
                                     <span asp-validation-for="FirstName" class="text-danger"></span>
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label asp-for="LastName" class="form-label">Soyad</label>
-                                    <input asp-for="LastName" class="form-control" placeholder="Örn: Yılmaz" />
+                                    <input asp-for="LastName" class="form-control" placeholder="Örn: Yılmaz" required data-val="true" data-val-required="Soyad zorunludur." />
                                     <span asp-validation-for="LastName" class="text-danger"></span>
                                 </div>
                             </div>
@@ -242,12 +242,12 @@
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label asp-for="Email" class="form-label">E-posta</label>
-                                    <input asp-for="Email" class="form-control" type="email" placeholder="ahmet@fitzone.com" />
+                                    <input asp-for="Email" class="form-control" type="email" placeholder="ahmet@fitzone.com" required data-val="true" data-val-required="E-posta zorunludur." />
                                     <span asp-validation-for="Email" class="text-danger"></span>
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label asp-for="Phone" class="form-label">Telefon</label>
-                                    <input asp-for="Phone" class="form-control" placeholder="(555) 123-4567" />
+                                    <input asp-for="Phone" class="form-control" placeholder="(555) 123-4567" required data-val="true" data-val-required="Telefon zorunludur." />
                                     <span asp-validation-for="Phone" class="text-danger"></span>
                                 </div>
                             </div>
@@ -271,12 +271,12 @@
                             <div class="row">
                                 <div class="col-md-4 mb-3">
                                     <label asp-for="WorkStartTime" class="form-label">Başlangıç Saati</label>
-                                    <input asp-for="WorkStartTime" class="form-control" type="time" />
+                                    <input asp-for="WorkStartTime" class="form-control" type="time" required data-val="true" data-val-required="İş başlangıç saati zorunludur." />
                                     <span asp-validation-for="WorkStartTime" class="text-danger"></span>
                                 </div>
                                 <div class="col-md-4 mb-3">
                                     <label asp-for="WorkEndTime" class="form-label">Bitiş Saati</label>
-                                    <input asp-for="WorkEndTime" class="form-control" type="time" />
+                                    <input asp-for="WorkEndTime" class="form-control" type="time" required data-val="true" data-val-required="İş bitiş saati zorunludur." />
                                     <span asp-validation-for="WorkEndTime" class="text-danger"></span>
                                 </div>
                                 <div class="col-md-4 mb-3">
@@ -287,7 +287,7 @@
 
                             <div class="mb-3">
                                 <label asp-for="GymId" class="form-label">Spor Salonu</label>
-                                <select asp-for="GymId" class="form-select">
+                                <select asp-for="GymId" class="form-select" required data-val="true" data-val-required="Salon seçimi zorunludur.">
                                     <option value="">Seçiniz</option>
                                     @if (gyms != null)
                                     {

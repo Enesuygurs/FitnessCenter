@@ -403,12 +403,14 @@
                             <div class="row">
                                 <div class="col-md-6 mb-4">
                                     <label asp-for="FirstName" class="form-label">Ad</label>
-                                    <input asp-for="FirstName" class="form-control" placeholder="Adınız" />
+                                    <input asp-for="FirstName" class="form-control" placeholder="Adınız" required
+                                           data-val="true" data-val-required="Ad alanı zorunludur." />
                                     <span asp-validation-for="FirstName" class="text-danger"></span>
                                 </div>
                                 <div class="col-md-6 mb-4">
                                     <label asp-for="LastName" class="form-label">Soyad</label>
-                                    <input asp-for="LastName" class="form-control" placeholder="Soyadınız" />
+                                    <input asp-for="LastName" class="form-control" placeholder="Soyadınız" required
+                                           data-val="true" data-val-required="Soyad alanı zorunludur." />
                                     <span asp-validation-for="LastName" class="text-danger"></span>
                                 </div>
                             </div>

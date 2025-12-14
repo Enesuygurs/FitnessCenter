@@ -276,7 +276,8 @@
                             <label asp-for="TrainerId" class="form-label">
                                 <i class="bi bi-person-badge"></i> Antrenör Seçin
                             </label>
-                            <select asp-for="TrainerId" class="form-select" id="trainerSelect">
+                            <select asp-for="TrainerId" class="form-select" id="trainerSelect" required
+                                    data-val="true" data-val-required="Antreör seçimi zorunludur.">
                                 <option value="">Antrenör Seçin</option>
                                 @if (Model.Trainers != null)
                                 {
@@ -297,7 +298,8 @@
                             <label asp-for="ServiceId" class="form-label">
                                 <i class="bi bi-grid-3x3-gap"></i> Hizmet Seçin
                             </label>
-                            <select asp-for="ServiceId" class="form-select" id="serviceSelect" disabled>
+                            <select asp-for="ServiceId" class="form-select" id="serviceSelect" disabled required
+                                    data-val="true" data-val-required="Hizmet seçimi zorunludur.">
                                 <option value="">Önce antrenör seçin</option>
                             </select>
                             <span asp-validation-for="ServiceId" class="text-danger"></span>
@@ -311,7 +313,8 @@
                             </label>
                             <input asp-for="AppointmentDate" type="date" class="form-control" id="dateSelect"
                                    min="@DateTime.Today.ToString("yyyy-MM-dd")" 
-                                   max="@DateTime.Today.AddMonths(1).ToString("yyyy-MM-dd")">
+                                   max="@DateTime.Today.AddMonths(1).ToString("yyyy-MM-dd")" required
+                                   data-val="true" data-val-required="Tarih seçimi zorunludur.">
                             <span asp-validation-for="AppointmentDate" class="text-danger"></span>
                         </div>
 
@@ -320,7 +323,8 @@
                             <label asp-for="AppointmentTime" class="form-label">
                                 <i class="bi bi-clock"></i> Saat Seçin
                             </label>
-                            <select name="AppointmentTime" class="form-select" id="timeSelect">
+                            <select name="AppointmentTime" class="form-select" id="timeSelect" required
+                                    data-val="true" data-val-required="Saat seçimi zorunludur.">
                                 <option value="">Saat seçin</option>
                                 @for (int h = 8; h <= 21; h++)
                                 {

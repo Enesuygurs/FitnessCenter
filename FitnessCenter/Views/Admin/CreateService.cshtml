@@ -222,13 +222,13 @@
 
                             <div class="mb-3">
                                 <label asp-for="Name" class="form-label">Hizmet Adı</label>
-                                <input asp-for="Name" class="form-control" placeholder="Örn: Kişisel Antrenman" />
+                                <input asp-for="Name" class="form-control" placeholder="Örn: Kişisel Antrenman" required data-val="true" data-val-required="Hizmet adı zorunludur." />
                                 <span asp-validation-for="Name" class="text-danger"></span>
                             </div>
 
                             <div class="mb-3">
                                 <label asp-for="Description" class="form-label">Açıklama</label>
-                                <textarea asp-for="Description" class="form-control" rows="3" placeholder="Hizmet açıklaması..."></textarea>
+                                <textarea asp-for="Description" class="form-control" rows="3" placeholder="Hizmet açıklaması..." required data-val="true" data-val-required="Açıklama zorunludur."></textarea>
                                 <span asp-validation-for="Description" class="text-danger"></span>
                             </div>
 
@@ -241,7 +241,7 @@
                             <div class="row">
                                 <div class="col-md-4 mb-3">
                                     <label asp-for="Category" class="form-label">Kategori</label>
-                                    <select asp-for="Category" class="form-select">
+                                    <select asp-for="Category" class="form-select" required data-val="true" data-val-required="Kategori seçimi zorunludur.">
                                         <option value="">Seçiniz</option>
                                         <option value="Fitness">Fitness</option>
                                         <option value="Yoga">Yoga</option>
@@ -254,19 +254,19 @@
                                 </div>
                                 <div class="col-md-4 mb-3">
                                     <label asp-for="DurationMinutes" class="form-label">Süre (Dakika)</label>
-                                    <input asp-for="DurationMinutes" class="form-control" type="number" placeholder="60" />
+                                    <input asp-for="DurationMinutes" class="form-control" type="number" placeholder="60" required data-val="true" data-val-required="Süre zorunludur." />
                                     <span asp-validation-for="DurationMinutes" class="text-danger"></span>
                                 </div>
                                 <div class="col-md-4 mb-3">
                                     <label asp-for="Price" class="form-label">Ücret (₺)</label>
-                                    <input asp-for="Price" class="form-control" type="number" step="0.01" placeholder="200.00" />
+                                    <input asp-for="Price" class="form-control" type="number" step="0.01" placeholder="200.00" required data-val="true" data-val-required="Fiyat zorunludur." />
                                     <span asp-validation-for="Price" class="text-danger"></span>
                                 </div>
                             </div>
 
                             <div class="mb-3">
                                 <label asp-for="GymId" class="form-label">Spor Salonu</label>
-                                <select asp-for="GymId" class="form-select">
+                                <select asp-for="GymId" class="form-select" required data-val="true" data-val-required="Salon seçimi zorunludur.">
                                     <option value="">Seçiniz</option>
                                     @if (gyms != null)
                                     {

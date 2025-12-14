@@ -163,12 +163,14 @@
                             <div class="row">
                                 <div class="col-md-6 mb-4">
                                     <label asp-for="FirstName" class="form-label"></label>
-                                    <input asp-for="FirstName" class="form-control" placeholder="Adınız" />
+                                    <input asp-for="FirstName" class="form-control" placeholder="Adınız" required
+                                           data-val="true" data-val-required="Ad alanı zorunludur." />
                                     <span asp-validation-for="FirstName" class="text-danger"></span>
                                 </div>
                                 <div class="col-md-6 mb-4">
                                     <label asp-for="LastName" class="form-label"></label>
-                                    <input asp-for="LastName" class="form-control" placeholder="Soyadınız" />
+                                    <input asp-for="LastName" class="form-control" placeholder="Soyadınız" required
+                                           data-val="true" data-val-required="Soyad alanı zorunludur." />
                                     <span asp-validation-for="LastName" class="text-danger"></span>
                                 </div>
                             </div>
@@ -177,7 +179,8 @@
                                 <label asp-for="Email" class="form-label"></label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="bi bi-envelope"></i></span>
-                                    <input asp-for="Email" class="form-control" placeholder="ornek@email.com" />
+                                    <input asp-for="Email" class="form-control" placeholder="ornek@email.com" required
+                                           data-val="true" data-val-required="E-posta alanı zorunludur." />
                                 </div>
                                 <span asp-validation-for="Email" class="text-danger"></span>
                             </div>
@@ -196,7 +199,8 @@
                                     <label asp-for="Password" class="form-label"></label>
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="bi bi-lock"></i></span>
-                                        <input asp-for="Password" class="form-control" placeholder="Şifreniz" />
+                                        <input asp-for="Password" class="form-control" placeholder="Şifreniz" required
+                                               data-val="true" data-val-required="Şifre alanı zorunludur." />
                                     </div>
                                     <span asp-validation-for="Password" class="text-danger"></span>
                                 </div>
@@ -204,7 +208,8 @@
                                     <label asp-for="ConfirmPassword" class="form-label"></label>
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="bi bi-lock-fill"></i></span>
-                                        <input asp-for="ConfirmPassword" class="form-control" placeholder="Şifre tekrar" />
+                                        <input asp-for="ConfirmPassword" class="form-control" placeholder="Şifre tekrar" required
+                                               data-val="true" data-val-required="Şifre tekrar alanı zorunludur." />
                                     </div>
                                     <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
                                 </div>

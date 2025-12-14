@@ -226,25 +226,29 @@
 
                             <div class="mb-3">
                                 <label asp-for="Name" class="form-label">Salon Adı</label>
-                                <input asp-for="Name" class="form-control" placeholder="Örn: FitZone Center" />
+                                <input asp-for="Name" class="form-control" placeholder="Örn: FitZone Center" required
+                                       data-val="true" data-val-required="Salon adı zorunludur." />
                                 <span asp-validation-for="Name" class="text-danger"></span>
                             </div>
 
                             <div class="mb-3">
                                 <label asp-for="Address" class="form-label">Adres</label>
-                                <textarea asp-for="Address" class="form-control" rows="2" placeholder="Salon adresi..."></textarea>
+                                <textarea asp-for="Address" class="form-control" rows="2" placeholder="Salon adresi..." required
+                                          data-val="true" data-val-required="Adres zorunludur."></textarea>
                                 <span asp-validation-for="Address" class="text-danger"></span>
                             </div>
 
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label asp-for="Phone" class="form-label">Telefon</label>
-                                    <input asp-for="Phone" class="form-control" placeholder="(555) 123-4567" />
+                                    <input asp-for="Phone" class="form-control" placeholder="(555) 123-4567" required
+                                           data-val="true" data-val-required="Telefon zorunludur." />
                                     <span asp-validation-for="Phone" class="text-danger"></span>
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label asp-for="Email" class="form-label">E-posta</label>
-                                    <input asp-for="Email" class="form-control" type="email" placeholder="info@fitzone.com" />
+                                    <input asp-for="Email" class="form-control" type="email" placeholder="info@fitzone.com" required
+                                           data-val="true" data-val-required="E-posta zorunludur." />
                                     <span asp-validation-for="Email" class="text-danger"></span>
                                 </div>
                             </div>
@@ -263,12 +267,14 @@
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label asp-for="OpeningTime" class="form-label">Açılış Saati</label>
-                                    <input asp-for="OpeningTime" class="form-control" type="time" />
+                                    <input asp-for="OpeningTime" class="form-control" type="time" required
+                                           data-val="true" data-val-required="Açılış saati zorunludur." />
                                     <span asp-validation-for="OpeningTime" class="text-danger"></span>
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label asp-for="ClosingTime" class="form-label">Kapanış Saati</label>
-                                    <input asp-for="ClosingTime" class="form-control" type="time" />
+                                    <input asp-for="ClosingTime" class="form-control" type="time" required
+                                           data-val="true" data-val-required="Kapanış saati zorunludur." />
                                     <span asp-validation-for="ClosingTime" class="text-danger"></span>
                                 </div>
                             </div>
