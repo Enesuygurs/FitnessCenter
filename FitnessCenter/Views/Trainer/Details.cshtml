@@ -347,7 +347,7 @@
                     <div class="edit-card-header"><h5><i class="bi bi-building"></i> Spor Salonu</h5></div>
                     <div class="edit-card-body">
                         <div class="gym-item">
-                            <img src="@(Model.Gym.ImageUrl ?? "https://via.placeholder.com/100x100?text=Gym")" alt="Gym">
+                            <img src="@((!string.IsNullOrEmpty(Model.Gym.ImageUrl) && !Model.Gym.ImageUrl.StartsWith("/images/")) ? Model.Gym.ImageUrl : "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=200&h=200&fit=crop")" alt="@Model.Gym.Name">
                             <div class="service-info">
                                 <div class="service-title">@Model.Gym.Name</div>
                                 <div class="service-desc"><i class="bi bi-geo-alt"></i> @Model.Gym.Address</div>
