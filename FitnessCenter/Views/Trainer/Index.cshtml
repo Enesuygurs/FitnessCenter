@@ -165,9 +165,17 @@
                             <i class="bi bi-award-fill"></i> @trainer.ExperienceYears Yıl
                         </span>
                         <h5 class="card-title">@trainer.FullName</h5>
-                        <div class="mb-3">
-                            <span class="badge">@trainer.Specializations</span>
-                        </div>
+                        @if (!string.IsNullOrEmpty(trainer.Specializations))
+                        {
+                            <div class="mb-3 d-flex flex-wrap gap-2">
+                                @foreach (var specialization in trainer.Specializations.Split(','))
+                                {
+                                    <span class="badge" style="background: linear-gradient(135deg, rgba(0, 210, 106, 0.18) 0%, rgba(0, 255, 136, 0.08) 100%); color: var(--primary-color); padding: 6px 12px; font-weight: 500; white-space: nowrap;">
+                                        @specialization.Trim()
+                                    </span>
+                                }
+                            </div>
+                        }
                         <div class="trainer-info">
                             <i class="bi bi-clock"></i>
                             <span>@trainer.WorkStartTime.ToString(@"hh\:mm") - @trainer.WorkEndTime.ToString(@"hh\:mm")</span>
