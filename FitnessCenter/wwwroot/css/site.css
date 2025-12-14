@@ -192,38 +192,102 @@ h1, h2, h3, h4, h5, h6 {
     margin-bottom: 24px !important;
     color: rgba(255, 255, 255, 0.6);
     min-height: 60px;
+    flex-grow: 1;
 }
 
-.service-card .badge {
-    background: rgba(0, 210, 106, 0.12) !important;
-    color: var(--primary-color) !important;
-    border: 1px solid rgba(0, 210, 106, 0.2);
-    padding: 8px 14px !important;
-    font-weight: 600;
-    border-radius: 8px;
+/* Süre ve Fiyat Bölümü */
+.service-card .d-flex {
+    background: linear-gradient(135deg, rgba(0, 210, 106, 0.08) 0%, rgba(0, 255, 136, 0.04) 100%);
+    border: 1px solid rgba(0, 210, 106, 0.15);
+    border-radius: 12px;
+    padding: 16px !important;
+    margin-bottom: 20px !important;
+    gap: 12px;
     transition: all 0.3s ease;
 }
 
-.service-card:hover .badge {
-    background: rgba(0, 210, 106, 0.2) !important;
-    border-color: rgba(0, 210, 106, 0.4);
-    transform: scale(1.05);
+.service-card:hover .d-flex {
+    background: linear-gradient(135deg, rgba(0, 210, 106, 0.12) 0%, rgba(0, 255, 136, 0.06) 100%);
+    border-color: rgba(0, 210, 106, 0.25);
+    box-shadow: 0 6px 16px rgba(0, 210, 106, 0.12);
 }
 
+/* Süre Badge */
+.service-card .badge {
+    background: linear-gradient(135deg, rgba(0, 210, 106, 0.18) 0%, rgba(0, 255, 136, 0.08) 100%) !important;
+    color: var(--primary-color) !important;
+    border: 1.5px solid rgba(0, 210, 106, 0.25);
+    padding: 8px 16px !important;
+    font-weight: 600;
+    font-size: 0.9rem;
+    border-radius: 10px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.service-card:hover .badge {
+    background: linear-gradient(135deg, rgba(0, 210, 106, 0.25) 0%, rgba(0, 255, 136, 0.12) 100%) !important;
+    border-color: rgba(0, 210, 106, 0.4);
+    transform: scale(1.08);
+    box-shadow: 0 4px 12px rgba(0, 210, 106, 0.2);
+}
+
+/* Fiyat */
+.service-card .text-primary-custom.fs-5 {
+    font-size: 1.4rem !important;
+    font-weight: 700;
+    background: linear-gradient(135deg, #00ff88 0%, #00d26a 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    transition: all 0.3s ease;
+    text-shadow: 0 2px 4px rgba(0, 210, 106, 0.2);
+}
+
+.service-card:hover .text-primary-custom.fs-5 {
+    transform: scale(1.1);
+    filter: drop-shadow(0 4px 12px rgba(0, 210, 106, 0.25));
+}
+
+/* Randevu Butonu */
 .service-card .btn-outline-primary {
     border: 2px solid var(--primary-color);
     color: var(--primary-color);
     font-weight: 600;
-    padding: 12px 20px;
-    transition: all 0.3s ease;
+    font-size: 1rem;
+    padding: 14px 20px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     background: transparent;
+    position: relative;
+    overflow: hidden;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.service-card .btn-outline-primary::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: var(--primary-color);
+    transition: left 0.3s ease;
+    z-index: -1;
 }
 
 .service-card .btn-outline-primary:hover {
-    background: var(--primary-color);
     color: #000;
-    box-shadow: 0 8px 20px rgba(0, 210, 106, 0.3);
-    transform: translateY(-2px);
+    border-color: var(--primary-color);
+    box-shadow: 0 10px 28px rgba(0, 210, 106, 0.4);
+    transform: translateY(-3px);
+}
+
+.service-card .btn-outline-primary:hover::before {
+    left: 0;
 }
 
 /* Buttons */
