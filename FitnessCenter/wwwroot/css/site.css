@@ -101,6 +101,16 @@ h1, h2, h3, h4, h5, h6 {
 /* Trainer Cards */
 .trainer-card {
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.trainer-card .card-body {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    justify-content: space-between;
 }
 
 .trainer-card img {
