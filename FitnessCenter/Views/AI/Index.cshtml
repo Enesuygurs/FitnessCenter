@@ -534,12 +534,21 @@
                         <small>30+</small>
                     </div>
                 `;
+            } else {
+                bmiResult.innerHTML = '<p class="text-white-50">Boy ve kilo bilgilerini girin</p>';
             }
         }
 
+        // Sayfa yüklendiğinde BMI hesaplaması yap
+        window.addEventListener('DOMContentLoaded', function() {
+            calculateBMI();
+        });
+
+        // Input alanları değiştiğinde BMI hesaplaması yap
         heightInput.addEventListener('input', calculateBMI);
         weightInput.addEventListener('input', calculateBMI);
 
+        // Form gönderildiğinde buton durumunu değiştir
         document.getElementById('aiForm').addEventListener('submit', function() {
             const btn = document.getElementById('submitBtn');
             btn.disabled = true;
