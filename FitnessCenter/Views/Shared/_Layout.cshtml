@@ -453,7 +453,7 @@
     <main>
         @if (TempData["Success"] != null)
         {
-            <div class="container" style="margin-top: 100px;">
+            <div class="container" style="margin-top: 100px;" id="successAlertContainer">
                 <div class="alert alert-success alert-dismissible fade show" role="alert" id="successAlert">
                     <i class="bi bi-check-circle"></i> @TempData["Success"]
                     <button type="button" class="btn-close" data-bs-dismiss="alert" style="filter: brightness(0) invert(1);"></button>
@@ -461,10 +461,14 @@
             </div>
             <script>
                 setTimeout(function() {
-                    var successAlert = document.getElementById('successAlert');
-                    if (successAlert) {
-                        var bsAlert = new bootstrap.Alert(successAlert);
-                        bsAlert.close();
+                    var alertContainer = document.getElementById('successAlertContainer');
+                    if (alertContainer) {
+                        alertContainer.style.transition = 'all 0.3s ease';
+                        alertContainer.style.marginTop = '0';
+                        alertContainer.style.opacity = '0';
+                        setTimeout(function() {
+                            alertContainer.remove();
+                        }, 300);
                     }
                 }, 3000);
             </script>
