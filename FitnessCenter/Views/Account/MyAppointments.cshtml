@@ -161,7 +161,11 @@
                         <div class="card-header">
                             <span>
                                 <i class="bi bi-calendar-event"></i>
-                                @appointment.AppointmentDate.ToString("dd MMMM yyyy")
+                                @{
+                                    var monthNames = new[] { "Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık" };
+                                    var formattedDate = $"{appointment.AppointmentDate.Day} {monthNames[appointment.AppointmentDate.Month - 1]} {appointment.AppointmentDate.Year}";
+                                }
+                                @formattedDate
                             </span>
                             @{
                                 var badgeClass = appointment.Status switch
