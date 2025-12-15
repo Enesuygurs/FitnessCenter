@@ -562,6 +562,66 @@
                 navbar.classList.remove('scrolled');
             }
         });
+
+        // ✨ Global Date/Time Picker Açılma Özelliği
+        // Tüm date ve time input'larına tıklandığında picker açılması için
+        document.addEventListener('DOMContentLoaded', function() {
+            // Date input'lar
+            document.querySelectorAll('input[type="date"]').forEach((dateInput) => {
+                // Input'a tıklandığında picker açılsın
+                dateInput.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    if (this.showPicker) {
+                        this.showPicker();
+                    }
+                });
+
+                // Label'a tıklandığında da picker açılsın
+                const labelFor = dateInput.getAttribute('id') || dateInput.getAttribute('name');
+                if (labelFor) {
+                    const label = document.querySelector(`label[for="${labelFor}"]`);
+                    if (label) {
+                        label.style.cursor = 'pointer';
+                        label.addEventListener('click', function(e) {
+                            e.stopPropagation();
+                            if (dateInput.showPicker) {
+                                dateInput.showPicker();
+                            } else {
+                                dateInput.focus();
+                            }
+                        });
+                    }
+                }
+            });
+
+            // Time input'lar
+            document.querySelectorAll('input[type="time"]').forEach((timeInput) => {
+                // Input'a tıklandığında picker açılsın
+                timeInput.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    if (this.showPicker) {
+                        this.showPicker();
+                    }
+                });
+
+                // Label'a tıklandığında da picker açılsın
+                const labelFor = timeInput.getAttribute('id') || timeInput.getAttribute('name');
+                if (labelFor) {
+                    const label = document.querySelector(`label[for="${labelFor}"]`);
+                    if (label) {
+                        label.style.cursor = 'pointer';
+                        label.addEventListener('click', function(e) {
+                            e.stopPropagation();
+                            if (timeInput.showPicker) {
+                                timeInput.showPicker();
+                            } else {
+                                timeInput.focus();
+                            }
+                        });
+                    }
+                }
+            });
+        });
     </script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>

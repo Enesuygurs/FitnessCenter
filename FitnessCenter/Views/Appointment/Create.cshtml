@@ -454,22 +454,8 @@
             updateSummary();
         });
 
-        // Date input'un tüm kutucuğuna tıklandığında picker açılsın
-        const dateInput = document.getElementById('dateSelect');
-        dateInput.addEventListener('click', function() {
-            if (dateInput.showPicker) {
-                dateInput.showPicker();
-            }
-        });
-
-        // Label'a tıklandığında da picker açılsın
-        document.querySelector('label[for="AppointmentDate"]').addEventListener('click', function(e) {
-            if (dateInput.showPicker) {
-                dateInput.showPicker();
-            }
-        });
-
         // Tarih değişikliğinde Türkçe görünümünü güncelle
+        const dateInput = document.getElementById('dateSelect');
         dateInput.addEventListener('change', function() {
             if (this.value) {
                 const date = new Date(this.value + 'T00:00:00');
