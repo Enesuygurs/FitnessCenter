@@ -560,8 +560,28 @@ namespace FitnessCenter.Controllers
             var user = await _userManager.FindByIdAsync(id);
             if (user != null)
             {
-                await _userManager.DeleteAsync(user);
-                TempData["Success"] = "Üye başarıyla silindi.";
+                // 1️⃣ Önce üyenin tüm randevularını sil
+                var appointments = await _context.Appointments
+                    .Where(a => a.UserId == id)
+                    .ToListAsync();
+                
+                if (appointments.Any())
+                {
+                    _context.Appointments.RemoveRange(appointments);
+                    await _context.SaveChangesAsync();
+                }
+
+                // 2️⃣ Sonra üyeyi sil
+                var result = await _userManager.DeleteAsync(user);
+                
+                if (result.Succeeded)
+                {
+                    TempData["Success"] = "Üye ve ilişkili tüm randevuları başarıyla silindi.";
+                }
+                else
+                {
+                    TempData["Error"] = "Üye silinirken bir hata oluştu.";
+                }
             }
             return RedirectToAction(nameof(Members));
         }
