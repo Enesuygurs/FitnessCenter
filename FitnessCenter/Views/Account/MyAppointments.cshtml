@@ -98,6 +98,33 @@
         color: #00d26a;
         font-size: 1.1rem;
     }
+    
+    .badge-status {
+        padding: 6px 12px;
+        border-radius: 8px;
+        font-weight: 500;
+        font-size: 0.8rem;
+    }
+
+    .badge-pending {
+        background: rgba(245, 158, 11, 0.15);
+        color: #f59e0b;
+    }
+
+    .badge-confirmed {
+        background: rgba(0, 210, 106, 0.15);
+        color: #00d26a;
+    }
+
+    .badge-cancelled {
+        background: rgba(239, 68, 68, 0.15);
+        color: #ef4444;
+    }
+
+    .badge-completed {
+        background: rgba(59, 130, 246, 0.15);
+        color: #3b82f6;
+    }
     .appointment-card .card-text .line-item span {
         flex: 1 1 auto;
         display: inline-block;
@@ -170,11 +197,11 @@
                             @{
                                 var badgeClass = appointment.Status switch
                                 {
-                                    FitnessCenter.Models.AppointmentStatus.Pending => "bg-warning text-dark",
-                                    FitnessCenter.Models.AppointmentStatus.Confirmed => "bg-success",
-                                    FitnessCenter.Models.AppointmentStatus.Cancelled => "bg-danger",
-                                    FitnessCenter.Models.AppointmentStatus.Completed => "bg-info",
-                                    _ => "bg-secondary"
+                                    FitnessCenter.Models.AppointmentStatus.Pending => "badge-status badge-pending",
+                                    FitnessCenter.Models.AppointmentStatus.Confirmed => "badge-status badge-confirmed",
+                                    FitnessCenter.Models.AppointmentStatus.Cancelled => "badge-status badge-cancelled",
+                                    FitnessCenter.Models.AppointmentStatus.Completed => "badge-status badge-completed",
+                                    _ => "badge-status"
                                 };
                                 var statusText = appointment.Status switch
                                 {
