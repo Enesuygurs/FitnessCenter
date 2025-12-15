@@ -309,13 +309,15 @@
                         <!-- Tarih Seçimi -->
                         <div class="mb-4">
                             <label asp-for="AppointmentDate" class="form-label">
-                                <i class="bi bi-calendar-date"></i> Tarih Seçin
+                                <i class="bi bi-calendar-date"></i> Tarih Seçin (GG/AA/YYYY)
                             </label>
                             <input asp-for="AppointmentDate" type="date" class="form-control" id="dateSelect"
                                    min="@DateTime.Today.ToString("yyyy-MM-dd")" 
                                    max="@DateTime.Today.AddMonths(1).ToString("yyyy-MM-dd")" required
-                                   data-val="true" data-val-required="Tarih seçimi zorunludur.">
+                                   data-val="true" data-val-required="Tarih seçimi zorunludur."
+                                   placeholder="GG/AA/YYYY">
                             <span asp-validation-for="AppointmentDate" class="text-danger"></span>
+                            <small class="text-muted mt-2 d-block">Bugünden itibaren 1 ay içinde tarih seçebilirsiniz.</small>
                         </div>
 
                         <!-- Saat Seçimi -->
