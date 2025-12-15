@@ -454,6 +454,39 @@
             updateSummary();
         });
 
+        // Date input'un tüm kutucuğuna tıklandığında picker açılsın
+        const dateInput = document.getElementById('dateSelect');
+        dateInput.addEventListener('click', function() {
+            if (dateInput.showPicker) {
+                dateInput.showPicker();
+            }
+        });
+
+        // Label'a tıklandığında da picker açılsın
+        document.querySelector('label[for="AppointmentDate"]').addEventListener('click', function(e) {
+            if (dateInput.showPicker) {
+                dateInput.showPicker();
+            }
+        });
+
+        // Tarih değişikliğinde Türkçe görünümünü güncelle
+        dateInput.addEventListener('change', function() {
+            if (this.value) {
+                const date = new Date(this.value + 'T00:00:00');
+                const turkishDate = date.toLocaleDateString('tr-TR', { 
+                    day: 'numeric', 
+                    month: 'long', 
+                    year: 'numeric' 
+                });
+                document.getElementById('selectedDateTurkish').textContent = `Seçilen Tarih: ${turkishDate}`;
+                document.getElementById('selectedDateTurkish').style.color = '#00d26a';
+            } else {
+                document.getElementById('selectedDateTurkish').textContent = 'Tarih seçili değil';
+                document.getElementById('selectedDateTurkish').style.color = '#888';
+            }
+            updateSummary();
+        });
+
         // Service ve time değişikliklerinde özeti güncelle
         document.getElementById('serviceSelect').addEventListener('change', updateSummary);
         document.getElementById('timeSelect').addEventListener('change', updateSummary);
