@@ -307,4 +307,48 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    
+    <script>
+        // Açılış saati - tıklayınca picker açılsın
+        const openingTimeInput = document.getElementById('OpeningTime');
+        if (openingTimeInput) {
+            openingTimeInput.addEventListener('click', function() {
+                if (this.showPicker) {
+                    this.showPicker();
+                }
+            });
+
+            // Label'a tıklandığında da picker açılsın
+            const openingLabel = document.querySelector('label[for="OpeningTime"]');
+            if (openingLabel) {
+                openingLabel.style.cursor = 'pointer';
+                openingLabel.addEventListener('click', function(e) {
+                    if (openingTimeInput.showPicker) {
+                        openingTimeInput.showPicker();
+                    }
+                });
+            }
+        }
+
+        // Kapanış saati - tıklayınca picker açılsın
+        const closingTimeInput = document.getElementById('ClosingTime');
+        if (closingTimeInput) {
+            closingTimeInput.addEventListener('click', function() {
+                if (this.showPicker) {
+                    this.showPicker();
+                }
+            });
+
+            // Label'a tıklandığında da picker açılsın
+            const closingLabel = document.querySelector('label[for="ClosingTime"]');
+            if (closingLabel) {
+                closingLabel.style.cursor = 'pointer';
+                closingLabel.addEventListener('click', function(e) {
+                    if (closingTimeInput.showPicker) {
+                        closingTimeInput.showPicker();
+                    }
+                });
+            }
+        }
+    </script>
 }
