@@ -26,15 +26,25 @@ public class HomeController : Controller
 
     public async Task<IActionResult> Index()
     {
-        var gym = await _context.Gyms.FirstOrDefaultAsync();
+        // Gym seç (sadece active olan ilki)
+        var gym = await _context.Gyms
+            .Where(g => g.IsActive)
+            .OrderBy(g => g.Id)
+            .FirstOrDefaultAsync();
+
+        // Featured services - OrderBy ile consistent sonuç
         var featuredServices = await _context.Services
             .Where(s => s.IsActive)
+            .OrderBy(s => s.Id)
             .Take(6)
             .ToListAsync();
+
+        // Featured trainers - OrderBy ile consistent sonuç
         var featuredTrainers = await _context.Trainers
             .Include(t => t.TrainerServices)
                 .ThenInclude(ts => ts.Service)
             .Where(t => t.IsActive)
+            .OrderBy(t => t.Id)
             .Take(4)
             .ToListAsync();
 

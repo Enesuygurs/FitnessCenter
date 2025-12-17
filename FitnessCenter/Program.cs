@@ -71,9 +71,14 @@ if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
+    app.UseHttpsRedirection();
+}
+else
+{
+    // Development'ta HTTPS redirect'i devre dışı bırak (warning'i önle)
+    // app.UseHttpsRedirection();
 }
 
-app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
 
