@@ -4,8 +4,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FitnessCenter.Data
 {
+    // Veritabanı başlatıcı ve seed veri sınıfı
     public static class DbInitializer
     {
+        // Ana başlatma metodu
         public static async Task InitializeAsync(IServiceProvider serviceProvider)
         {
             using var scope = serviceProvider.CreateScope();
@@ -13,19 +15,20 @@ namespace FitnessCenter.Data
             var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
             var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
 
-            // Apply pending migrations
+            // Bekleyen migration'ları uygula
             await context.Database.MigrateAsync();
 
-            // Seed roles
+            // Rolleri oluştur
             await SeedRolesAsync(roleManager);
 
-            // Seed admin user
+            // Admin kullanıcısını oluştur
             await SeedAdminUserAsync(userManager);
 
-            // Seed gym data
+            // Spor salonu verilerini oluştur
             await SeedGymDataAsync(context);
         }
 
+        // Rolleri oluştur
         private static async Task SeedRolesAsync(RoleManager<IdentityRole> roleManager)
         {
             string[] roles = { "Admin", "Member" };
@@ -39,6 +42,7 @@ namespace FitnessCenter.Data
             }
         }
 
+        // Admin ve demo kullanıcılarını oluştur
         private static async Task SeedAdminUserAsync(UserManager<ApplicationUser> userManager)
         {
             // Admin kullanıcısı: g231210302@sakarya.edu.tr / sau

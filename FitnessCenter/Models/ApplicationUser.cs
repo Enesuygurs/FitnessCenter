@@ -42,7 +42,7 @@ namespace FitnessCenter.Models
         [Display(Name = "Ad Soyad")]
         public string FullName => $"{FirstName} {LastName}";
 
-        // Navigation properties
+        // İlişkili tablolar
         public virtual ICollection<Appointment> Appointments { get; set; } = new List<Appointment>();
     }
 }

@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FitnessCenter.Models
 {
-    // Many-to-Many relationship between Trainer and Service
+    // Antrenör-Hizmet çoka çok ilişki tablosu
     public class TrainerService
     {
         public int Id { get; set; }
@@ -13,7 +13,7 @@ namespace FitnessCenter.Models
         [Required]
         public int ServiceId { get; set; }
 
-        // Navigation properties
+        // İlişkili tablolar
         public virtual Trainer? Trainer { get; set; }
         public virtual Service? Service { get; set; }
     }

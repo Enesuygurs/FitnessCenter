@@ -25,7 +25,7 @@ namespace FitnessCenter.Models
         [Display(Name = "Müsait")]
         public bool IsAvailable { get; set; } = true;
 
-        // Navigation property
+        // İlişkili tablo
         public virtual Trainer? Trainer { get; set; }
     }
 }

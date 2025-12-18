@@ -5,38 +5,38 @@ using FitnessCenter.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
-// .env dosyasını yükle
+// Ortam değişkenlerini yükle
 Env.Load();
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// MVC servislerini ekle
 builder.Services.AddControllersWithViews();
 
-// Add DbContext with SQL Server
+// Veritabanı bağlantısını yapılandır
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Add Identity
+// Identity sistemini yapılandır
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 {
-    // Password settings
+    // Şifre gereksinimleri
     options.Password.RequireDigit = false;
     options.Password.RequireLowercase = false;
     options.Password.RequireUppercase = false;
     options.Password.RequireNonAlphanumeric = false;
     options.Password.RequiredLength = 3;
     
-    // User settings
+    // Kullanıcı ayarları
     options.User.RequireUniqueEmail = true;
     
-    // SignIn settings
+    // Giriş ayarları
     options.SignIn.RequireConfirmedEmail = false;
 })
 .AddEntityFrameworkStores<ApplicationDbContext>()
 .AddDefaultTokenProviders();
 
-// Configure cookie settings
+// Çerez ayarlarını yapılandır
 builder.Services.ConfigureApplicationCookie(options =>
 {
     options.LoginPath = "/Account/Login";
@@ -46,12 +46,12 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.SlidingExpiration = true;
 });
 
-// Add HttpClient for AI Service
+// AI servisi için HttpClient ekle
 builder.Services.AddHttpClient<IAIService, AIService>();
 
 var app = builder.Build();
 
-// Initialize database
+// Veritabanını başlat ve seed verilerini ekle
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
@@ -62,29 +62,26 @@ using (var scope = app.Services.CreateScope())
     catch (Exception ex)
     {
         var logger = services.GetRequiredService<ILogger<Program>>();
-        logger.LogError(ex, "An error occurred while seeding the database.");
+        logger.LogError(ex, "Veritabanı başlatılırken hata oluştu.");
     }
 }
 
-// Configure the HTTP request pipeline.
+// HTTP pipeline yapılandırması
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
     app.UseHttpsRedirection();
 }
-else
-{
-    // Development'ta HTTPS redirect'i devre dışı bırak (warning'i önle)
-    // app.UseHttpsRedirection();
-}
 
 app.UseStaticFiles();
 app.UseRouting();
 
+// Kimlik doğrulama ve yetkilendirme
 app.UseAuthentication();
 app.UseAuthorization();
 
+// Route tanımlamaları
 app.MapControllerRoute(
     name: "areas",
     pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");

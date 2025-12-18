@@ -43,7 +43,7 @@ namespace FitnessCenter.Models
         [Display(Name = "Aktif")]
         public bool IsActive { get; set; } = true;
 
-        // Navigation properties
+        // İlişkili tablolar
         public virtual ICollection<Service> Services { get; set; } = new List<Service>();
         public virtual ICollection<Trainer> Trainers { get; set; } = new List<Trainer>();
     }

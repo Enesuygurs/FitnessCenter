@@ -33,7 +33,7 @@ namespace FitnessCenter.Models.ViewModels
         [StringLength(1000)]
         public string? HealthConditions { get; set; }
 
-        // Result
+        // Öneri sonucu
         public string? Recommendation { get; set; }
         public bool HasRecommendation => !string.IsNullOrEmpty(Recommendation);
     }

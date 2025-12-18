@@ -35,12 +35,12 @@ namespace FitnessCenter.Models
         [Display(Name = "Aktif")]
         public bool IsActive { get; set; } = true;
 
-        // Foreign Key
+        // Yabancı anahtar
         [Required]
         [Display(Name = "Spor Salonu")]
         public int GymId { get; set; }
 
-        // Navigation properties
+        // İlişkili tablolar
         public virtual Gym? Gym { get; set; }
         public virtual ICollection<TrainerService> TrainerServices { get; set; } = new List<TrainerService>();
         public virtual ICollection<Appointment> Appointments { get; set; } = new List<Appointment>();

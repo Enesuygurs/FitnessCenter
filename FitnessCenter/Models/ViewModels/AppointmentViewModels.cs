@@ -26,7 +26,7 @@ namespace FitnessCenter.Models.ViewModels
         [StringLength(1000, ErrorMessage = "Notlar en fazla 1000 karakter olabilir")]
         public string? Notes { get; set; }
 
-        // For dropdown lists
+        // Açılır liste verileri
         public List<Trainer>? Trainers { get; set; }
         public List<Service>? Services { get; set; }
     }

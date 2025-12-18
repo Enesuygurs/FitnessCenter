@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FitnessCenter.Data
 {
+    // Uygulama veritabanı bağlam sınıfı
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
@@ -12,6 +13,7 @@ namespace FitnessCenter.Data
         {
         }
 
+        // Veritabanı tabloları
         public DbSet<Gym> Gyms { get; set; }
         public DbSet<Service> Services { get; set; }
         public DbSet<Trainer> Trainers { get; set; }
@@ -23,7 +25,7 @@ namespace FitnessCenter.Data
         {
             base.OnModelCreating(builder);
 
-            // Gym configuration
+            // Spor salonu yapılandırması
             builder.Entity<Gym>(entity =>
             {
                 entity.HasKey(g => g.Id);
@@ -32,7 +34,7 @@ namespace FitnessCenter.Data
                 entity.Property(g => g.Phone).IsRequired().HasMaxLength(20);
             });
 
-            // Service configuration
+            // Hizmet yapılandırması
             builder.Entity<Service>(entity =>
             {
                 entity.HasKey(s => s.Id);
@@ -44,7 +46,7 @@ namespace FitnessCenter.Data
                       .OnDelete(DeleteBehavior.Restrict);
             });
 
-            // Trainer configuration
+            // Antrenör yapılandırması
             builder.Entity<Trainer>(entity =>
             {
                 entity.HasKey(t => t.Id);
@@ -57,7 +59,7 @@ namespace FitnessCenter.Data
                       .OnDelete(DeleteBehavior.Restrict);
             });
 
-            // TrainerService (Many-to-Many) configuration
+            // Antrenör-Hizmet çoka çok ilişki yapılandırması
             builder.Entity<TrainerService>(entity =>
             {
                 entity.HasKey(ts => ts.Id);
@@ -71,7 +73,7 @@ namespace FitnessCenter.Data
                       .OnDelete(DeleteBehavior.Cascade);
             });
 
-            // TrainerAvailability configuration
+            // Antrenör müsaitlik yapılandırması
             builder.Entity<TrainerAvailability>(entity =>
             {
                 entity.HasKey(ta => ta.Id);
@@ -81,7 +83,7 @@ namespace FitnessCenter.Data
                       .OnDelete(DeleteBehavior.Cascade);
             });
 
-            // Appointment configuration
+            // Randevu yapılandırması
             builder.Entity<Appointment>(entity =>
             {
                 entity.HasKey(a => a.Id);

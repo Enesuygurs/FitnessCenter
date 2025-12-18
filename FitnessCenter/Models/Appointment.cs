@@ -49,7 +49,7 @@ namespace FitnessCenter.Models
         [DataType(DataType.Currency)]
         public decimal TotalPrice { get; set; }
 
-        // Foreign Keys
+        // Yabancı anahtarlar
         [Required]
         [Display(Name = "Üye")]
         public string UserId { get; set; } = string.Empty;
@@ -62,7 +62,7 @@ namespace FitnessCenter.Models
         [Display(Name = "Hizmet")]
         public int ServiceId { get; set; }
 
-        // Navigation properties
+        // İlişkili tablolar
         public virtual ApplicationUser? User { get; set; }
         public virtual Trainer? Trainer { get; set; }
         public virtual Service? Service { get; set; }

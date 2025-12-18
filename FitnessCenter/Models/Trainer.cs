@@ -52,12 +52,12 @@ namespace FitnessCenter.Models
         [Range(0, 50, ErrorMessage = "Deneyim 0-50 yıl arasında olmalıdır")]
         public int? ExperienceYears { get; set; }
 
-        // Foreign Key
+        // Yabancı anahtar
         [Required]
         [Display(Name = "Spor Salonu")]
         public int GymId { get; set; }
 
-        // Navigation properties
+        // İlişkili tablolar
         public virtual Gym? Gym { get; set; }
         public virtual ICollection<TrainerService> TrainerServices { get; set; } = new List<TrainerService>();
         public virtual ICollection<Appointment> Appointments { get; set; } = new List<Appointment>();
