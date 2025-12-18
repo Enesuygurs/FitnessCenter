@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FitnessCenter.Controllers
 {
+    // Kullanıcı hesap işlemleri controller sınıfı
     public class AccountController : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;
@@ -23,7 +24,7 @@ namespace FitnessCenter.Controllers
             _context = context;
         }
 
-        // GET: /Account/Register
+        // Kayıt sayfası
         [HttpGet]
         public IActionResult Register()
         {
@@ -34,7 +35,7 @@ namespace FitnessCenter.Controllers
             return View();
         }
 
-        // POST: /Account/Register
+        // Kayıt işlemi
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(RegisterViewModel model)
@@ -55,7 +56,7 @@ namespace FitnessCenter.Controllers
 
                 if (result.Succeeded)
                 {
-                    // Assign Member role by default
+                    // Varsayılan olarak Member rolü ata
                     await _userManager.AddToRoleAsync(user, "Member");
                     
                     await _signInManager.SignInAsync(user, isPersistent: false);
@@ -72,7 +73,7 @@ namespace FitnessCenter.Controllers
             return View(model);
         }
 
-        // GET: /Account/Login
+        // Giriş sayfası
         [HttpGet]
         public IActionResult Login(string? returnUrl = null)
         {
@@ -84,7 +85,7 @@ namespace FitnessCenter.Controllers
             return View();
         }
 
-        // POST: /Account/Login
+        // Giriş işlemi
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginViewModel model, string? returnUrl = null)
@@ -121,7 +122,7 @@ namespace FitnessCenter.Controllers
             return View(model);
         }
 
-        // POST: /Account/Logout
+        // Çıkış işlemi
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Logout()
@@ -131,7 +132,7 @@ namespace FitnessCenter.Controllers
             return RedirectToAction("Index", "Home");
         }
 
-        // GET: /Account/Profile
+        // Profil sayfası
         [HttpGet]
         public async Task<IActionResult> Profile()
         {
@@ -163,7 +164,7 @@ namespace FitnessCenter.Controllers
             return View(model);
         }
 
-        // POST: /Account/Profile
+        // Profil güncelleme işlemi
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Profile(ProfileViewModel model)
@@ -206,14 +207,14 @@ namespace FitnessCenter.Controllers
             return View(model);
         }
 
-        // GET: /Account/AccessDenied
+        // Erişim engellendi sayfası
         [HttpGet]
         public IActionResult AccessDenied()
         {
             return View();
         }
 
-        // GET: /Account/MyAppointments
+        // Kullanıcının randevuları
         [HttpGet]
         public async Task<IActionResult> MyAppointments()
         {

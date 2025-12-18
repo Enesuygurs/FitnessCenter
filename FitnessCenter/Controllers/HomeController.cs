@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FitnessCenter.Controllers;
 
+// Ana sayfa controller sınıfı
 public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
@@ -24,22 +25,23 @@ public class HomeController : Controller
         _userManager = userManager;
     }
 
+    // Ana sayfa
     public async Task<IActionResult> Index()
     {
-        // Gym seç (sadece active olan ilki)
+        // Aktif spor salonunu getir
         var gym = await _context.Gyms
             .Where(g => g.IsActive)
             .OrderBy(g => g.Id)
             .FirstOrDefaultAsync();
 
-        // Featured services - OrderBy ile consistent sonuç
+        // Öne çıkan hizmetleri getir
         var featuredServices = await _context.Services
             .Where(s => s.IsActive)
             .OrderBy(s => s.Id)
             .Take(6)
             .ToListAsync();
 
-        // Featured trainers - OrderBy ile consistent sonuç
+        // Öne çıkan antrenörleri getir
         var featuredTrainers = await _context.Trainers
             .Include(t => t.TrainerServices)
                 .ThenInclude(ts => ts.Service)
@@ -60,21 +62,25 @@ public class HomeController : Controller
         return View(model);
     }
 
+    // Hakkımızda sayfası
     public IActionResult About()
     {
         return View();
     }
 
+    // İletişim sayfası
     public IActionResult Contact()
     {
         return View();
     }
 
+    // Gizlilik politikası sayfası
     public IActionResult Privacy()
     {
         return View();
     }
 
+    // Hata sayfası
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error()
     {

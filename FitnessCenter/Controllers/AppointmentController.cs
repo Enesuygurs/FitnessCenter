@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FitnessCenter.Controllers
 {
+    // Randevu controller sınıfı
     public class AppointmentController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -19,7 +20,7 @@ namespace FitnessCenter.Controllers
             _userManager = userManager;
         }
 
-        // GET: /Appointment
+        // Randevu listesi
         [Authorize]
         public async Task<IActionResult> Index()
         {
@@ -41,7 +42,7 @@ namespace FitnessCenter.Controllers
             return View(appointments);
         }
 
-        // GET: /Appointment/Create
+        // Randevu oluşturma sayfası
         [Authorize]
         public async Task<IActionResult> Create(int? trainerId = null, int? serviceId = null)
         {
@@ -70,7 +71,7 @@ namespace FitnessCenter.Controllers
             return View(model);
         }
 
-        // POST: /Appointment/Create
+        // Randevu oluşturma işlemi
         [HttpPost]
         [Authorize]
         [ValidateAntiForgeryToken]
@@ -103,14 +104,14 @@ namespace FitnessCenter.Controllers
                 return RedirectToAction("Login", "Account");
             }
 
-            // Check if appointment date is in the past
+            // Geçmiş tarih kontrolü
             if (model.AppointmentDate.Date < DateTime.Today)
             {
                 ModelState.AddModelError("AppointmentDate", "Randevu tarihi geçmişte olamaz.");
                 return View(model);
             }
 
-            // Get the service to calculate end time and price
+            // Hizmeti bul ve bitiş saati/fiyat hesapla
             var service = await _context.Services.FindAsync(model.ServiceId);
             if (service == null)
             {
@@ -118,7 +119,7 @@ namespace FitnessCenter.Controllers
                 return View(model);
             }
 
-            // Check if trainer provides this service
+            // Antrenörün bu hizmeti sunup sunmadığını kontrol et
             var trainerProvidesService = await _context.TrainerServices
                 .AnyAsync(ts => ts.TrainerId == model.TrainerId && ts.ServiceId == model.ServiceId);
             
@@ -130,7 +131,7 @@ namespace FitnessCenter.Controllers
 
             var endTime = model.AppointmentTime.Add(TimeSpan.FromMinutes(service.DurationMinutes));
 
-            // Check for conflicting appointments for the same trainer
+            // Randevu çakışması kontrolü
             var hasConflict = await _context.Appointments
                 .Where(a => a.TrainerId == model.TrainerId &&
                            a.AppointmentDate.Date == model.AppointmentDate.Date &&
@@ -146,7 +147,7 @@ namespace FitnessCenter.Controllers
                 return View(model);
             }
 
-            // Check trainer availability (if availability records exist)
+            // Antrenör müsaitlik kontrolü
             var dayOfWeek = model.AppointmentDate.DayOfWeek;
             var hasAvailabilityRecords = await _context.TrainerAvailabilities
                 .Where(ta => ta.TrainerId == model.TrainerId)
@@ -169,6 +170,7 @@ namespace FitnessCenter.Controllers
                 }
             }
 
+            // Randevuyu oluştur
             var appointment = new Appointment
             {
                 UserId = user.Id,
@@ -190,7 +192,7 @@ namespace FitnessCenter.Controllers
             return RedirectToAction("MyAppointments", "Account");
         }
 
-        // GET: /Appointment/Details/5
+        // Randevu detayı
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -210,7 +212,7 @@ namespace FitnessCenter.Controllers
                 return NotFound();
             }
 
-            // Check if user is authorized to view this appointment
+            // Yetki kontrolü
             var user = await _userManager.GetUserAsync(User);
             if (user != null && appointment.UserId != user.Id && !User.IsInRole("Admin"))
             {
@@ -220,7 +222,7 @@ namespace FitnessCenter.Controllers
             return View(appointment);
         }
 
-        // POST: /Appointment/Cancel/5
+        // Randevu iptal işlemi
         [HttpPost]
         [Authorize]
         [ValidateAntiForgeryToken]
@@ -238,13 +240,13 @@ namespace FitnessCenter.Controllers
                 return NotFound();
             }
 
-            // Check if user owns this appointment or is admin
+            // Yetki kontrolü
             if (appointment.UserId != user.Id && !User.IsInRole("Admin"))
             {
                 return Forbid();
             }
 
-            // Can only cancel pending or confirmed appointments
+            // Sadece bekleyen veya onaylı randevular iptal edilebilir
             if (appointment.Status == AppointmentStatus.Completed ||
                 appointment.Status == AppointmentStatus.Cancelled)
             {
@@ -259,7 +261,7 @@ namespace FitnessCenter.Controllers
             return RedirectToAction("MyAppointments", "Account");
         }
 
-        // GET: /Appointment/GetAvailableSlots
+        // Müsait zaman dilimleri
         [HttpGet]
         public async Task<IActionResult> GetAvailableSlots(int trainerId, int serviceId, DateTime date)
         {
@@ -279,7 +281,7 @@ namespace FitnessCenter.Controllers
                 return Json(new { error = "Antrenör bu gün çalışmıyor" });
             }
 
-            // Get existing appointments for this trainer on this date
+            // Bu tarihte mevcut randevuları getir
             var existingAppointments = await _context.Appointments
                 .Where(a => a.TrainerId == trainerId &&
                            a.AppointmentDate.Date == date.Date &&
@@ -299,7 +301,7 @@ namespace FitnessCenter.Controllers
                     (slotEnd > a.AppointmentTime && slotEnd <= a.EndTime) ||
                     (currentTime <= a.AppointmentTime && slotEnd >= a.EndTime));
 
-                // Don't show past slots for today
+                // Bugün için geçmiş saatleri gösterme
                 if (date.Date == DateTime.Today && currentTime < DateTime.Now.TimeOfDay)
                 {
                     isAvailable = false;
@@ -312,13 +314,13 @@ namespace FitnessCenter.Controllers
                     IsAvailable = isAvailable
                 });
 
-                currentTime = currentTime.Add(TimeSpan.FromMinutes(30)); // 30 minute intervals
+                currentTime = currentTime.Add(TimeSpan.FromMinutes(30));
             }
 
             return Json(slots);
         }
 
-        // GET: /Appointment/GetTrainerServices
+        // Antrenörün sunduğu hizmetler
         [HttpGet]
         public async Task<IActionResult> GetTrainerServices(int trainerId)
         {

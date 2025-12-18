@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FitnessCenter.Controllers
 {
+    // AI fitness önerileri controller sınıfı
     public class AIController : Controller
     {
         private readonly IAIService _aiService;
@@ -19,12 +20,12 @@ namespace FitnessCenter.Controllers
             _userManager = userManager;
         }
 
-        // GET: /AI
+        // AI öneri sayfası
         public async Task<IActionResult> Index()
         {
             var model = new AIRecommendationViewModel();
 
-            // Kullanıcı giriş yapmışsa profil bilgilerini otomatik doldur
+            // Giriş yapmış kullanıcının profil bilgilerini doldur
             if (User.Identity?.IsAuthenticated == true)
             {
                 var user = await _userManager.GetUserAsync(User);
@@ -41,7 +42,7 @@ namespace FitnessCenter.Controllers
             return View(model);
         }
 
-        // POST: /AI/GetRecommendation
+        // AI'dan öneri al
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> GetRecommendation(AIRecommendationViewModel model)

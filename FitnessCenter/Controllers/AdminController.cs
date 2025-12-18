@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FitnessCenter.Controllers
 {
+    // Admin panel controller sınıfı
     [Authorize(Roles = "Admin")]
     public class AdminController : Controller
     {
@@ -20,7 +21,7 @@ namespace FitnessCenter.Controllers
             _userManager = userManager;
         }
 
-        // GET: /Admin
+        // Admin ana sayfa / Dashboard
         public async Task<IActionResult> Index()
         {
             var totalMembers = await _userManager.Users.CountAsync();
@@ -64,22 +65,22 @@ namespace FitnessCenter.Controllers
             return View(model);
         }
 
-        #region Gym Management
+        #region Spor Salonu Yönetimi
 
-        // GET: /Admin/Gyms
+        // Spor salonu listesi
         public async Task<IActionResult> Gyms()
         {
             var gyms = await _context.Gyms.ToListAsync();
             return View(gyms);
         }
 
-        // GET: /Admin/CreateGym
+        // Spor salonu oluşturma sayfası
         public IActionResult CreateGym()
         {
             return View();
         }
 
-        // POST: /Admin/CreateGym
+        // Spor salonu oluşturma işlemi
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateGym(Gym gym)
@@ -94,7 +95,7 @@ namespace FitnessCenter.Controllers
             return View(gym);
         }
 
-        // GET: /Admin/EditGym/5
+        // Spor salonu düzenleme sayfası
         public async Task<IActionResult> EditGym(int? id)
         {
             if (id == null)
@@ -110,7 +111,7 @@ namespace FitnessCenter.Controllers
             return View(gym);
         }
 
-        // POST: /Admin/EditGym/5
+        // Spor salonu düzenleme işlemi
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditGym(int id, Gym gym)
@@ -141,7 +142,7 @@ namespace FitnessCenter.Controllers
             return View(gym);
         }
 
-        // POST: /Admin/DeleteGym/5
+        // Spor salonu silme işlemi
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteGym(int id)
@@ -158,9 +159,9 @@ namespace FitnessCenter.Controllers
 
         #endregion
 
-        #region Service Management
+        #region Hizmet Yönetimi
 
-        // GET: /Admin/Services
+        // Hizmet listesi
         public async Task<IActionResult> Services()
         {
             var services = await _context.Services
@@ -169,14 +170,14 @@ namespace FitnessCenter.Controllers
             return View(services);
         }
 
-        // GET: /Admin/CreateService
+        // Hizmet oluşturma sayfası
         public async Task<IActionResult> CreateService()
         {
             ViewBag.Gyms = await _context.Gyms.Where(g => g.IsActive).ToListAsync();
             return View();
         }
 
-        // POST: /Admin/CreateService
+        // Hizmet oluşturma işlemi
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateService(Service service)
@@ -192,7 +193,7 @@ namespace FitnessCenter.Controllers
             return View(service);
         }
 
-        // GET: /Admin/EditService/5
+        // Hizmet düzenleme sayfası
         public async Task<IActionResult> EditService(int? id)
         {
             if (id == null)
@@ -209,7 +210,7 @@ namespace FitnessCenter.Controllers
             return View(service);
         }
 
-        // POST: /Admin/EditService/5
+        // Hizmet düzenleme işlemi
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditService(int id, Service service)
@@ -241,7 +242,7 @@ namespace FitnessCenter.Controllers
             return View(service);
         }
 
-        // POST: /Admin/DeleteService/5
+        // Hizmet silme işlemi
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteService(int id)
@@ -258,9 +259,9 @@ namespace FitnessCenter.Controllers
 
         #endregion
 
-        #region Trainer Management
+        #region Antrenör Yönetimi
 
-        // GET: /Admin/Trainers
+        // Antrenör listesi
         public async Task<IActionResult> Trainers()
         {
             var trainers = await _context.Trainers
@@ -271,7 +272,7 @@ namespace FitnessCenter.Controllers
             return View(trainers);
         }
 
-        // GET: /Admin/CreateTrainer
+        // Antrenör oluşturma sayfası
         public async Task<IActionResult> CreateTrainer()
         {
             ViewBag.Gyms = await _context.Gyms.Where(g => g.IsActive).ToListAsync();
@@ -279,7 +280,7 @@ namespace FitnessCenter.Controllers
             return View();
         }
 
-        // POST: /Admin/CreateTrainer
+        // Antrenör oluşturma işlemi
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateTrainer(Trainer trainer, int[] selectedServices)
@@ -289,7 +290,7 @@ namespace FitnessCenter.Controllers
                 _context.Trainers.Add(trainer);
                 await _context.SaveChangesAsync();
 
-                // Add trainer services
+                // Antrenör hizmetlerini ekle
                 if (selectedServices != null)
                 {
                     foreach (var serviceId in selectedServices)
@@ -311,7 +312,7 @@ namespace FitnessCenter.Controllers
             return View(trainer);
         }
 
-        // GET: /Admin/EditTrainer/5
+        // Antrenör düzenleme sayfası
         public async Task<IActionResult> EditTrainer(int? id)
         {
             if (id == null)
@@ -334,7 +335,7 @@ namespace FitnessCenter.Controllers
             return View(trainer);
         }
 
-        // POST: /Admin/EditTrainer/5
+        // Antrenör düzenleme işlemi
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditTrainer(int id, Trainer trainer, int[] selectedServices)
@@ -350,7 +351,7 @@ namespace FitnessCenter.Controllers
                 {
                     _context.Update(trainer);
 
-                    // Update trainer services
+                    // Antrenör hizmetlerini güncelle
                     var existingServices = await _context.TrainerServices
                         .Where(ts => ts.TrainerId == id)
                         .ToListAsync();
@@ -386,7 +387,7 @@ namespace FitnessCenter.Controllers
             return View(trainer);
         }
 
-        // POST: /Admin/DeleteTrainer/5
+        // Antrenör silme işlemi
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteTrainer(int id)
@@ -403,9 +404,9 @@ namespace FitnessCenter.Controllers
 
         #endregion
 
-        #region Appointment Management
+        #region Randevu Yönetimi
 
-        // GET: /Admin/Appointments
+        // Randevu listesi
         public async Task<IActionResult> Appointments(AppointmentStatus? status = null)
         {
             var query = _context.Appointments
@@ -428,7 +429,7 @@ namespace FitnessCenter.Controllers
             return View(appointments);
         }
 
-        // POST: /Admin/ConfirmAppointment/5
+        // Randevu onaylama işlemi
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ConfirmAppointment(int id)
@@ -443,7 +444,7 @@ namespace FitnessCenter.Controllers
             return RedirectToLocalRefererOrAppointments();
         }
 
-        // POST: /Admin/CancelAppointment/5
+        // Randevu iptal işlemi
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CancelAppointment(int id)
@@ -458,7 +459,7 @@ namespace FitnessCenter.Controllers
             return RedirectToLocalRefererOrAppointments();
         }
 
-        // POST: /Admin/CompleteAppointment/5
+        // Randevu tamamlama işlemi
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CompleteAppointment(int id)
@@ -473,7 +474,7 @@ namespace FitnessCenter.Controllers
             return RedirectToLocalRefererOrAppointments();
         }
 
-        // POST: /Admin/RevertAppointmentToPending/5
+        // Randevuyu beklemede durumuna geri al
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> RevertAppointmentToPending(int id)
@@ -488,7 +489,7 @@ namespace FitnessCenter.Controllers
             return RedirectToLocalRefererOrAppointments();
         }
 
-        // POST: /Admin/RevertAppointmentToConfirmed/5
+        // Randevuyu onaylı durumuna geri al
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> RevertAppointmentToConfirmed(int id)
@@ -503,7 +504,7 @@ namespace FitnessCenter.Controllers
             return RedirectToLocalRefererOrAppointments();
         }
 
-        // POST: /Admin/RevertCancelledToPending/5
+        // İptal edilen randevuyu beklemede durumuna geri al
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> RevertCancelledToPending(int id)
@@ -518,6 +519,7 @@ namespace FitnessCenter.Controllers
             return RedirectToLocalRefererOrAppointments();
         }
 
+        // Yönlendirme yardımcı metodu
         private IActionResult RedirectToLocalRefererOrAppointments()
         {
             var referer = Request.Headers["Referer"].ToString();
@@ -535,9 +537,9 @@ namespace FitnessCenter.Controllers
 
         #endregion
 
-        #region Member Management
+        #region Üye Yönetimi
 
-        // GET: /Admin/Members
+        // Üye listesi
         public async Task<IActionResult> Members()
         {
             var members = await _userManager.Users.ToListAsync();
@@ -552,7 +554,7 @@ namespace FitnessCenter.Controllers
             return View(memberList);
         }
 
-        // POST: /Admin/DeleteMember
+        // Üye silme işlemi
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteMember(string id)
@@ -560,7 +562,7 @@ namespace FitnessCenter.Controllers
             var user = await _userManager.FindByIdAsync(id);
             if (user != null)
             {
-                // 1️⃣ Önce üyenin tüm randevularını sil
+                // Önce üyenin tüm randevularını sil
                 var appointments = await _context.Appointments
                     .Where(a => a.UserId == id)
                     .ToListAsync();
@@ -571,7 +573,7 @@ namespace FitnessCenter.Controllers
                     await _context.SaveChangesAsync();
                 }
 
-                // 2️⃣ Sonra üyeyi sil
+                // Sonra üyeyi sil
                 var result = await _userManager.DeleteAsync(user);
                 
                 if (result.Succeeded)

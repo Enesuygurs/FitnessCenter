@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FitnessCenter.Controllers.Api
 {
+    // REST API controller sınıfı
     [Route("api/[controller]")]
     [ApiController]
     public class FitnessApiController : ControllerBase
@@ -16,12 +17,9 @@ namespace FitnessCenter.Controllers.Api
             _context = context;
         }
 
-        #region Trainers API
+        #region Antrenör API
 
-        /// <summary>
-        /// Tüm antrenörleri listeler
-        /// GET: api/FitnessApi/trainers
-        /// </summary>
+        // Tüm antrenörleri listele
         [HttpGet("trainers")]
         public async Task<ActionResult<IEnumerable<object>>> GetTrainers()
         {

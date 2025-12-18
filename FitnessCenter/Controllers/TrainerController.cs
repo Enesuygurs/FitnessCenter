@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FitnessCenter.Controllers
 {
+    // Antrenör controller sınıfı
     public class TrainerController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -13,7 +14,7 @@ namespace FitnessCenter.Controllers
             _context = context;
         }
 
-        // GET: /Trainer
+        // Antrenör listesi
         public async Task<IActionResult> Index()
         {
             var trainers = await _context.Trainers
@@ -26,7 +27,7 @@ namespace FitnessCenter.Controllers
             return View(trainers);
         }
 
-        // GET: /Trainer/Details/5
+        // Antrenör detayı
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
