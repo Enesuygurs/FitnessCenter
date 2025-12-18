@@ -97,13 +97,14 @@ namespace FitnessCenter.Data
             }
         }
 
+        // Spor salonu ve ilgili verileri oluştur
         private static async Task SeedGymDataAsync(ApplicationDbContext context)
         {
-            // Check if data already exists
+            // Veri zaten varsa çık
             if (await context.Gyms.AnyAsync())
                 return;
 
-            // Create Gym
+            // Spor salonu oluştur
             var gym = new Gym
             {
                 Name = "FitLife Spor Merkezi",
@@ -120,7 +121,7 @@ namespace FitnessCenter.Data
             context.Gyms.Add(gym);
             await context.SaveChangesAsync();
 
-            // Create Services
+            // Hizmetleri oluştur
             var services = new List<Service>
             {
                 new Service
@@ -194,7 +195,7 @@ namespace FitnessCenter.Data
             context.Services.AddRange(services);
             await context.SaveChangesAsync();
 
-            // Create Trainers
+            // Antrenörleri oluştur
             var trainers = new List<Trainer>
             {
                 new Trainer
@@ -262,7 +263,7 @@ namespace FitnessCenter.Data
             context.Trainers.AddRange(trainers);
             await context.SaveChangesAsync();
 
-            // Create TrainerServices (which trainer can provide which service)
+            // Antrenör-Hizmet ilişkilerini oluştur
             var trainerServices = new List<TrainerService>
             {
                 // Ahmet - Fitness, Kas Geliştirme, Kişisel Antrenman
@@ -287,11 +288,11 @@ namespace FitnessCenter.Data
             context.TrainerServices.AddRange(trainerServices);
             await context.SaveChangesAsync();
 
-            // Create TrainerAvailabilities
+            // Antrenör müsaitlik zamanlarını oluştur
             var availabilities = new List<TrainerAvailability>();
             foreach (var trainer in trainers)
             {
-                // Monday to Friday
+                // Pazartesi-Cuma
                 for (int day = 1; day <= 5; day++)
                 {
                     availabilities.Add(new TrainerAvailability
@@ -303,7 +304,7 @@ namespace FitnessCenter.Data
                         IsAvailable = true
                     });
                 }
-                // Saturday - shorter hours
+                // Cumartesi - kısa mesai
                 availabilities.Add(new TrainerAvailability
                 {
                     TrainerId = trainer.Id,
