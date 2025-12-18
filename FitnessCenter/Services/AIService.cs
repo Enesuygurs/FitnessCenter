@@ -4,11 +4,13 @@ using System.Text.Json;
 
 namespace FitnessCenter.Services
 {
+    // AI servisi arayüzü
     public interface IAIService
     {
         Task<string> GetFitnessRecommendationAsync(AIRecommendationViewModel model);
     }
 
+    // Google Gemini AI servisi
     public class AIService : IAIService
     {
         private readonly HttpClient _httpClient;
@@ -22,12 +24,13 @@ namespace FitnessCenter.Services
             _logger = logger;
         }
 
+        // Fitness önerisi al
         public async Task<string> GetFitnessRecommendationAsync(AIRecommendationViewModel model)
         {
-            // .env dosyasından API key'i al
+            // API anahtarını ortam değişkeninden al
             var apiKey = Environment.GetEnvironmentVariable("GEMINI_API_KEY");
             
-            // If no API key, return a demo recommendation
+            // API anahtarı yoksa demo öneri döndür
             if (string.IsNullOrEmpty(apiKey))
             {
                 return GenerateDemoRecommendation(model);
@@ -37,7 +40,7 @@ namespace FitnessCenter.Services
             {
                 var prompt = BuildPrompt(model);
 
-                // Gemini API request format
+                // Gemini API istek formatı
                 var requestBody = new
                 {
                     contents = new[]
@@ -62,7 +65,7 @@ namespace FitnessCenter.Services
 
                 _httpClient.DefaultRequestHeaders.Clear();
 
-                // Gemini API endpoint
+                // Gemini API'ye istek gönder
                 var response = await _httpClient.PostAsync(
                     $"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={apiKey}", 
                     content);
@@ -72,7 +75,7 @@ namespace FitnessCenter.Services
                     var responseContent = await response.Content.ReadAsStringAsync();
                     var result = JsonDocument.Parse(responseContent);
                     
-                    // Parse Gemini response
+                    // Gemini yanıtını ayrıştır
                     var recommendation = result.RootElement
                         .GetProperty("candidates")[0]
                         .GetProperty("content")
@@ -85,17 +88,18 @@ namespace FitnessCenter.Services
                 else
                 {
                     var errorContent = await response.Content.ReadAsStringAsync();
-                    _logger.LogError($"Gemini API Error: {response.StatusCode} - {errorContent}");
+                    _logger.LogError($"Gemini API Hatası: {response.StatusCode} - {errorContent}");
                     return GenerateDemoRecommendation(model);
                 }
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error calling Gemini API");
+                _logger.LogError(ex, "Gemini API çağrısında hata");
                 return GenerateDemoRecommendation(model);
             }
         }
 
+        // Prompt oluştur
         private string BuildPrompt(AIRecommendationViewModel model)
         {
             var sb = new StringBuilder();
@@ -135,11 +139,12 @@ namespace FitnessCenter.Services
             return sb.ToString();
         }
 
+        // Demo öneri oluştur (API yoksa)
         private string GenerateDemoRecommendation(AIRecommendationViewModel model)
         {
             var sb = new StringBuilder();
             
-            // Calculate BMI if possible
+            // VKİ hesapla
             double? bmi = null;
             string bmiCategory = "";
             if (model.Height.HasValue && model.Weight.HasValue)
