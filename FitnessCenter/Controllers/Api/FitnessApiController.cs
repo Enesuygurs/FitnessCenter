@@ -62,10 +62,7 @@ namespace FitnessCenter.Controllers.Api
             return Ok(trainers);
         }
 
-        /// <summary>
-        /// ID'ye göre antrenör detayı getirir
-        /// GET: api/FitnessApi/trainers/5
-        /// </summary>
+        // Antrenör detayını getir
         [HttpGet("trainers/{id}")]
         public async Task<ActionResult<object>> GetTrainer(int id)
         {
@@ -124,10 +121,7 @@ namespace FitnessCenter.Controllers.Api
             return Ok(trainer);
         }
 
-        /// <summary>
-        /// Belirli bir tarihte uygun antrenörleri getirir
-        /// GET: api/FitnessApi/trainers/available?date=2024-01-15&serviceId=1
-        /// </summary>
+        // Belirli tarihte müsait antrenörleri getir
         [HttpGet("trainers/available")]
         public async Task<ActionResult<IEnumerable<object>>> GetAvailableTrainers(
             [FromQuery] DateTime date, 
@@ -184,10 +178,7 @@ namespace FitnessCenter.Controllers.Api
             });
         }
 
-        /// <summary>
-        /// Uzmanlık alanına göre antrenörleri filtreler
-        /// GET: api/FitnessApi/trainers/search?specialization=yoga
-        /// </summary>
+        // Uzmanlık alanına göre antrenör ara
         [HttpGet("trainers/search")]
         public async Task<ActionResult<IEnumerable<object>>> SearchTrainers(
             [FromQuery] string? specialization = null,
@@ -199,14 +190,14 @@ namespace FitnessCenter.Controllers.Api
                     .ThenInclude(ts => ts.Service)
                 .Where(t => t.IsActive);
 
-            // Filter by specialization
+            // Uzmanlık alanına göre filtrele
             if (!string.IsNullOrEmpty(specialization))
             {
                 query = query.Where(t => t.Specializations != null && 
                                         t.Specializations.ToLower().Contains(specialization.ToLower()));
             }
 
-            // Filter by minimum experience
+            // Minimum deneyime göre filtrele
             if (minExperience.HasValue)
             {
                 query = query.Where(t => t.ExperienceYears >= minExperience.Value);
@@ -230,12 +221,9 @@ namespace FitnessCenter.Controllers.Api
 
         #endregion
 
-        #region Appointments API
+        #region Randevu API
 
-        /// <summary>
-        /// Üyenin randevularını getirir
-        /// GET: api/FitnessApi/appointments/member/{userId}
-        /// </summary>
+        // Üyenin randevularını getir
         [HttpGet("appointments/member/{userId}")]
         public async Task<ActionResult<IEnumerable<object>>> GetMemberAppointments(string userId)
         {
@@ -274,10 +262,7 @@ namespace FitnessCenter.Controllers.Api
             return Ok(appointments);
         }
 
-        /// <summary>
-        /// Belirli bir tarihteki randevuları getirir
-        /// GET: api/FitnessApi/appointments/date/2024-01-15
-        /// </summary>
+        // Belirli tarihteki randevuları getir
         [HttpGet("appointments/date/{date}")]
         public async Task<ActionResult<IEnumerable<object>>> GetAppointmentsByDate(DateTime date)
         {
@@ -308,10 +293,7 @@ namespace FitnessCenter.Controllers.Api
             });
         }
 
-        /// <summary>
-        /// Antrenörün randevularını getirir
-        /// GET: api/FitnessApi/appointments/trainer/5?startDate=2024-01-01&endDate=2024-01-31
-        /// </summary>
+        // Antrenörün randevularını getir
         [HttpGet("appointments/trainer/{trainerId}")]
         public async Task<ActionResult<IEnumerable<object>>> GetTrainerAppointments(
             int trainerId,
@@ -354,12 +336,9 @@ namespace FitnessCenter.Controllers.Api
 
         #endregion
 
-        #region Services API
+        #region Hizmet API
 
-        /// <summary>
-        /// Tüm hizmetleri listeler
-        /// GET: api/FitnessApi/services
-        /// </summary>
+        // Tüm hizmetleri listele
         [HttpGet("services")]
         public async Task<ActionResult<IEnumerable<object>>> GetServices()
         {
@@ -391,10 +370,7 @@ namespace FitnessCenter.Controllers.Api
             return Ok(services);
         }
 
-        /// <summary>
-        /// Kategoriye göre hizmetleri filtreler
-        /// GET: api/FitnessApi/services/category/yoga
-        /// </summary>
+        // Kategoriye göre hizmetleri filtrele
         [HttpGet("services/category/{category}")]
         public async Task<ActionResult<IEnumerable<object>>> GetServicesByCategory(string category)
         {
@@ -419,12 +395,9 @@ namespace FitnessCenter.Controllers.Api
 
         #endregion
 
-        #region Stats API
+        #region İstatistik API
 
-        /// <summary>
-        /// Genel istatistikleri getirir
-        /// GET: api/FitnessApi/stats
-        /// </summary>
+        // Genel istatistikleri getir
         [HttpGet("stats")]
         public async Task<ActionResult<object>> GetStats()
         {
