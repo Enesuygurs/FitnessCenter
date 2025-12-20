@@ -27,13 +27,13 @@
             {
                 if (inUl) { sb.AppendLine("</ul>"); inUl = false; }
                 if (inOl) { sb.AppendLine("</ol>"); inOl = false; }
-                sb.AppendLine($"<h4>{ProcessInline(line.Substring(4))}</h4>");
+                sb.AppendLine($"<h3>{ProcessInline(line.Substring(4))}</h3>");
             }
             else if (Regex.IsMatch(line, "^##\\s"))
             {
                 if (inUl) { sb.AppendLine("</ul>"); inUl = false; }
                 if (inOl) { sb.AppendLine("</ol>"); inOl = false; }
-                sb.AppendLine($"<h3>{ProcessInline(line.Substring(3))}</h3>");
+                sb.AppendLine($"<h2>{ProcessInline(line.Substring(3))}</h2>");
             }
             else if (Regex.IsMatch(line, "^\\d+\\.\\s"))
             {
@@ -41,6 +41,12 @@
                 if (!inOl) { sb.AppendLine("<ol class=\"rec-list\">"); inOl = true; }
                 var item = Regex.Replace(line, "^\\d+\\.\\s", "");
                 sb.AppendLine($"<li>{ProcessInline(item.Trim())}</li>");
+            }
+            else if (line.TrimStart().StartsWith("* "))
+            {
+                if (inOl) { sb.AppendLine("</ol>"); inOl = false; }
+                if (!inUl) { sb.AppendLine("<ul class=\"rec-list\">"); inUl = true; }
+                sb.AppendLine($"<li>{ProcessInline(line.Trim().Substring(2))}</li>");
             }
             else if (line.TrimStart().StartsWith("- "))
             {
