@@ -303,7 +303,7 @@ Sadece JSON döndür, başka bir şey yazma.";
                 _httpClient.DefaultRequestHeaders.Clear();
 
                 var response = await _httpClient.PostAsync(
-                    $"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={apiKey}", 
+                    $"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={apiKey}", 
                     content);
                 
                 if (response.IsSuccessStatusCode)
@@ -381,7 +381,7 @@ Sadece JSON döndür, başka bir şey yazma.";
 
                 // Gemini API'ye istek gönder
                 var response = await _httpClient.PostAsync(
-                    $"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={apiKey}", 
+                    $"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={apiKey}", 
                     content);
                 
                 if (response.IsSuccessStatusCode)
@@ -453,7 +453,7 @@ Sadece JSON döndür, başka bir şey yazma.";
 
                 // Gemini API'ye istek gönder
                 var response = await _httpClient.PostAsync(
-                    $"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={apiKey}", 
+                    $"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={apiKey}", 
                     content);
                 
                 if (response.IsSuccessStatusCode)
