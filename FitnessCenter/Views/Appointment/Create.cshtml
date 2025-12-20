@@ -314,6 +314,72 @@
         transform: translateY(-2px);
         box-shadow: 0 10px 30px rgba(220, 53, 69, 0.3);
     }
+
+    /* Success Modal Styles */
+    .success-modal .modal-content {
+        background: linear-gradient(145deg, #12121c 0%, #0d0d14 100%);
+        border: 1px solid rgba(0, 210, 106, 0.3);
+        border-radius: 20px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    }
+
+    .success-modal .modal-header {
+        background: linear-gradient(135deg, rgba(0, 210, 106, 0.15) 0%, rgba(0, 210, 106, 0.05) 100%);
+        border-bottom: 1px solid rgba(0, 210, 106, 0.2);
+        padding: 25px 30px;
+    }
+
+    .success-modal .modal-title {
+        color: #00d26a;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .success-modal .modal-title i {
+        font-size: 1.5rem;
+    }
+
+    .success-modal .btn-close {
+        filter: invert(1);
+        opacity: 0.7;
+    }
+
+    .success-modal .btn-close:hover {
+        opacity: 1;
+    }
+
+    .success-modal .modal-body {
+        padding: 30px;
+        color: #b8b8b8;
+    }
+
+    .success-modal .modal-body p {
+        margin-bottom: 15px;
+        font-size: 1rem;
+        line-height: 1.6;
+    }
+
+    .success-modal .modal-footer {
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 20px 30px;
+    }
+
+    .success-modal .btn-success-ok {
+        background: linear-gradient(135deg, #00d26a, #00b359);
+        border: none;
+        color: #fff;
+        font-weight: 600;
+        padding: 12px 30px;
+        border-radius: 12px;
+        transition: all 0.3s ease;
+    }
+
+    .success-modal .btn-success-ok:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 30px rgba(0, 210, 106, 0.3);
+    }
 </style>
 
 <div class="create-page">
@@ -647,8 +713,62 @@
             }
         }
 
+        // Form gönderimini AJAX ile yönet
+        document.getElementById('appointmentForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            
+            fetch('@Url.Action("Create", "Appointment")', {
+                method: 'POST',
+                body: formData,
+                redirect: 'manual'
+            })
+            .then(response => {
+                // Redirect varsa başarılı demektir
+                if (response.type === 'opaqueredirect' || response.redirected || response.status === 302) {
+                    showSuccessModal('Randevu Başarıyla Oluşturuldu', 'Randevunuz başarıyla kaydedildi. Randevularım sayfasına yönlendiriliyorsunuz...');
+                    return null;
+                }
+                return response.text();
+            })
+            .then(html => {
+                if (html === null) return; // Başarılı durumda zaten modal gösterildi
+                
+                // Hata varsa modal göster
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                const errorDiv = doc.querySelector('.alert-danger');
+                
+                if (errorDiv) {
+                    const errorMessage = errorDiv.querySelector('li')?.textContent || errorDiv.textContent;
+                    showErrorModal('Randevu Oluşturulamadı', errorMessage.trim());
+                } else {
+                    // Eğer alert-danger yoksa ama View döndüyse, başka bir hata olabilir
+                    // Formu tekrar göster
+                    console.log('Beklenmeyen durum:', html.substring(0, 200));
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showErrorModal('Hata', 'Bir hata oluştu. Lütfen tekrar deneyin.');
+            });
+        });
+
         // Error Modal Fonksiyonu
         function showErrorModal(title, message, workingDays) {
+            const workingDaysSection = workingDays ? `
+                <div class="working-days">
+                    <div style="margin-bottom: 8px;">
+                        <i class="bi bi-calendar-check me-2"></i>
+                        <strong>Çalıştığı Günler:</strong>
+                    </div>
+                    <div style="padding-left: 28px;">
+                        ${workingDays}
+                    </div>
+                </div>
+            ` : '';
+            
             const modalHtml = `
                 <div class="modal fade error-modal" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered">
@@ -662,15 +782,7 @@
                             </div>
                             <div class="modal-body">
                                 <p>${message}</p>
-                                <div class="working-days">
-                                    <div style="margin-bottom: 8px;">
-                                        <i class="bi bi-calendar-check me-2"></i>
-                                        <strong>Çalıştığı Günler:</strong>
-                                    </div>
-                                    <div style="padding-left: 28px;">
-                                        ${workingDays}
-                                    </div>
-                                </div>
+                                ${workingDaysSection}
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-error-ok" data-bs-dismiss="modal">
@@ -698,6 +810,51 @@
             // Modal kapandığında DOM'dan kaldır
             document.getElementById('errorModal').addEventListener('hidden.bs.modal', function () {
                 this.remove();
+            });
+        }
+
+        // Success Modal Fonksiyonu
+        function showSuccessModal(title, message) {
+            const modalHtml = `
+                <div class="modal fade success-modal" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="successModalLabel">
+                                    <i class="bi bi-check-circle-fill"></i>
+                                    ${title}
+                                </h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <p>${message}</p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-success-ok" data-bs-dismiss="modal">
+                                    <i class="bi bi-check-circle me-2"></i>Tamam
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Eğer varsa önceki modal'ı kaldır
+            const existingModal = document.getElementById('successModal');
+            if (existingModal) {
+                existingModal.remove();
+            }
+            
+            // Yeni modal'ı ekle
+            document.body.insertAdjacentHTML('beforeend', modalHtml);
+            
+            // Modal'ı göster
+            const successModal = new bootstrap.Modal(document.getElementById('successModal'));
+            successModal.show();
+            
+            // Modal kapandığında yönlendir
+            document.getElementById('successModal').addEventListener('hidden.bs.modal', function () {
+                window.location.href = '@Url.Action("Index", "Appointment")';
             });
         }
     </script>
