@@ -215,6 +215,45 @@
         border-radius: 12px 0 0 12px;
     }
 
+    /* Custom File Upload */
+    .custom-file-upload {
+        display: inline-block;
+        padding: 12px 24px;
+        cursor: pointer;
+        background: rgba(0, 210, 106, 0.1);
+        border: 2px dashed rgba(0, 210, 106, 0.3);
+        border-radius: 12px;
+        color: #00d26a;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        text-align: center;
+        width: 100%;
+    }
+
+    .custom-file-upload:hover {
+        background: rgba(0, 210, 106, 0.15);
+        border-color: rgba(0, 210, 106, 0.5);
+    }
+
+    .custom-file-upload i {
+        font-size: 1.2rem;
+        margin-right: 8px;
+    }
+
+    .file-input-hidden {
+        display: none;
+    }
+
+    .file-name-display {
+        margin-top: 10px;
+        padding: 8px 16px;
+        background: rgba(0, 210, 106, 0.05);
+        border-radius: 8px;
+        color: #00d26a;
+        font-size: 0.9rem;
+        display: none;
+    }
+
     .btn-ai {
         background: linear-gradient(135deg, #00d26a 0%, #00ff88 100%);
         border: none;
@@ -438,9 +477,14 @@
                         </div>
 
                         <div class="mb-4">
-                            <label asp-for="Photo" class="form-label">Fotoğrafınız (Opsiyonel)</label>
-                            <input asp-for="Photo" type="file" class="form-control" accept="image/*" id="photoInput">
-                            <small class="text-white-50 mt-1">Fotoğraf yüklerseniz AI daha detaylı analiz yapabilir</small>
+                            <label class="form-label">Fotoğrafınız (Opsiyonel)</label>
+                            <label for="photoInput" class="custom-file-upload">
+                                <i class="bi bi-cloud-upload"></i>
+                                <span id="fileButtonText">Fotoğraf Seç</span>
+                            </label>
+                            <input asp-for="Photo" type="file" class="file-input-hidden" accept="image/*" id="photoInput">
+                            <div id="fileNameDisplay" class="file-name-display"></div>
+                            <small class="text-white-50 mt-1 d-block">Fotoğraf yüklerseniz AI daha detaylı analiz yapabilir</small>
                             <div id="photoPreview" class="mt-3" style="display:none;">
                                 <img id="previewImage" src="" alt="Önizleme" style="max-width: 100%; border-radius: 12px; border: 2px solid rgba(0,210,106,0.3);">
                             </div>
@@ -604,11 +648,19 @@
         const photoInput = document.getElementById('photoInput');
         const photoPreview = document.getElementById('photoPreview');
         const previewImage = document.getElementById('previewImage');
+        const fileButtonText = document.getElementById('fileButtonText');
+        const fileNameDisplay = document.getElementById('fileNameDisplay');
 
         // Fotoğraf seçildiğinde önizleme göster
         photoInput.addEventListener('change', function(e) {
             const file = e.target.files[0];
             if (file) {
+                // Dosya adını göster
+                fileButtonText.textContent = 'Fotoğraf Değiştir';
+                fileNameDisplay.textContent = '✓ ' + file.name;
+                fileNameDisplay.style.display = 'block';
+                
+                // Önizleme göster
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     previewImage.src = e.target.result;
@@ -616,6 +668,8 @@
                 }
                 reader.readAsDataURL(file);
             } else {
+                fileButtonText.textContent = 'Fotoğraf Seç';
+                fileNameDisplay.style.display = 'none';
                 photoPreview.style.display = 'none';
             }
         });
