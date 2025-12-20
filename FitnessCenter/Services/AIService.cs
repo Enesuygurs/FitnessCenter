@@ -39,7 +39,7 @@ namespace FitnessCenter.Services
             _photoAnalysisResult = null;
             _base64Photo = null;
             
-            // Fotoğraf varsa önce Gemini Vision ile analiz et ve base64'ü sakla
+            // Fotoğraf varsa base64'e çevir (sadece görsel üretimi için)
             if (model.Photo != null && model.Photo.Length > 0)
             {
                 // Fotoğrafı base64'e çevir ve sakla
@@ -48,17 +48,12 @@ namespace FitnessCenter.Services
                     await model.Photo.CopyToAsync(ms);
                     _base64Photo = Convert.ToBase64String(ms.ToArray());
                 }
-                
-                // Fotoğrafı analiz et ve sonucu sakla
-                _photoAnalysisResult = await AnalyzePhotoWithGemini(model, geminiApiKey, _base64Photo);
-                textRecommendation = await GetRecommendationWithPhotoAnalysis(model, geminiApiKey, _photoAnalysisResult, _base64Photo);
-            }
-            else
-            {
-                textRecommendation = await GetRecommendationWithoutPhoto(model, geminiApiKey);
             }
             
-            // Hedef vücut görseli üret
+            // Gemini sadece metin önerisi üretsin (fotoğraf analizi yapmasın)
+            textRecommendation = await GetRecommendationWithoutPhoto(model, geminiApiKey);
+            
+            // Hedef vücut görseli üret - Replicate ve Pollinations sorumlu
             var replicateToken = Environment.GetEnvironmentVariable("REPLICATE_API_TOKEN");
             string? imageUrl;
             
@@ -89,19 +84,21 @@ namespace FitnessCenter.Services
                 // Fotoğrafı data URI formatına çevir
                 var imageDataUri = $"data:image/jpeg;base64,{base64Photo}";
                 
-                // Replicate API - SDXL img2img modeli kullan
-                // Model: stability-ai/sdxl:39ed52f2a78e934b3ba6e2a89f5b1c712de7dfea535525255b1aa35c5565e08b
+                // Replicate API - Flux Dev img2img modeli kullan (daha iyi sonuçlar)
+                // Model: black-forest-labs/flux-dev
                 var requestBody = new
                 {
-                    version = "39ed52f2a78e934b3ba6e2a89f5b1c712de7dfea535525255b1aa35c5565e08b", 
                     input = new
                     {
                         image = imageDataUri,
-                        prompt = targetPrompt + ", professional fitness photography, 8k, highly detailed, realistic",
-                        negative_prompt = "ugly, deformed, noisy, blurry, distorted, disfigured, bad anatomy, wrong proportions, low quality, cartoon, anime",
-                        strength = 0.65, // Orijinal fotoğraftan ne kadar sapacağı (0.0 - 1.0)
-                        guidance_scale = 7.5,
-                        num_inference_steps = 30
+                        prompt = targetPrompt + ", professional fitness photography, 8k uhd, highly detailed, photorealistic",
+                        guidance = 3.5,
+                        num_outputs = 1,
+                        aspect_ratio = "3:4",
+                        output_format = "jpg",
+                        output_quality = 70,
+                        prompt_strength = 0.45, // Orijinal fotoğrafa daha sadık (düşük = daha benzer)
+                        num_inference_steps = 28
                     }
                 };
 
@@ -109,32 +106,24 @@ namespace FitnessCenter.Services
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
 
                 _httpClient.DefaultRequestHeaders.Clear();
-                _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {replicateToken}");
-                _httpClient.DefaultRequestHeaders.Add("Prefer", "wait"); // Sonucu bekle
+                _httpClient.DefaultRequestHeaders.Add("Authorization", $"Token {replicateToken}");
 
                 var response = await _httpClient.PostAsync(
-                    "https://api.replicate.com/v1/predictions",
+                    "https://api.replicate.com/v1/models/black-forest-labs/flux-dev/predictions",
                     content);
 
                 if (response.IsSuccessStatusCode)
                 {
                     var responseContent = await response.Content.ReadAsStringAsync();
-                    var result = JsonDocument.Parse(responseContent);
-                    var status = result.RootElement.GetProperty("status").GetString();
+                    _logger.LogInformation($"Replicate yanıtı: {responseContent}");
                     
-                    if (status == "succeeded")
+                    var result = JsonDocument.Parse(responseContent);
+                    var predictionId = result.RootElement.GetProperty("id").GetString();
+                    
+                    // Sonucu bekle
+                    if (!string.IsNullOrEmpty(predictionId))
                     {
-                        var output = result.RootElement.GetProperty("output");
-                        if (output.ValueKind == JsonValueKind.Array && output.GetArrayLength() > 0)
-                        {
-                            return output[0].GetString();
-                        }
-                    }
-                    else if (status == "processing" || status == "starting")
-                    {
-                        // Bekleme gerekirse (wait header'a rağmen)
-                        var predictionId = result.RootElement.GetProperty("id").GetString();
-                        return await WaitForReplicateResult(predictionId!, replicateToken);
+                        return await WaitForReplicateResult(predictionId, replicateToken);
                     }
                 }
                 else
@@ -149,17 +138,20 @@ namespace FitnessCenter.Services
             }
 
             // Hata durumunda Pollinations.ai'a fallback
+            _logger.LogWarning("Replicate başarısız oldu, Pollinations.ai'a geçiliyor...");
             return await GenerateTargetBodyImage(model, _photoAnalysisResult);
         }
 
         // Replicate sonucunu bekle
         private async Task<string?> WaitForReplicateResult(string predictionId, string replicateToken)
         {
-            for (int i = 0; i < 30; i++)
+            _logger.LogInformation($"Replicate prediction {predictionId} bekleniyor...");
+            
+            for (int i = 0; i < 60; i++) // 2 dakika bekle (60 x 2 saniye)
             {
                 await Task.Delay(2000);
                 _httpClient.DefaultRequestHeaders.Clear();
-                _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {replicateToken}");
+                _httpClient.DefaultRequestHeaders.Add("Authorization", $"Token {replicateToken}");
 
                 var response = await _httpClient.GetAsync($"https://api.replicate.com/v1/predictions/{predictionId}");
                 if (response.IsSuccessStatusCode)
@@ -167,15 +159,42 @@ namespace FitnessCenter.Services
                     var content = await response.Content.ReadAsStringAsync();
                     var result = JsonDocument.Parse(content);
                     var status = result.RootElement.GetProperty("status").GetString();
+                    
+                    _logger.LogInformation($"Replicate status: {status} (deneme {i + 1}/60)");
 
                     if (status == "succeeded")
                     {
                         var output = result.RootElement.GetProperty("output");
-                        return output.ValueKind == JsonValueKind.Array ? output[0].GetString() : output.GetString();
+                        if (output.ValueKind == JsonValueKind.Array && output.GetArrayLength() > 0)
+                        {
+                            var imageUrl = output[0].GetString();
+                            _logger.LogInformation($"Replicate görsel başarıyla üretildi: {imageUrl}");
+                            return imageUrl;
+                        }
+                        else if (output.ValueKind == JsonValueKind.String)
+                        {
+                            var imageUrl = output.GetString();
+                            _logger.LogInformation($"Replicate görsel başarıyla üretildi: {imageUrl}");
+                            return imageUrl;
+                        }
                     }
-                    else if (status == "failed" || status == "canceled") break;
+                    else if (status == "failed" || status == "canceled")
+                    {
+                        _logger.LogError($"Replicate başarısız: {status}");
+                        if (result.RootElement.TryGetProperty("error", out var error))
+                        {
+                            _logger.LogError($"Replicate hatası: {error.GetString()}");
+                        }
+                        break;
+                    }
+                }
+                else
+                {
+                    _logger.LogError($"Replicate status sorgulaması başarısız: {response.StatusCode}");
                 }
             }
+            
+            _logger.LogError("Replicate timeout - görsel üretilemedi");
             return null;
         }
 
