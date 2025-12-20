@@ -349,7 +349,7 @@
                         <!-- Antrenör Seçimi -->
                         <div class="mb-4">
                             <label asp-for="TrainerId" class="form-label">
-                                <i class="bi bi-person-badge"></i> Antrenör Seçin
+                                <i class="bi bi-person-badge"></i> Antrenör
                             </label>
                             <select asp-for="TrainerId" class="form-select" id="trainerSelect" required
                                     data-val="true" data-val-required="Antreör seçimi zorunludur.">
@@ -372,7 +372,7 @@
                         <!-- Hizmet Seçimi -->
                         <div class="mb-4">
                             <label asp-for="ServiceId" class="form-label">
-                                <i class="bi bi-grid-3x3-gap"></i> Hizmet Seçin
+                                <i class="bi bi-grid-3x3-gap"></i> Hizmet
                             </label>
                             <select asp-for="ServiceId" class="form-select" id="serviceSelect" disabled required
                                     data-val="true" data-val-required="Hizmet seçimi zorunludur.">
@@ -385,7 +385,7 @@
                         <!-- Tarih Seçimi -->
                         <div class="mb-4">
                             <label asp-for="AppointmentDate" class="form-label">
-                                <i class="bi bi-calendar-date"></i> Tarih Seçin (GG/AA/YYYY)
+                                <i class="bi bi-calendar-date"></i> Tarih
                             </label>
                             <input asp-for="AppointmentDate" type="date" class="form-control" id="dateSelect"
                                    min="@DateTime.Today.ToString("yyyy-MM-dd")" 
@@ -399,7 +399,7 @@
                         <!-- Saat Seçimi -->
                         <div class="mb-4">
                             <label asp-for="AppointmentTime" class="form-label">
-                                <i class="bi bi-clock"></i> Saat Seçin
+                                <i class="bi bi-clock"></i> Saat
                             </label>
                             <select name="AppointmentTime" class="form-select" id="timeSelect" required
                                     data-val="true" data-val-required="Saat seçimi zorunludur.">
@@ -555,12 +555,29 @@
                     }
                 }
                 
+                // Bugünün tarihi ve saati
+                const now = new Date();
+                const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+                const selectedDate = new Date(date + 'T00:00:00');
+                const isToday = selectedDate.getTime() === today.getTime();
+                const currentHour = now.getHours();
+                
                 // Basit saat seçenekleri oluştur
                 for (let h = 8; h <= 21; h++) {
+                    // Eğer bugün seçildiyse ve saat geçmişte ise, bu saati ekleme
+                    if (isToday && h <= currentHour) {
+                        continue;
+                    }
+                    
                     const option = document.createElement('option');
                     option.value = `${h.toString().padStart(2,'0')}:00:00`;
                     option.textContent = `${h.toString().padStart(2,'0')}:00`;
                     timeSelect.appendChild(option);
+                }
+                
+                // Eğer bugün için hiç saat kalmadıysa
+                if (isToday && timeSelect.options.length === 1) {
+                    timeSelect.innerHTML = '<option value="">Bugün için uygun saat yok</option>';
                 }
             }
             updateSummary();
