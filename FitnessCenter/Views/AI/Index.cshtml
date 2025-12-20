@@ -460,8 +460,8 @@
         <div class="col-lg-7" data-aos="fade-left">
             @if (!string.IsNullOrEmpty(Model?.Recommendation))
             {
-                <!-- Hedef Vücut Görseli -->
-                @if (!string.IsNullOrEmpty(Model.GeneratedImageUrl))
+                <!-- Hedef Vücut Görseli - Sadece fotoğraf yüklenmişse göster -->
+                @if (!string.IsNullOrEmpty(Model.UploadedImageBase64) && !string.IsNullOrEmpty(Model.GeneratedImageUrl))
                 {
                     <div class="result-card mb-4">
                         <div class="card-header">

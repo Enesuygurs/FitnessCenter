@@ -53,20 +53,25 @@ namespace FitnessCenter.Services
             // Gemini sadece metin önerisi üretsin (fotoğraf analizi yapmasın)
             textRecommendation = await GetRecommendationWithoutPhoto(model, geminiApiKey);
             
-            // Hedef vücut görseli üret - Replicate ve Pollinations sorumlu
-            var replicateToken = Environment.GetEnvironmentVariable("REPLICATE_API_TOKEN");
-            string? imageUrl;
+            // Görsel üretimi sadece fotoğraf yüklendiyse yapılsın
+            string? imageUrl = null;
             
-            // Replicate API varsa ve fotoğraf yüklendiyse gerçek dönüşüm yap
-            if (!string.IsNullOrEmpty(replicateToken) && !string.IsNullOrEmpty(_base64Photo))
+            if (!string.IsNullOrEmpty(_base64Photo))
             {
-                imageUrl = await GenerateImageWithReplicate(model, _base64Photo, replicateToken);
+                var replicateToken = Environment.GetEnvironmentVariable("REPLICATE_API_TOKEN");
+                
+                // Replicate API varsa gerçek dönüşüm yap
+                if (!string.IsNullOrEmpty(replicateToken))
+                {
+                    imageUrl = await GenerateImageWithReplicate(model, _base64Photo, replicateToken);
+                }
+                else
+                {
+                    // Replicate yoksa Pollinations.ai kullan (fallback)
+                    imageUrl = await GenerateTargetBodyImage(model, _photoAnalysisResult);
+                }
             }
-            else
-            {
-                // Replicate yoksa Pollinations.ai kullan (fallback)
-                imageUrl = await GenerateTargetBodyImage(model, _photoAnalysisResult);
-            }
+            // Fotoğraf yüklenmediyse görsel üretme (imageUrl = null kalır)
             
             return (textRecommendation, imageUrl);
         }
