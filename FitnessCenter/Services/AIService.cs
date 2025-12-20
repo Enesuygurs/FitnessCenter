@@ -355,7 +355,7 @@ Sadece JSON döndür, başka bir şey yazma.";
                         {
                             parts = new object[]
                             {
-                                new { text = "Sen bir profesyonel fitness ve beslenme danışmanısın. Türkçe yanıt ver. Kullanıcının verdiği bilgilere ve fotoğrafına göre kişiselleştirilmiş egzersiz ve diyet önerileri sun.\n\n" + prompt },
+                                new { text = "Sen bir profesyonel fitness ve beslenme danışmanısın. Türkçe yanıt ver. Kullanıcının verdiği bilgilere ve fotoğrafına göre kişiselleştirilmiş egzersiz ve diyet önerileri sun. Yanıtlarını kısa ve öz tut, gereksiz detaylara girme. Maksimum 500 kelime ile sınırla.\n\n" + prompt },
                                 new 
                                 { 
                                     inline_data = new 
@@ -435,7 +435,7 @@ Sadece JSON döndür, başka bir şey yazma.";
                         {
                             parts = new[]
                             {
-                                new { text = "Sen bir profesyonel fitness ve beslenme danışmanısın. Türkçe yanıt ver. Kullanıcının verdiği bilgilere göre kişiselleştirilmiş egzersiz ve diyet önerileri sun.\n\n" + prompt }
+                                new { text = "Sen bir profesyonel fitness ve beslenme danışmanısın. Türkçe yanıt ver. Kullanıcının verdiği bilgilere göre kişiselleştirilmiş egzersiz ve diyet önerileri sun. Yanıtlarını kısa ve öz tut, gereksiz detaylara girme. Maksimum 500 kelime ile sınırla.\n\n" + prompt }
                             }
                         }
                     },
