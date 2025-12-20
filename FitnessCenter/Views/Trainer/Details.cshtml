@@ -330,7 +330,9 @@
                                     DayOfWeek.Sunday => "Pazar",
                                     _ => ""
                                 };
-                                <span class="badge bg-primary">@dayName: @availability.StartTime.ToString(@"hh\:mm") - @availability.EndTime.ToString(@"hh\:mm")</span>
+                                <span class="badge" style="background: linear-gradient(135deg, rgba(0,210,106,0.2), rgba(0,210,106,0.1)); color: #00d26a; padding: 8px 16px; border-radius: 20px; border: 1px solid rgba(0,210,106,0.3);">
+                                    @dayName: @availability.StartTime.ToString(@"hh\:mm") - @availability.EndTime.ToString(@"hh\:mm")
+                                </span>
                             }
                         </div>
                     }
