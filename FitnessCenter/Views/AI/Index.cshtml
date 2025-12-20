@@ -346,69 +346,75 @@
                 </div>
                 <div class="card-body">
                     <form asp-action="GetRecommendation" method="post" id="aiForm" enctype="multipart/form-data">
-                        <div class="mb-4">
-                            <label asp-for="Height" class="form-label">Boy (cm) <span class="text-danger">*</span></label>
-                            <div class="input-group">
-                                <input asp-for="Height" type="number" class="form-control" placeholder="175" min="100" max="250" required
-                                       data-val="true" data-val-required="Boy (cm) alanı zorunludur.">
-                                <span class="input-group-text">cm</span>
+                        <div class="row">
+                            <div class="col-md-6 mb-4">
+                                <label asp-for="Height" class="form-label">Boy (cm) <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <input asp-for="Height" type="number" class="form-control" placeholder="175" min="100" max="250" required
+                                           data-val="true" data-val-required="Boy (cm) alanı zorunludur.">
+                                    <span class="input-group-text">cm</span>
+                                </div>
+                                <span asp-validation-for="Height" class="text-danger small"></span>
                             </div>
-                            <span asp-validation-for="Height" class="text-danger small"></span>
-                        </div>
 
-                        <div class="mb-4">
-                            <label asp-for="Weight" class="form-label">Kilo (kg) <span class="text-danger">*</span></label>
-                            <div class="input-group">
-                                <input asp-for="Weight" type="number" step="0.1" class="form-control" placeholder="70" min="30" max="300" required
-                                       data-val="true" data-val-required="Kilo (kg) alanı zorunludur.">
-                                <span class="input-group-text">kg</span>
+                            <div class="col-md-6 mb-4">
+                                <label asp-for="Weight" class="form-label">Kilo (kg) <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <input asp-for="Weight" type="number" step="0.1" class="form-control" placeholder="70" min="30" max="300" required
+                                           data-val="true" data-val-required="Kilo (kg) alanı zorunludur.">
+                                    <span class="input-group-text">kg</span>
+                                </div>
+                                <span asp-validation-for="Weight" class="text-danger small"></span>
                             </div>
-                            <span asp-validation-for="Weight" class="text-danger small"></span>
                         </div>
 
-                        <div class="mb-4">
-                            <label asp-for="Age" class="form-label">Yaş <span class="text-danger">*</span></label>
-                            <input asp-for="Age" type="number" class="form-control" placeholder="25" min="10" max="100" required
-                                   data-val="true" data-val-required="Yaş alanı zorunludur.">
-                            <span asp-validation-for="Age" class="text-danger small"></span>
+                        <div class="row">
+                            <div class="col-md-6 mb-4">
+                                <label asp-for="Age" class="form-label">Yaş <span class="text-danger">*</span></label>
+                                <input asp-for="Age" type="number" class="form-control" placeholder="25" min="10" max="100" required
+                                       data-val="true" data-val-required="Yaş alanı zorunludur.">
+                                <span asp-validation-for="Age" class="text-danger small"></span>
+                            </div>
+
+                            <div class="col-md-6 mb-4">
+                                <label asp-for="Gender" class="form-label">Cinsiyet <span class="text-danger">*</span></label>
+                                <select asp-for="Gender" class="form-select" required
+                                        data-val="true" data-val-required="Cinsiyet alanı zorunludur.">
+                                    <option value="">Seçin...</option>
+                                    <option value="Erkek">Erkek</option>
+                                    <option value="Kadın">Kadın</option>
+                                </select>
+                                <span asp-validation-for="Gender" class="text-danger small"></span>
+                            </div>
                         </div>
 
-                        <div class="mb-4">
-                            <label asp-for="Gender" class="form-label">Cinsiyet <span class="text-danger">*</span></label>
-                            <select asp-for="Gender" class="form-select" required
-                                    data-val="true" data-val-required="Cinsiyet alanı zorunludur.">
-                                <option value="">Seçin...</option>
-                                <option value="Erkek">Erkek</option>
-                                <option value="Kadın">Kadın</option>
-                            </select>
-                            <span asp-validation-for="Gender" class="text-danger small"></span>
-                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-4">
+                                <label asp-for="BodyType" class="form-label">Vücut Tipi <span class="text-danger">*</span></label>
+                                <select asp-for="BodyType" class="form-select" required
+                                        data-val="true" data-val-required="Vücut Tipi alanı zorunludur.">
+                                    <option value="">Seçin...</option>
+                                    <option value="Ektomorf">Ektomorf (İnce yapılı)</option>
+                                    <option value="Mezomorf">Mezomorf (Atletik)</option>
+                                    <option value="Endomorf">Endomorf (Geniş yapılı)</option>
+                                    <option value="Normal">Normal</option>
+                                </select>
+                                <span asp-validation-for="BodyType" class="text-danger small"></span>
+                            </div>
 
-                        <div class="mb-4">
-                            <label asp-for="BodyType" class="form-label">Vücut Tipi <span class="text-danger">*</span></label>
-                            <select asp-for="BodyType" class="form-select" required
-                                    data-val="true" data-val-required="Vücut Tipi alanı zorunludur.">
-                                <option value="">Seçin...</option>
-                                <option value="Ektomorf">Ektomorf (İnce yapılı)</option>
-                                <option value="Mezomorf">Mezomorf (Atletik)</option>
-                                <option value="Endomorf">Endomorf (Geniş yapılı)</option>
-                                <option value="Normal">Normal</option>
-                            </select>
-                            <span asp-validation-for="BodyType" class="text-danger small"></span>
-                        </div>
-
-                        <div class="mb-4">
-                            <label asp-for="FitnessGoal" class="form-label">Fitness Hedefiniz <span class="text-danger">*</span></label>
-                            <select asp-for="FitnessGoal" class="form-select" required
-                                    data-val="true" data-val-required="Fitness Hedefiniz alanı zorunludur.">
-                                <option value="">Seçin...</option>
-                                <option value="WeightLoss">Kilo Vermek</option>
-                                <option value="MuscleGain">Kas Kazanmak</option>
-                                <option value="Endurance">Dayanıklılık Arttırmak</option>
-                                <option value="Flexibility">Esneklik Geliştirmek</option>
-                                <option value="GeneralFitness">Genel Fitness</option>
-                            </select>
-                            <span asp-validation-for="FitnessGoal" class="text-danger small"></span>
+                            <div class="col-md-6 mb-4">
+                                <label asp-for="FitnessGoal" class="form-label">Fitness Hedefiniz <span class="text-danger">*</span></label>
+                                <select asp-for="FitnessGoal" class="form-select" required
+                                        data-val="true" data-val-required="Fitness Hedefiniz alanı zorunludur.">
+                                    <option value="">Seçin...</option>
+                                    <option value="WeightLoss">Kilo Vermek</option>
+                                    <option value="MuscleGain">Kas Kazanmak</option>
+                                    <option value="Endurance">Dayanıklılık Arttırmak</option>
+                                    <option value="Flexibility">Esneklik Geliştirmek</option>
+                                    <option value="GeneralFitness">Genel Fitness</option>
+                                </select>
+                                <span asp-validation-for="FitnessGoal" class="text-danger small"></span>
+                            </div>
                         </div>
 
                         <div class="mb-4">
