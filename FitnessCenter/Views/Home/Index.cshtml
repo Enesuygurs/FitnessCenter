@@ -365,31 +365,34 @@
     </div>
 </section>
 
-<!-- CTA Section -->
-<section class="py-5 position-relative overflow-hidden cta-section">
-    <div class="cta-bg">
-        <div class="cta-shape shape-1"></div>
-        <div class="cta-shape shape-2"></div>
-    </div>
-    
-    <div class="container py-5 position-relative text-center" data-aos="zoom-in">
-        <h2 class="display-4 fw-bold text-white mb-4">
-            Sağlıklı Yaşama <span class="text-dark">İlk Adımı</span> Atın!
-        </h2>
-        <p class="lead text-dark mb-5 opacity-75" style="max-width: 600px; margin: 0 auto;">
-            Hemen üye olun, fitness yolculuğunuza bugün başlayın. 
-            İlk danışmanlık seansınız <strong>ÜCRETSİZ!</strong>
-        </p>
-        <div class="d-flex justify-content-center gap-3 flex-wrap">
-            <a asp-controller="Account" asp-action="Register" class="btn btn-dark btn-lg px-5">
-                <i class="bi bi-person-plus me-2"></i> Ücretsiz Kayıt Ol
-            </a>
-            <a asp-controller="Appointment" asp-action="Create" class="btn btn-outline-dark btn-lg px-5">
-                <i class="bi bi-calendar-check me-2"></i> Randevu Al
-            </a>
+@if (!User.Identity.IsAuthenticated)
+{
+    <!-- CTA Section -->
+    <section class="py-5 position-relative overflow-hidden cta-section">
+        <div class="cta-bg">
+            <div class="cta-shape shape-1"></div>
+            <div class="cta-shape shape-2"></div>
         </div>
-    </div>
-</section>
+        
+        <div class="container py-5 position-relative text-center" data-aos="zoom-in">
+            <h2 class="display-4 fw-bold text-white mb-4">
+                Sağlıklı Yaşama <span class="text-dark">İlk Adımı</span> Atın!
+            </h2>
+            <p class="lead text-dark mb-5 opacity-75" style="max-width: 600px; margin: 0 auto;">
+                Hemen üye olun, fitness yolculuğunuza bugün başlayın. 
+                İlk danışmanlık seansınız <strong>ÜCRETSİZ!</strong>
+            </p>
+            <div class="d-flex justify-content-center gap-3 flex-wrap">
+                <a asp-controller="Account" asp-action="Register" class="btn btn-dark btn-lg px-5">
+                    <i class="bi bi-person-plus me-2"></i> Ücretsiz Kayıt Ol
+                </a>
+                <a asp-controller="Appointment" asp-action="Create" class="btn btn-outline-dark btn-lg px-5">
+                    <i class="bi bi-calendar-check me-2"></i> Randevu Al
+                </a>
+            </div>
+        </div>
+    </section>
+}
 
 <style>
     /* Hero Section Styles */
