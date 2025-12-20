@@ -32,11 +32,18 @@
             box-sizing: border-box;
         }
         
+        html {
+            height: 100%;
+        }
+        
         body {
             font-family: 'Poppins', sans-serif;
             background-color: #0a0a14;
             color: #ffffff;
             overflow-x: hidden;
+            min-height: 100%;
+            display: flex;
+            flex-direction: column;
         }
         
         /* Page Content - Navbar için padding */
@@ -454,7 +461,7 @@
         </nav>
     </header>
 
-    <main>
+    <main style="flex: 1 0 auto;">
         @if (TempData["Success"] != null)
         {
             <div class="container" style="margin-top: 100px;" id="successAlertContainer">
@@ -491,7 +498,7 @@
         </div>
     </main>
 
-    <footer class="text-white pt-5">
+    <footer class="text-white pt-5" style="flex-shrink: 0;">
         <div class="container">
             <div class="row">
                 <div class="col-md-4 mb-4" data-aos="fade-up">
