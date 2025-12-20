@@ -27,13 +27,14 @@
                 </h1>
                 <p class="lead mb-5 text-white-50" style="font-size: 1.2rem;">
                     Modern ekipmanlar, uzman antrenörler ve yapay zeka destekli kişisel programlarla 
-                    fitness yolculuğunuza başlayın. <span class="text-primary-custom fw-semibold">Hayalinizdeki vücuda</span> ulaşmanın tam zamanı!
+                    fitness yolculuğunuza başlayın. 
+                    <br><span class="text-primary-custom fw-semibold">Hayalinizdeki vücuda</span> ulaşmanın tam zamanı!
                 </p>
                 <div class="d-flex flex-wrap gap-3 mb-5">
                     <a asp-controller="Account" asp-action="Register" class="btn btn-primary btn-lg px-5 glow-animation">
                         <i class="bi bi-rocket-takeoff me-2"></i> Hemen Başla
                     </a>
-                    <a asp-controller="Service" asp-action="Index" class="btn btn-outline-light btn-lg px-4">
+                    <a asp-controller="Service" asp-action="Index" class="btn btn-lg px-4" style="background: rgba(255, 255, 255, 0.08); border: none; color: #fff; border-radius: 50px;">
                         <i class="bi bi-play-circle me-2"></i> Keşfet
                     </a>
                 </div>
@@ -470,10 +471,12 @@
     }
 
     /* Keşfet butonu hover rengi */
-    .hero-section .btn-outline-light:hover {
-        background: linear-gradient(135deg, #00d26a, #00ff88);
-        border-color: #00d26a;
-        color: #0a0a14;
+    .hero-section .btn:not(.btn-primary):hover {
+        background: rgba(0, 210, 106, 0.15) !important;
+        color: #00d26a !important;
+        transform: translateY(-2px);
+        box-shadow: 0 10px 30px rgba(0, 210, 106, 0.2);
+        transition: all 0.3s ease;
     }
 
     .hero-image-wrapper {
