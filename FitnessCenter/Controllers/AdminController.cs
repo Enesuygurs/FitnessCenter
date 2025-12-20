@@ -283,10 +283,16 @@ namespace FitnessCenter.Controllers
         // Antrenör oluşturma işlemi
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CreateTrainer(Trainer trainer, int[] selectedServices)
+        public async Task<IActionResult> CreateTrainer(Trainer trainer, int[] selectedServices, string[] selectedWorkingDays)
         {
             if (ModelState.IsValid)
             {
+                // Çalışma günlerini kaydet
+                if (selectedWorkingDays != null && selectedWorkingDays.Length > 0)
+                {
+                    trainer.WorkingDays = string.Join(",", selectedWorkingDays);
+                }
+                
                 _context.Trainers.Add(trainer);
                 await _context.SaveChangesAsync();
 
@@ -338,7 +344,7 @@ namespace FitnessCenter.Controllers
         // Antrenör düzenleme işlemi
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> EditTrainer(int id, Trainer trainer, int[] selectedServices)
+        public async Task<IActionResult> EditTrainer(int id, Trainer trainer, int[] selectedServices, string[] selectedWorkingDays)
         {
             if (id != trainer.Id)
             {
@@ -349,6 +355,16 @@ namespace FitnessCenter.Controllers
             {
                 try
                 {
+                    // Çalışma günlerini kaydet
+                    if (selectedWorkingDays != null && selectedWorkingDays.Length > 0)
+                    {
+                        trainer.WorkingDays = string.Join(",", selectedWorkingDays);
+                    }
+                    else
+                    {
+                        trainer.WorkingDays = null;
+                    }
+
                     _context.Update(trainer);
 
                     // Antrenör hizmetlerini güncelle

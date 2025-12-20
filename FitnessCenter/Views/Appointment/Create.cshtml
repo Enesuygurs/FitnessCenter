@@ -284,7 +284,8 @@
                                     @foreach (var trainer in Model.Trainers)
                                     {
                                         <option value="@trainer.Id" 
-                                                data-services="@string.Join(",", trainer.TrainerServices?.Select(ts => ts.ServiceId) ?? new List<int>())">
+                                                data-services="@string.Join(",", trainer.TrainerServices?.Select(ts => ts.ServiceId) ?? new List<int>())"
+                                                data-workingdays="@(trainer.WorkingDays ?? "")">
                                             @trainer.FullName
                                         </option>
                                     }
@@ -400,16 +401,27 @@
         // Antrenör değişince hizmetleri filtrele
         document.getElementById('trainerSelect').addEventListener('change', function() {
             const serviceSelect = document.getElementById('serviceSelect');
+            const dateInput = document.getElementById('dateSelect');
             const selectedOption = this.options[this.selectedIndex];
             
             // Hizmet ve tarih seçimlerini sıfırla
             serviceSelect.innerHTML = '<option value="">Hizmet Seçin</option>';
-            document.getElementById('dateSelect').value = '';
+            dateInput.value = '';
             document.getElementById('timeSelect').innerHTML = '<option value="">Saat seçin</option>';
             
             if (this.value) {
                 // Antrenörün sunduğu hizmet ID'lerini al
                 const serviceIds = selectedOption.dataset.services.split(',').map(id => parseInt(id)).filter(id => !isNaN(id));
+                
+                // Çalışma günlerini al
+                const workingDays = selectedOption.dataset.workingdays || '';
+                
+                // Tarih inputuna çalışma günü kısıtlaması ekle
+                if (workingDays) {
+                    dateInput.setAttribute('data-working-days', workingDays);
+                } else {
+                    dateInput.removeAttribute('data-working-days');
+                }
                 
                 if (serviceIds.length === 0) {
                     serviceSelect.innerHTML = '<option value="">Bu antrenörün hizmeti yok</option>';
@@ -430,19 +442,44 @@
             } else {
                 serviceSelect.innerHTML = '<option value="">Önce antrenör seçin</option>';
                 serviceSelect.disabled = true;
+                dateInput.removeAttribute('data-working-days');
             }
             updateSummary();
         });
 
-        // Tarih değiştiğinde müsait saatleri yükle
+        // Tarih değiştiğinde çalışma günü kontrolü yap
         document.getElementById('dateSelect').addEventListener('change', async function() {
             const trainerId = document.getElementById('trainerSelect').value;
             const date = this.value;
             const timeSelect = document.getElementById('timeSelect');
+            const workingDays = this.getAttribute('data-working-days');
             
             timeSelect.innerHTML = '<option value="">Saat seçin</option>';
             
             if (trainerId && date) {
+                // Seçilen günü kontrol et
+                if (workingDays) {
+                    const selectedDate = new Date(date + 'T00:00:00');
+                    const dayOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][selectedDate.getDay()];
+                    const workingDaysList = workingDays.split(',');
+                    
+                    if (!workingDaysList.includes(dayOfWeek)) {
+                        const dayNamesTr = {
+                            'Monday': 'Pazartesi',
+                            'Tuesday': 'Salı',
+                            'Wednesday': 'Çarşamba',
+                            'Thursday': 'Perşembe',
+                            'Friday': 'Cuma',
+                            'Saturday': 'Cumartesi',
+                            'Sunday': 'Pazar'
+                        };
+                        const workingDaysStr = workingDaysList.map(d => dayNamesTr[d] || d).join(', ');
+                        alert(`Antrenör seçtiğiniz günde çalışmamaktadır.\n\nÇalıştığı günler: ${workingDaysStr}`);
+                        this.value = '';
+                        return;
+                    }
+                }
+                
                 // Basit saat seçenekleri oluştur
                 for (let h = 8; h <= 21; h++) {
                     const option = document.createElement('option');

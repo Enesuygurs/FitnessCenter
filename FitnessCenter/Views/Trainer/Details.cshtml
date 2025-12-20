@@ -288,9 +288,34 @@
                 <div class="edit-card-header"><h5><i class="bi bi-clock"></i> Çalışma Saatleri</h5></div>
                 <div class="edit-card-body">
                     <p><strong>Günlük Çalışma Saati:</strong> @Model.WorkStartTime.ToString(@"hh\:mm") - @Model.WorkEndTime.ToString(@"hh\:mm")</p>
-                    @if (Model.Availabilities != null && Model.Availabilities.Any())
+                    
+                    @if (!string.IsNullOrEmpty(Model.WorkingDays))
                     {
-                        <h6 class="mt-3 section-title">Müsait Günler</h6>
+                        var workingDays = Model.WorkingDays.Split(',', StringSplitOptions.RemoveEmptyEntries);
+                        <h6 class="mt-3" style="color: #00d26a; font-weight: 600;">Müsait Günler</h6>
+                        <div class="d-flex flex-wrap gap-2">
+                            @foreach (var day in workingDays)
+                            {
+                                string dayName = day switch
+                                {
+                                    "Monday" => "Pazartesi",
+                                    "Tuesday" => "Salı",
+                                    "Wednesday" => "Çarşamba",
+                                    "Thursday" => "Perşembe",
+                                    "Friday" => "Cuma",
+                                    "Saturday" => "Cumartesi",
+                                    "Sunday" => "Pazar",
+                                    _ => day
+                                };
+                                <span class="badge" style="background: linear-gradient(135deg, rgba(0,210,106,0.2), rgba(0,210,106,0.1)); color: #00d26a; padding: 8px 16px; border-radius: 20px; border: 1px solid rgba(0,210,106,0.3);">
+                                    @dayName
+                                </span>
+                            }
+                        </div>
+                    }
+                    else if (Model.Availabilities != null && Model.Availabilities.Any())
+                    {
+                        <h6 class="mt-3" style="color: #00d26a; font-weight: 600;">Müsait Günler</h6>
                         <div class="d-flex flex-wrap gap-2">
                             @foreach (var availability in Model.Availabilities.OrderBy(a => a.DayOfWeek))
                             {

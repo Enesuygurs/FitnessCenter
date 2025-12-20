@@ -149,6 +149,32 @@ namespace FitnessCenter.Controllers
 
             // Antrenör müsaitlik kontrolü
             var dayOfWeek = model.AppointmentDate.DayOfWeek;
+            
+            // Önce WorkingDays kontrolü yap
+            var trainer = await _context.Trainers.FindAsync(model.TrainerId);
+            if (trainer != null && !string.IsNullOrEmpty(trainer.WorkingDays))
+            {
+                var workingDaysList = trainer.WorkingDays.Split(',', StringSplitOptions.RemoveEmptyEntries);
+                var dayName = dayOfWeek.ToString();
+                
+                if (!workingDaysList.Contains(dayName))
+                {
+                    string dayNameTr = dayOfWeek switch
+                    {
+                        DayOfWeek.Monday => "Pazartesi",
+                        DayOfWeek.Tuesday => "Salı",
+                        DayOfWeek.Wednesday => "Çarşamba",
+                        DayOfWeek.Thursday => "Perşembe",
+                        DayOfWeek.Friday => "Cuma",
+                        DayOfWeek.Saturday => "Cumartesi",
+                        DayOfWeek.Sunday => "Pazar",
+                        _ => dayName
+                    };
+                    ModelState.AddModelError("AppointmentDate", $"Antrenör {dayNameTr} günü çalışmamaktadır. Lütfen çalıştığı günlerden birini seçin.");
+                    return View(model);
+                }
+            }
+            
             var hasAvailabilityRecords = await _context.TrainerAvailabilities
                 .Where(ta => ta.TrainerId == model.TrainerId)
                 .AnyAsync();

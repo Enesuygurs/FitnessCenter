@@ -52,6 +52,9 @@ namespace FitnessCenter.Models
         [Range(0, 50, ErrorMessage = "Deneyim 0-50 yıl arasında olmalıdır")]
         public int? ExperienceYears { get; set; }
 
+        [Display(Name = "Çalışma Günleri")]
+        public string? WorkingDays { get; set; } // JSON formatında: ["Monday","Tuesday",...] veya comma-separated
+
         // Yabancı anahtar
         [Required]
         [Display(Name = "Spor Salonu")]
