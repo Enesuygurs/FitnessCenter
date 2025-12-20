@@ -74,7 +74,7 @@ namespace FitnessCenter.Controllers
                 model.Recommendation = textRecommendation;
                 model.GeneratedImageUrl = imageUrl;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 TempData["Error"] = "Öneri alınırken bir hata oluştu. Lütfen daha sonra tekrar deneyin.";
             }

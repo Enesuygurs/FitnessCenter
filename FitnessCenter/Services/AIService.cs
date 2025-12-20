@@ -486,7 +486,7 @@ Sadece JSON döndür, başka bir şey yazma.";
         }
 
         // Hedef vücut görseli üret (Pollinations.ai - ücretsiz)
-        private async Task<string?> GenerateTargetBodyImage(AIRecommendationViewModel model, string? photoAnalysis)
+        private Task<string?> GenerateTargetBodyImage(AIRecommendationViewModel model, string? photoAnalysis)
         {
             try
             {
@@ -502,12 +502,12 @@ Sadece JSON döndür, başka bir şey yazma.";
                 
                 _logger.LogInformation($"Görsel URL oluşturuldu: {imageUrl}");
                 
-                return imageUrl;
+                return Task.FromResult<string?>(imageUrl);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Görsel üretiminde hata");
-                return null;
+                return Task.FromResult<string?>(null);
             }
         }
 
@@ -520,7 +520,6 @@ Sadece JSON döndür, başka bir şey yazma.";
             string skinTone = "medium skin tone";
             string hairColor = "dark hair";
             string hairLength = "";
-            string currentBodyType = "";
             
             if (!string.IsNullOrEmpty(photoAnalysis))
             {
@@ -558,13 +557,6 @@ Sadece JSON döndür, başka bir şey yazma.";
                     else
                         hairLength = "medium length ";
                     
-                    // Mevcut vücut tipi (hedef için ters çevireceğiz)
-                    if (analysis.Contains("kilolu") || analysis.Contains("overweight") || analysis.Contains("yüksek"))
-                        currentBodyType = "overweight";
-                    else if (analysis.Contains("ince") || analysis.Contains("thin") || analysis.Contains("zayıf"))
-                        currentBodyType = "thin";
-                    else
-                        currentBodyType = "normal";
                 }
                 catch
                 {
