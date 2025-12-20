@@ -287,7 +287,7 @@
             <div class="edit-card mb-4">
                 <div class="edit-card-header"><h5><i class="bi bi-clock"></i> Çalışma Saatleri</h5></div>
                 <div class="edit-card-body">
-                    <p><strong>Günlük Çalışma Saati:</strong> @Model.WorkStartTime.ToString(@"hh\:mm") - @Model.WorkEndTime.ToString(@"hh\:mm")</p>
+                    <p><strong>Günlük Çalışma Saati:</strong> @($"{Model.WorkStartTime.Hours:D2}:{Model.WorkStartTime.Minutes:D2}") - @($"{Model.WorkEndTime.Hours:D2}:{Model.WorkEndTime.Minutes:D2}")</p>
                     
                     @if (!string.IsNullOrEmpty(Model.WorkingDays))
                     {
@@ -378,7 +378,7 @@
                             <div class="service-info">
                                 <div class="service-title">@Model.Gym.Name</div>
                                 <div class="service-desc"><i class="bi bi-geo-alt"></i> @Model.Gym.Address</div>
-                                <div class="service-desc"><i class="bi bi-clock"></i> @Model.Gym.OpeningTime.ToString(@"hh\:mm") - @Model.Gym.ClosingTime.ToString(@"hh\:mm")</div>
+                                <div class="service-desc"><i class="bi bi-clock"></i> @($"{Model.Gym.OpeningTime.Hours:D2}:{Model.Gym.OpeningTime.Minutes:D2}") - @($"{Model.Gym.ClosingTime.Hours:D2}:{Model.Gym.ClosingTime.Minutes:D2}")</div>
                             </div>
                         </div>
                     </div>

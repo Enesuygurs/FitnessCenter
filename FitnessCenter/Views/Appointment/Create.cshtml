@@ -491,8 +491,6 @@
                 }
             }
         };
-        
-        console.log('Trainer Availabilities:', trainerAvailabilities);
 
         // Antrenör değişince hizmetleri filtrele
         document.getElementById('trainerSelect').addEventListener('change', function() {
@@ -581,18 +579,8 @@
                 const dayOfWeekNum = selectedDate.getDay(); // 0 = Sunday, 1 = Monday, ...
                 const availabilities = trainerAvailabilities[trainerId] || [];
                 
-                console.log('Seçilen tarih:', date);
-                console.log('Gün numarası (JS):', dayOfWeekNum);
-                console.log('Antrenör ID:', trainerId);
-                console.log('Availabilities:', availabilities);
-                
                 // O gün için müsait zaman aralıklarını bul
-                const dayAvailabilities = availabilities.filter(a => {
-                    console.log('Kontrol edilen availability:', a, 'dayOfWeek:', a.dayOfWeek, 'aranan:', dayOfWeekNum);
-                    return a.dayOfWeek === dayOfWeekNum && a.isAvailable;
-                });
-                
-                console.log('Bulunan müsait saatler:', dayAvailabilities);
+                const dayAvailabilities = availabilities.filter(a => a.dayOfWeek === dayOfWeekNum && a.isAvailable);
                 
                 // Bugünün tarihi ve saati
                 const now = new Date();
@@ -609,8 +597,6 @@
                         const endTime = avail.endTime.split(':');
                         const startHour = parseInt(startTime[0]);
                         const endHour = parseInt(endTime[0]);
-                        
-                        console.log('Saat aralığı:', startHour, '-', endHour);
                         
                         for (let h = startHour; h < endHour; h++) {
                             // Eğer bugün seçildiyse ve saat geçmişte ise, bu saati ekleme

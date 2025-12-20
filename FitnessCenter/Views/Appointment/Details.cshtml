@@ -256,7 +256,7 @@
                                 </tr>
                                 <tr>
                                     <th>Randevu Saati:</th>
-                                    <td><strong>@Model.AppointmentTime.ToString(@"hh\:mm") - @Model.EndTime.ToString(@"hh\:mm")</strong></td>
+                                    <td><strong>@($"{Model.AppointmentTime.Hours:D2}:{Model.AppointmentTime.Minutes:D2}") - @($"{Model.EndTime.Hours:D2}:{Model.EndTime.Minutes:D2}")</strong></td>
                                 </tr>
                             </table>
                         </div>
