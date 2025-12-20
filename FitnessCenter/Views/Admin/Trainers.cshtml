@@ -227,7 +227,7 @@
                                         }
                                     }
                                 </td>
-                                <td>@trainer.WorkStartTime.ToString(@"hh\:mm") - @trainer.WorkEndTime.ToString(@"hh\:mm")</td>
+                                <td>@($"{trainer.WorkStartTime.Hours:D2}:{trainer.WorkStartTime.Minutes:D2}") - @($"{trainer.WorkEndTime.Hours:D2}:{trainer.WorkEndTime.Minutes:D2}")</td>
                                 <td>
                                     @if (trainer.IsActive)
                                     {

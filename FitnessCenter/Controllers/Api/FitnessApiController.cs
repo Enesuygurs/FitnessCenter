@@ -41,8 +41,8 @@ namespace FitnessCenter.Controllers.Api
                     t.ProfileImageUrl,
                     WorkingHours = new
                     {
-                        Start = t.WorkStartTime.ToString(@"hh\:mm"),
-                        End = t.WorkEndTime.ToString(@"hh\:mm")
+                        Start = $"{t.WorkStartTime.Hours:D2}:{t.WorkStartTime.Minutes:D2}",
+                        End = $"{t.WorkEndTime.Hours:D2}:{t.WorkEndTime.Minutes:D2}"
                     },
                     Gym = new
                     {
@@ -87,8 +87,8 @@ namespace FitnessCenter.Controllers.Api
                     t.IsActive,
                     WorkingHours = new
                     {
-                        Start = t.WorkStartTime.ToString(@"hh\:mm"),
-                        End = t.WorkEndTime.ToString(@"hh\:mm")
+                        Start = $"{t.WorkStartTime.Hours:D2}:{t.WorkStartTime.Minutes:D2}",
+                        End = $"{t.WorkEndTime.Hours:D2}:{t.WorkEndTime.Minutes:D2}"
                     },
                     Gym = new
                     {
@@ -106,8 +106,8 @@ namespace FitnessCenter.Controllers.Api
                     Availabilities = t.Availabilities.Select(a => new
                     {
                         a.DayOfWeek,
-                        Start = a.StartTime.ToString(@"hh\:mm"),
-                        End = a.EndTime.ToString(@"hh\:mm"),
+                        Start = $"{a.StartTime.Hours:D2}:{a.StartTime.Minutes:D2}",
+                        End = $"{a.EndTime.Hours:D2}:{a.EndTime.Minutes:D2}",
                         a.IsAvailable
                     })
                 })
@@ -158,8 +158,8 @@ namespace FitnessCenter.Controllers.Api
                         .Where(a => a.DayOfWeek == dayOfWeek && a.IsAvailable)
                         .Select(a => new
                         {
-                            Start = a.StartTime.ToString(@"hh\:mm"),
-                            End = a.EndTime.ToString(@"hh\:mm")
+                            Start = $"{a.StartTime.Hours:D2}:{a.StartTime.Minutes:D2}",
+                            End = $"{a.EndTime.Hours:D2}:{a.EndTime.Minutes:D2}"
                         })
                         .FirstOrDefault(),
                     Services = t.TrainerServices.Select(ts => new
@@ -238,8 +238,8 @@ namespace FitnessCenter.Controllers.Api
                 {
                     a.Id,
                     a.AppointmentDate,
-                    AppointmentTime = a.AppointmentTime.ToString(@"hh\:mm"),
-                    EndTime = a.EndTime.ToString(@"hh\:mm"),
+                    AppointmentTime = $"{a.AppointmentTime.Hours:D2}:{a.AppointmentTime.Minutes:D2}",
+                    EndTime = $"{a.EndTime.Hours:D2}:{a.EndTime.Minutes:D2}",
                     Status = a.Status.ToString(),
                     a.TotalPrice,
                     a.Notes,
@@ -275,8 +275,8 @@ namespace FitnessCenter.Controllers.Api
                 .Select(a => new
                 {
                     a.Id,
-                    AppointmentTime = a.AppointmentTime.ToString(@"hh\:mm"),
-                    EndTime = a.EndTime.ToString(@"hh\:mm"),
+                    AppointmentTime = $"{a.AppointmentTime.Hours:D2}:{a.AppointmentTime.Minutes:D2}",
+                    EndTime = $"{a.EndTime.Hours:D2}:{a.EndTime.Minutes:D2}",
                     Status = a.Status.ToString(),
                     Member = a.User!.FirstName + " " + a.User.LastName,
                     Trainer = a.Trainer!.FirstName + " " + a.Trainer.LastName,
@@ -322,8 +322,8 @@ namespace FitnessCenter.Controllers.Api
                 {
                     a.Id,
                     a.AppointmentDate,
-                    AppointmentTime = a.AppointmentTime.ToString(@"hh\:mm"),
-                    EndTime = a.EndTime.ToString(@"hh\:mm"),
+                    AppointmentTime = $"{a.AppointmentTime.Hours:D2}:{a.AppointmentTime.Minutes:D2}",
+                    EndTime = $"{a.EndTime.Hours:D2}:{a.EndTime.Minutes:D2}",
                     Status = a.Status.ToString(),
                     Member = a.User!.FirstName + " " + a.User.LastName,
                     Service = a.Service!.Name,

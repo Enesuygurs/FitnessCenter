@@ -178,7 +178,7 @@
                         }
                         <div class="trainer-info">
                             <i class="bi bi-clock"></i>
-                            <span>@trainer.WorkStartTime.ToString(@"hh\:mm") - @trainer.WorkEndTime.ToString(@"hh\:mm")</span>
+                            <span>@($"{trainer.WorkStartTime.Hours:D2}:{trainer.WorkStartTime.Minutes:D2}") - @($"{trainer.WorkEndTime.Hours:D2}:{trainer.WorkEndTime.Minutes:D2}")</span>
                         </div>
                         <div class="trainer-info">
                             <i class="bi bi-building"></i>

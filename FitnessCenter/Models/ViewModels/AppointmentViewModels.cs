@@ -52,6 +52,6 @@ namespace FitnessCenter.Models.ViewModels
         public TimeSpan StartTime { get; set; }
         public TimeSpan EndTime { get; set; }
         public bool IsAvailable { get; set; }
-        public string DisplayTime => StartTime.ToString(@"hh\:mm");
+        public string DisplayTime => $"{StartTime.Hours:D2}:{StartTime.Minutes:D2}";
     }
 }

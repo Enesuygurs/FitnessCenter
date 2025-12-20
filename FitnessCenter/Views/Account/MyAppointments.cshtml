@@ -217,7 +217,7 @@
                         <div class="card-body">
                             <h5 class="card-title">@appointment.Service?.Name</h5>
                             <p class="card-text">
-                                <span class="line-item"><i class="bi bi-clock"></i><span>@appointment.AppointmentTime.ToString(@"hh\:mm") - @appointment.EndTime.ToString(@"hh\:mm")</span></span>
+                                <span class="line-item"><i class="bi bi-clock"></i><span>@($"{appointment.AppointmentTime.Hours:D2}:{appointment.AppointmentTime.Minutes:D2}") - @($"{appointment.EndTime.Hours:D2}:{appointment.EndTime.Minutes:D2}")</span></span>
                                 <span class="line-item"><i class="bi bi-person"></i><span>Antrenör: @appointment.Trainer?.FullName</span></span>
                                 <span class="line-item"><i class="bi bi-geo-alt"></i><span>@appointment.Service?.Gym?.Name</span></span>
                                 <span class="line-item"><i class="bi bi-cash-stack"></i><span>@appointment.TotalPrice.ToString("N0") ₺</span></span>

@@ -372,7 +372,7 @@
                                             </div>
                                             <div class="appointment-info">
                                                 <i class="bi bi-clock"></i>
-                                                <span>@apt.AppointmentTime.ToString(@"hh\:mm") - @apt.EndTime.ToString(@"hh\:mm")</span>
+                                                <span>@($"{apt.AppointmentTime.Hours:D2}:{apt.AppointmentTime.Minutes:D2}") - @($"{apt.EndTime.Hours:D2}:{apt.EndTime.Minutes:D2}")</span>
                                             </div>
                                             <div class="appointment-info">
                                                 <i class="bi bi-building"></i>
@@ -431,7 +431,7 @@
                                     <td class="text-white">@apt.Service?.Name</td>
                                     <td>@apt.Trainer?.FullName</td>
                                     <td>@apt.AppointmentDate.ToString("dd.MM.yyyy")</td>
-                                    <td>@apt.AppointmentTime.ToString(@"hh\:mm") - @apt.EndTime.ToString(@"hh\:mm")</td>
+                                    <td>@($"{apt.AppointmentTime.Hours:D2}:{apt.AppointmentTime.Minutes:D2}") - @($"{apt.EndTime.Hours:D2}:{apt.EndTime.Minutes:D2}")</td>
                                     <td><span class="price-tag" style="font-size: 1rem;">@apt.TotalPrice ₺</span></td>
                                     <td>
                                         <a asp-action="Details" asp-route-id="@apt.Id" class="btn btn-action view btn-sm">
@@ -481,7 +481,7 @@
                                     <td class="text-white">@apt.Service?.Name</td>
                                     <td>@apt.Trainer?.FullName</td>
                                     <td>@apt.AppointmentDate.ToString("dd.MM.yyyy")</td>
-                                    <td>@apt.AppointmentTime.ToString(@"hh\:mm") - @apt.EndTime.ToString(@"hh\:mm")</td>
+                                    <td>@($"{apt.AppointmentTime.Hours:D2}:{apt.AppointmentTime.Minutes:D2}") - @($"{apt.EndTime.Hours:D2}:{apt.EndTime.Minutes:D2}")</td>
                                     <td>
                                         @if (apt.Status == FitnessCenter.Models.AppointmentStatus.Completed)
                                         {

@@ -247,7 +247,7 @@
                                 <tr>
                                     <td>@apt.Id</td>
                                     <td>@apt.AppointmentDate.ToString("dd.MM.yyyy")</td>
-                                    <td>@apt.AppointmentTime.ToString(@"hh\:mm") - @apt.EndTime.ToString(@"hh\:mm")</td>
+                                    <td>@($"{apt.AppointmentTime.Hours:D2}:{apt.AppointmentTime.Minutes:D2}") - @($"{apt.EndTime.Hours:D2}:{apt.EndTime.Minutes:D2}")</td>
                                     <td><strong>@apt.User?.FullName</strong></td>
                                     <td>@apt.Trainer?.FullName</td>
                                     <td>@apt.Service?.Name</td>

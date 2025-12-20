@@ -206,7 +206,7 @@
                                 <td><strong>@gym.Name</strong></td>
                                 <td><span class="address-text">@gym.Address</span></td>
                                 <td>@gym.Phone</td>
-                                <td>@gym.OpeningTime.ToString(@"hh\:mm") - @gym.ClosingTime.ToString(@"hh\:mm")</td>
+                                <td>@($"{gym.OpeningTime.Hours:D2}:{gym.OpeningTime.Minutes:D2}") - @($"{gym.ClosingTime.Hours:D2}:{gym.ClosingTime.Minutes:D2}")</td>
                                 <td>
                                     @if (gym.IsActive)
                                     {
