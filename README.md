@@ -25,21 +25,30 @@ Modern bir spor salonu yönetim sistemi. ASP.NET Core MVC ile geliştirilmiştir
 
 ### Gereksinimler
 - .NET 9 SDK
-- SQL Server LocalDB
+- SQL Server
 
 ### Adımlar
 
 ```bash
 # 1. Projeyi klonlayın
 git clone https://github.com/Enesuygurs/FitnessCenter.git
-cd web/FitnessCenter
+cd FitnessCenter/FitnessCenter
 
-# 2. Veritabanını oluşturun
+# 2. .env dosyasını oluşturun
+# .env.example dosyasını .env olarak kopyalayın ve API anahtarlarınızı girin
+cp .env.example .env
+# Ardından .env dosyasını düzenleyin:
+# - GEMINI_API_KEY: https://ai.google.dev/ adresinden alın
+# - REPLICATE_API_TOKEN: (Opsiyonel) https://replicate.com/account/api-tokens
+
+# 3. Veritabanını oluşturun
 dotnet ef database update
 
-# 3. Uygulamayı çalıştırın
+# 4. Uygulamayı çalıştırın
 dotnet run
 ```
+
+Uygulama `https://localhost:5150` adresinde çalışacaktır.
 
 ## 📁 Proje Yapısı
 
