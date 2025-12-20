@@ -54,10 +54,27 @@ namespace FitnessCenter.Controllers
 
             try
             {
-                var recommendation = await _aiService.GetFitnessRecommendationAsync(model);
-                model.Recommendation = recommendation;
+                // Fotoğraf varsa Base64'e çevir (görüntüleme için)
+                if (model.Photo != null && model.Photo.Length > 0)
+                {
+                    using (var ms = new MemoryStream())
+                    {
+                        await model.Photo.CopyToAsync(ms);
+                        var fileBytes = ms.ToArray();
+                        model.UploadedImageBase64 = Convert.ToBase64String(fileBytes);
+                        
+                        // Stream pozisyonunu başa al (servis de kullanabilsin diye)
+                        model.Photo.OpenReadStream().Position = 0;
+                    }
+                }
+
+                // Fotoğraf ve metin önerisi al
+                var (textRecommendation, imageUrl) = await _aiService.GetFitnessRecommendationAsync(model);
+                
+                model.Recommendation = textRecommendation;
+                model.GeneratedImageUrl = imageUrl;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 TempData["Error"] = "Öneri alınırken bir hata oluştu. Lütfen daha sonra tekrar deneyin.";
             }

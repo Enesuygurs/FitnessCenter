@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Http;
 
 namespace FitnessCenter.Models.ViewModels
 {
@@ -33,8 +34,18 @@ namespace FitnessCenter.Models.ViewModels
         [StringLength(1000)]
         public string? HealthConditions { get; set; }
 
+        [Display(Name = "Fotoğrafınız")]
+        public IFormFile? Photo { get; set; }
+
         // Öneri sonucu
         public string? Recommendation { get; set; }
+        
+        // Üretilen görsel URL
+        public string? GeneratedImageUrl { get; set; }
+
+        // Yüklenen fotoğrafın Base64 hali (görüntüleme için)
+        public string? UploadedImageBase64 { get; set; }
+        
         public bool HasRecommendation => !string.IsNullOrEmpty(Recommendation);
     }
 

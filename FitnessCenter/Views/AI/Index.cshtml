@@ -339,7 +339,7 @@
                     <h5 class="mb-0"><i class="bi bi-person-lines-fill me-2"></i>Bilgilerinizi Girin</h5>
                 </div>
                 <div class="card-body">
-                    <form asp-action="GetRecommendation" method="post" id="aiForm">
+                    <form asp-action="GetRecommendation" method="post" id="aiForm" enctype="multipart/form-data">
                         <div class="mb-4">
                             <label asp-for="Height" class="form-label">Boy (cm) <span class="text-danger">*</span></label>
                             <div class="input-group">
@@ -425,6 +425,15 @@
                                       placeholder="Varsa kronik hastalık, alerji vb."></textarea>
                         </div>
 
+                        <div class="mb-4">
+                            <label asp-for="Photo" class="form-label">Fotoğrafınız (Opsiyonel)</label>
+                            <input asp-for="Photo" type="file" class="form-control" accept="image/*" id="photoInput">
+                            <small class="text-white-50 mt-1">Fotoğraf yüklerseniz AI daha detaylı analiz yapabilir</small>
+                            <div id="photoPreview" class="mt-3" style="display:none;">
+                                <img id="previewImage" src="" alt="Önizleme" style="max-width: 100%; border-radius: 12px; border: 2px solid rgba(0,210,106,0.3);">
+                            </div>
+                        </div>
+
                         <div class="d-grid">
                             <button type="submit" class="btn btn-ai" id="submitBtn">
                                 <i class="bi bi-magic"></i> Öneri Al
@@ -451,6 +460,66 @@
         <div class="col-lg-7" data-aos="fade-left">
             @if (!string.IsNullOrEmpty(Model?.Recommendation))
             {
+                <!-- Hedef Vücut Görseli -->
+                @if (!string.IsNullOrEmpty(Model.GeneratedImageUrl))
+                {
+                    <div class="result-card mb-4">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="bi bi-image-fill me-2"></i>Dönüşüm Hedefiniz</h5>
+                        </div>
+                        <div class="card-body text-center">
+                            <p class="text-white-50 mb-3">
+                                <i class="bi bi-stars me-1"></i>
+                                Fiziksel özelliklerinize ve hedefinize göre oluşturulmuş motivasyon görseli:
+                            </p>
+                            
+                            <div class="row justify-content-center align-items-center g-3">
+                                @if (!string.IsNullOrEmpty(Model.UploadedImageBase64))
+                                {
+                                    <div class="col-md-6">
+                                        <div class="position-relative">
+                                            <span class="badge bg-secondary position-absolute top-0 start-0 m-2 p-2">Mevcut Haliniz</span>
+                                            <img src="data:image/jpeg;base64,@Model.UploadedImageBase64" alt="Yüklenen Fotoğraf" class="img-fluid rounded shadow-lg w-100" 
+                                                 style="max-height: 500px; object-fit: cover; border: 3px solid rgba(255,255,255,0.1);">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="position-relative">
+                                            <span class="badge bg-success position-absolute top-0 start-0 m-2 p-2">Hedef Haliniz (AI)</span>
+                                            <img src="@Model.GeneratedImageUrl" alt="Hedef Vücut Motivasyonu" class="img-fluid rounded shadow-lg w-100" 
+                                                 style="max-height: 500px; object-fit: cover; border: 3px solid rgba(0,210,106,0.3);" 
+                                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                                            <div style="display:none;" class="alert alert-warning mt-3">
+                                                Görsel yüklenirken bir hata oluştu.
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="col-12">
+                                        <div class="position-relative d-inline-block">
+                                            <span class="badge bg-success position-absolute top-0 start-0 m-2 p-2">Hedef Haliniz (AI)</span>
+                                            <img src="@Model.GeneratedImageUrl" alt="Hedef Vücut Motivasyonu" class="img-fluid rounded shadow-lg" 
+                                                 style="max-height: 500px; border: 3px solid rgba(0,210,106,0.3);" 
+                                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                                            <div style="display:none;" class="alert alert-warning mt-3">
+                                                Görsel yüklenirken bir hata oluştu. Lütfen tekrar deneyin.
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+
+                            <p class="text-white-50 mt-3 small">
+                                <i class="bi bi-info-circle me-1"></i>
+                                Bu görsel, AI tarafından bilgilerinize göre üretilmiştir. 
+                                Düzenli antrenman ile bu hedefe ulaşabilirsiniz!
+                            </p>
+                        </div>
+                    </div>
+                }
+                
                 <!-- Öneriler -->
                 <div class="result-card mb-4">
                     <div class="card-header">
@@ -520,6 +589,24 @@
         const bmiResult = document.getElementById('bmiResult');
         const submitBtn = document.getElementById('submitBtn');
         const aiForm = document.getElementById('aiForm');
+        const photoInput = document.getElementById('photoInput');
+        const photoPreview = document.getElementById('photoPreview');
+        const previewImage = document.getElementById('previewImage');
+
+        // Fotoğraf seçildiğinde önizleme göster
+        photoInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    previewImage.src = e.target.result;
+                    photoPreview.style.display = 'block';
+                }
+                reader.readAsDataURL(file);
+            } else {
+                photoPreview.style.display = 'none';
+            }
+        });
 
         function calculateBMI() {
             const height = parseFloat(heightInput.value) / 100;
@@ -572,7 +659,7 @@
         // Form gönderildiğinde buton durumunu değiştir
         aiForm.addEventListener('submit', function() {
             submitBtn.disabled = true;
-            submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Analiz Ediliyor...';
+            submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>AI Analiz Ediyor...';
         });
     </script>
 }

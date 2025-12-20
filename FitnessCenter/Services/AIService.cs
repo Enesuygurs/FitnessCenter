@@ -1,13 +1,14 @@
 using FitnessCenter.Models.ViewModels;
 using System.Text;
 using System.Text.Json;
+using Microsoft.AspNetCore.Http;
 
 namespace FitnessCenter.Services
 {
     // AI servisi arayüzü
     public interface IAIService
     {
-        Task<string> GetFitnessRecommendationAsync(AIRecommendationViewModel model);
+        Task<(string textRecommendation, string? imageUrl)> GetFitnessRecommendationAsync(AIRecommendationViewModel model);
     }
 
     // Google Gemini AI servisi
@@ -16,6 +17,10 @@ namespace FitnessCenter.Services
         private readonly HttpClient _httpClient;
         private readonly IConfiguration _configuration;
         private readonly ILogger<AIService> _logger;
+        
+        // Fotoğraf analizinden elde edilen bilgiler
+        private string? _photoAnalysisResult;
+        private string? _base64Photo;
 
         public AIService(HttpClient httpClient, IConfiguration configuration, ILogger<AIService> logger)
         {
@@ -24,12 +29,369 @@ namespace FitnessCenter.Services
             _logger = logger;
         }
 
-        // Fitness önerisi al
-        public async Task<string> GetFitnessRecommendationAsync(AIRecommendationViewModel model)
+        // Fitness önerisi ve görsel üret
+        public async Task<(string textRecommendation, string? imageUrl)> GetFitnessRecommendationAsync(AIRecommendationViewModel model)
         {
-            // API anahtarını ortam değişkeninden al
-            var apiKey = Environment.GetEnvironmentVariable("GEMINI_API_KEY");
+            // API anahtarlarını ortam değişkeninden al
+            var geminiApiKey = Environment.GetEnvironmentVariable("GEMINI_API_KEY");
             
+            string textRecommendation;
+            _photoAnalysisResult = null;
+            _base64Photo = null;
+            
+            // Fotoğraf varsa önce Gemini Vision ile analiz et ve base64'ü sakla
+            if (model.Photo != null && model.Photo.Length > 0)
+            {
+                // Fotoğrafı base64'e çevir ve sakla
+                using (var ms = new MemoryStream())
+                {
+                    await model.Photo.CopyToAsync(ms);
+                    _base64Photo = Convert.ToBase64String(ms.ToArray());
+                }
+                
+                // Fotoğrafı analiz et ve sonucu sakla
+                _photoAnalysisResult = await AnalyzePhotoWithGemini(model, geminiApiKey, _base64Photo);
+                textRecommendation = await GetRecommendationWithPhotoAnalysis(model, geminiApiKey, _photoAnalysisResult, _base64Photo);
+            }
+            else
+            {
+                textRecommendation = await GetRecommendationWithoutPhoto(model, geminiApiKey);
+            }
+            
+            // Hedef vücut görseli üret
+            var replicateToken = Environment.GetEnvironmentVariable("REPLICATE_API_TOKEN");
+            string? imageUrl;
+            
+            // Replicate API varsa ve fotoğraf yüklendiyse gerçek dönüşüm yap
+            if (!string.IsNullOrEmpty(replicateToken) && !string.IsNullOrEmpty(_base64Photo))
+            {
+                imageUrl = await GenerateImageWithReplicate(model, _base64Photo, replicateToken);
+            }
+            else
+            {
+                // Replicate yoksa Pollinations.ai kullan (fallback)
+                imageUrl = await GenerateTargetBodyImage(model, _photoAnalysisResult);
+            }
+            
+            return (textRecommendation, imageUrl);
+        }
+
+        // Replicate API ile görsel üret (fotoğrafı kullanarak)
+        private async Task<string?> GenerateImageWithReplicate(AIRecommendationViewModel model, string base64Photo, string replicateToken)
+        {
+            try
+            {
+                _logger.LogInformation("Replicate API ile görsel üretiliyor...");
+                
+                // Hedef prompt oluştur
+                var targetPrompt = BuildReplicatePrompt(model);
+                
+                // Fotoğrafı data URI formatına çevir
+                var imageDataUri = $"data:image/jpeg;base64,{base64Photo}";
+                
+                // Replicate API - SDXL img2img modeli kullan
+                // Model: stability-ai/sdxl:39ed52f2a78e934b3ba6e2a89f5b1c712de7dfea535525255b1aa35c5565e08b
+                var requestBody = new
+                {
+                    version = "39ed52f2a78e934b3ba6e2a89f5b1c712de7dfea535525255b1aa35c5565e08b", 
+                    input = new
+                    {
+                        image = imageDataUri,
+                        prompt = targetPrompt + ", professional fitness photography, 8k, highly detailed, realistic",
+                        negative_prompt = "ugly, deformed, noisy, blurry, distorted, disfigured, bad anatomy, wrong proportions, low quality, cartoon, anime",
+                        strength = 0.65, // Orijinal fotoğraftan ne kadar sapacağı (0.0 - 1.0)
+                        guidance_scale = 7.5,
+                        num_inference_steps = 30
+                    }
+                };
+
+                var json = JsonSerializer.Serialize(requestBody);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                _httpClient.DefaultRequestHeaders.Clear();
+                _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {replicateToken}");
+                _httpClient.DefaultRequestHeaders.Add("Prefer", "wait"); // Sonucu bekle
+
+                var response = await _httpClient.PostAsync(
+                    "https://api.replicate.com/v1/predictions",
+                    content);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var responseContent = await response.Content.ReadAsStringAsync();
+                    var result = JsonDocument.Parse(responseContent);
+                    var status = result.RootElement.GetProperty("status").GetString();
+                    
+                    if (status == "succeeded")
+                    {
+                        var output = result.RootElement.GetProperty("output");
+                        if (output.ValueKind == JsonValueKind.Array && output.GetArrayLength() > 0)
+                        {
+                            return output[0].GetString();
+                        }
+                    }
+                    else if (status == "processing" || status == "starting")
+                    {
+                        // Bekleme gerekirse (wait header'a rağmen)
+                        var predictionId = result.RootElement.GetProperty("id").GetString();
+                        return await WaitForReplicateResult(predictionId!, replicateToken);
+                    }
+                }
+                else
+                {
+                    var errorContent = await response.Content.ReadAsStringAsync();
+                    _logger.LogError($"Replicate API Hatası: {response.StatusCode} - {errorContent}");
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Replicate API çağrısında hata");
+            }
+
+            // Hata durumunda Pollinations.ai'a fallback
+            return await GenerateTargetBodyImage(model, _photoAnalysisResult);
+        }
+
+        // Replicate sonucunu bekle
+        private async Task<string?> WaitForReplicateResult(string predictionId, string replicateToken)
+        {
+            for (int i = 0; i < 30; i++)
+            {
+                await Task.Delay(2000);
+                _httpClient.DefaultRequestHeaders.Clear();
+                _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {replicateToken}");
+
+                var response = await _httpClient.GetAsync($"https://api.replicate.com/v1/predictions/{predictionId}");
+                if (response.IsSuccessStatusCode)
+                {
+                    var content = await response.Content.ReadAsStringAsync();
+                    var result = JsonDocument.Parse(content);
+                    var status = result.RootElement.GetProperty("status").GetString();
+
+                    if (status == "succeeded")
+                    {
+                        var output = result.RootElement.GetProperty("output");
+                        return output.ValueKind == JsonValueKind.Array ? output[0].GetString() : output.GetString();
+                    }
+                    else if (status == "failed" || status == "canceled") break;
+                }
+            }
+            return null;
+        }
+
+        // Replicate için prompt oluştur
+        private string BuildReplicatePrompt(AIRecommendationViewModel model)
+        {
+            var sb = new StringBuilder();
+            
+            // Cinsiyet
+            var gender = model.Gender?.ToLower() ?? "";
+            var isMale = gender.Contains("erkek");
+            var isFemale = gender.Contains("kadın");
+            
+            if (isMale)
+            {
+                sb.Append("athletic muscular man, fit male body, ");
+            }
+            else if (isFemale)
+            {
+                sb.Append("athletic fit woman, toned female body, ");
+            }
+            else
+            {
+                sb.Append("athletic fit person, ");
+            }
+            
+            // Hedef
+            var goal = model.FitnessGoal?.ToLower() ?? "";
+            if (goal.Contains("muscle") || goal.Contains("kas"))
+            {
+                sb.Append("very muscular, defined muscles, six pack abs, bodybuilder physique, ");
+            }
+            else if (goal.Contains("weight") || goal.Contains("kilo"))
+            {
+                sb.Append("lean slim body, low body fat, toned physique, ");
+            }
+            else
+            {
+                sb.Append("healthy fit body, balanced physique, ");
+            }
+            
+            sb.Append("professional fitness photography, gym environment, good lighting, high quality, realistic");
+            
+            return sb.ToString();
+        }
+
+        // Fotoğrafı Gemini Vision ile analiz et
+        private async Task<string?> AnalyzePhotoWithGemini(AIRecommendationViewModel model, string? apiKey, string base64Image)
+        {
+            if (string.IsNullOrEmpty(apiKey))
+            {
+                return null;
+            }
+
+            try
+            {
+                // Analiz prompt'u - vücut özelliklerini tespit et
+                var analysisPrompt = @"Bu fotoğrafı analiz et ve şu bilgileri JSON formatında döndür:
+{
+    ""bodyType"": ""ince/normal/kaslı/kilolu"",
+    ""estimatedBodyFat"": ""düşük/orta/yüksek"",
+    ""muscleDefinition"": ""az/orta/yüksek"",
+    ""skinTone"": ""açık/orta/koyu"",
+    ""hairColor"": ""sarı/kahverengi/siyah/kızıl"",
+    ""hairLength"": ""kısa/orta/uzun"",
+    ""apparentAge"": ""genç/orta yaşlı/yaşlı"",
+    ""physicalFeatures"": ""kısa açıklama""
+}
+Sadece JSON döndür, başka bir şey yazma.";
+
+                var requestBody = new
+                {
+                    contents = new[]
+                    {
+                        new
+                        {
+                            parts = new object[]
+                            {
+                                new { text = analysisPrompt },
+                                new 
+                                { 
+                                    inline_data = new 
+                                    { 
+                                        mime_type = "image/jpeg",
+                                        data = base64Image 
+                                    } 
+                                }
+                            }
+                        }
+                    },
+                    generationConfig = new
+                    {
+                        temperature = 0.3,
+                        maxOutputTokens = 500
+                    }
+                };
+
+                var json = JsonSerializer.Serialize(requestBody);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                _httpClient.DefaultRequestHeaders.Clear();
+
+                var response = await _httpClient.PostAsync(
+                    $"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={apiKey}", 
+                    content);
+                
+                if (response.IsSuccessStatusCode)
+                {
+                    var responseContent = await response.Content.ReadAsStringAsync();
+                    var result = JsonDocument.Parse(responseContent);
+                    
+                    var analysisResult = result.RootElement
+                        .GetProperty("candidates")[0]
+                        .GetProperty("content")
+                        .GetProperty("parts")[0]
+                        .GetProperty("text")
+                        .GetString();
+
+                    _logger.LogInformation($"Fotoğraf analiz sonucu: {analysisResult}");
+                    return analysisResult;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Fotoğraf analizi sırasında hata");
+            }
+
+            return null;
+        }
+
+        // Fotoğraf analizi ile öneri al
+        private async Task<string> GetRecommendationWithPhotoAnalysis(AIRecommendationViewModel model, string? apiKey, string? photoAnalysis, string base64Image)
+        {
+            if (string.IsNullOrEmpty(apiKey))
+            {
+                return GenerateDemoRecommendation(model);
+            }
+
+            try
+            {
+                var prompt = BuildPrompt(model);
+                if (!string.IsNullOrEmpty(photoAnalysis))
+                {
+                    prompt += $"\n\nFotoğraf Analiz Sonucu:\n{photoAnalysis}\n\nBu analiz sonucuna göre önerilerini kişiselleştir.";
+                }
+
+                // Gemini Vision API istek formatı
+                var requestBody = new
+                {
+                    contents = new[]
+                    {
+                        new
+                        {
+                            parts = new object[]
+                            {
+                                new { text = "Sen bir profesyonel fitness ve beslenme danışmanısın. Türkçe yanıt ver. Kullanıcının verdiği bilgilere ve fotoğrafına göre kişiselleştirilmiş egzersiz ve diyet önerileri sun.\n\n" + prompt },
+                                new 
+                                { 
+                                    inline_data = new 
+                                    { 
+                                        mime_type = "image/jpeg",
+                                        data = base64Image 
+                                    } 
+                                }
+                            }
+                        }
+                    },
+                    generationConfig = new
+                    {
+                        temperature = 0.7,
+                        maxOutputTokens = 4096
+                    }
+                };
+
+                var json = JsonSerializer.Serialize(requestBody);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                _httpClient.DefaultRequestHeaders.Clear();
+
+                // Gemini API'ye istek gönder
+                var response = await _httpClient.PostAsync(
+                    $"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={apiKey}", 
+                    content);
+                
+                if (response.IsSuccessStatusCode)
+                {
+                    var responseContent = await response.Content.ReadAsStringAsync();
+                    var result = JsonDocument.Parse(responseContent);
+                    
+                    // Gemini yanıtını ayrıştır
+                    var recommendation = result.RootElement
+                        .GetProperty("candidates")[0]
+                        .GetProperty("content")
+                        .GetProperty("parts")[0]
+                        .GetProperty("text")
+                        .GetString();
+
+                    return recommendation ?? "Öneri alınamadı.";
+                }
+                else
+                {
+                    var errorContent = await response.Content.ReadAsStringAsync();
+                    _logger.LogError($"Gemini API Hatası: {response.StatusCode} - {errorContent}");
+                    return GenerateDemoRecommendation(model);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Gemini Vision API çağrısında hata");
+                return GenerateDemoRecommendation(model);
+            }
+        }
+
+        // Fotoğrafsız öneri
+        private async Task<string> GetRecommendationWithoutPhoto(AIRecommendationViewModel model, string? apiKey)
+        {
             // API anahtarı yoksa demo öneri döndür
             if (string.IsNullOrEmpty(apiKey))
             {
@@ -97,6 +459,168 @@ namespace FitnessCenter.Services
                 _logger.LogError(ex, "Gemini API çağrısında hata");
                 return GenerateDemoRecommendation(model);
             }
+        }
+
+        // Hedef vücut görseli üret (Pollinations.ai - ücretsiz)
+        private async Task<string?> GenerateTargetBodyImage(AIRecommendationViewModel model, string? photoAnalysis)
+        {
+            try
+            {
+                // Görsel prompt oluştur (fotoğraf analizi varsa kullan)
+                var imagePrompt = BuildImagePrompt(model, photoAnalysis);
+                
+                // Her seferinde farklı görsel üretmek için seed ekle
+                var seed = DateTime.Now.Ticks.ToString();
+                
+                // Pollinations.ai URL'i oluştur (URL encode)
+                var encodedPrompt = Uri.EscapeDataString(imagePrompt);
+                var imageUrl = $"https://image.pollinations.ai/prompt/{encodedPrompt}?width=512&height=768&model=flux&seed={seed}&nologo=true&enhance=true";
+                
+                _logger.LogInformation($"Görsel URL oluşturuldu: {imageUrl}");
+                
+                return imageUrl;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Görsel üretiminde hata");
+                return null;
+            }
+        }
+
+        // Görsel prompt oluştur (fotoğraf analizi ile zenginleştirilmiş)
+        private string BuildImagePrompt(AIRecommendationViewModel model, string? photoAnalysis)
+        {
+            var sb = new StringBuilder();
+            
+            // Fotoğraf analizinden bilgileri çıkar
+            string skinTone = "medium skin tone";
+            string hairColor = "dark hair";
+            string hairLength = "";
+            string currentBodyType = "";
+            
+            if (!string.IsNullOrEmpty(photoAnalysis))
+            {
+                try
+                {
+                    // JSON'dan bilgileri çıkarmaya çalış
+                    var analysis = photoAnalysis.ToLower();
+                    
+                    // Cilt tonu
+                    if (analysis.Contains("\"skintone\"") || analysis.Contains("\"skin_tone\"") || analysis.Contains("cilt"))
+                    {
+                        if (analysis.Contains("açık") || analysis.Contains("light") || analysis.Contains("fair"))
+                            skinTone = "fair light skin";
+                        else if (analysis.Contains("koyu") || analysis.Contains("dark"))
+                            skinTone = "dark brown skin";
+                        else
+                            skinTone = "medium olive skin";
+                    }
+                    
+                    // Saç rengi
+                    if (analysis.Contains("sarı") || analysis.Contains("blonde"))
+                        hairColor = "blonde hair";
+                    else if (analysis.Contains("kızıl") || analysis.Contains("red"))
+                        hairColor = "red hair";
+                    else if (analysis.Contains("kahverengi") || analysis.Contains("brown"))
+                        hairColor = "brown hair";
+                    else
+                        hairColor = "black hair";
+                    
+                    // Saç uzunluğu
+                    if (analysis.Contains("uzun") || analysis.Contains("long"))
+                        hairLength = "long ";
+                    else if (analysis.Contains("kısa") || analysis.Contains("short"))
+                        hairLength = "short ";
+                    else
+                        hairLength = "medium length ";
+                    
+                    // Mevcut vücut tipi (hedef için ters çevireceğiz)
+                    if (analysis.Contains("kilolu") || analysis.Contains("overweight") || analysis.Contains("yüksek"))
+                        currentBodyType = "overweight";
+                    else if (analysis.Contains("ince") || analysis.Contains("thin") || analysis.Contains("zayıf"))
+                        currentBodyType = "thin";
+                    else
+                        currentBodyType = "normal";
+                }
+                catch
+                {
+                    // Analiz parse edilemezse varsayılanları kullan
+                }
+            }
+            
+            // Cinsiyet bazlı detaylı tanım
+            var gender = model.Gender?.ToLower() ?? "";
+            var isMale = gender.Contains("erkek") && !gender.Contains("kadın");
+            var isFemale = gender.Contains("kadın");
+            
+            if (isMale)
+            {
+                sb.Append($"professional fitness photography of athletic man, {skinTone}, {hairLength}{hairColor}, ");
+                sb.Append("masculine features, handsome face, ");
+            }
+            else if (isFemale)
+            {
+                sb.Append($"professional fitness photography of athletic woman, {skinTone}, {hairLength}{hairColor}, ");
+                sb.Append("feminine features, beautiful face, ");
+            }
+            else
+            {
+                sb.Append($"professional fitness photography of athletic person, {skinTone}, {hairColor}, ");
+            }
+            
+            // Hedef bazlı vücut tipi
+            var goal = model.FitnessGoal?.ToLower() ?? "";
+            if (goal.Contains("kas") || goal.Contains("musclegain") || goal.Contains("muscle"))
+            {
+                if (isMale)
+                {
+                    sb.Append("very muscular body, strong biceps and chest, six pack abs, bodybuilder physique, ");
+                }
+                else if (isFemale)
+                {
+                    sb.Append("toned athletic body, defined muscles, fit abs, strong feminine physique, ");
+                }
+                else
+                {
+                    sb.Append("muscular and toned body, strong physique, ");
+                }
+            }
+            else if (goal.Contains("kilo") || goal.Contains("weightloss") || goal.Contains("weight"))
+            {
+                if (isMale)
+                {
+                    sb.Append("lean muscular body, slim waist, defined abs, fit athletic male, ");
+                }
+                else if (isFemale)
+                {
+                    sb.Append("slim toned body, lean athletic figure, fit waist, graceful feminine physique, ");
+                }
+                else
+                {
+                    sb.Append("lean and fit body, slim physique, ");
+                }
+            }
+            else
+            {
+                if (isMale)
+                {
+                    sb.Append("balanced athletic male body, healthy muscular build, fit physique, ");
+                }
+                else if (isFemale)
+                {
+                    sb.Append("balanced athletic female body, healthy toned figure, fit physique, ");
+                }
+                else
+                {
+                    sb.Append("healthy and toned body, balanced physique, ");
+                }
+            }
+            
+            // Genel özellikler
+            sb.Append("confident pose in gym, professional studio lighting, ");
+            sb.Append("high quality, detailed, realistic, 8k resolution");
+            
+            return sb.ToString();
         }
 
         // Prompt oluştur
