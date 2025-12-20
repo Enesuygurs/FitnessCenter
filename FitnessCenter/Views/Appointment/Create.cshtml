@@ -239,6 +239,81 @@
             padding-top: 100px;
         }
     }
+
+    /* Error Modal Styles */
+    .error-modal .modal-content {
+        background: linear-gradient(145deg, #12121c 0%, #0d0d14 100%);
+        border: 1px solid rgba(220, 53, 69, 0.3);
+        border-radius: 20px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    }
+
+    .error-modal .modal-header {
+        background: linear-gradient(135deg, rgba(220, 53, 69, 0.15) 0%, rgba(220, 53, 69, 0.05) 100%);
+        border-bottom: 1px solid rgba(220, 53, 69, 0.2);
+        padding: 25px 30px;
+    }
+
+    .error-modal .modal-title {
+        color: #ff6b6b;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .error-modal .modal-title i {
+        font-size: 1.5rem;
+    }
+
+    .error-modal .btn-close {
+        filter: invert(1);
+        opacity: 0.7;
+    }
+
+    .error-modal .btn-close:hover {
+        opacity: 1;
+    }
+
+    .error-modal .modal-body {
+        padding: 30px;
+        color: #b8b8b8;
+    }
+
+    .error-modal .modal-body p {
+        margin-bottom: 15px;
+        font-size: 1rem;
+        line-height: 1.6;
+    }
+
+    .error-modal .working-days {
+        background: rgba(0, 210, 106, 0.1);
+        border: 1px solid rgba(0, 210, 106, 0.2);
+        border-radius: 12px;
+        padding: 15px 20px;
+        color: #00d26a;
+        font-weight: 600;
+    }
+
+    .error-modal .modal-footer {
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 20px 30px;
+    }
+
+    .error-modal .btn-error-ok {
+        background: linear-gradient(135deg, #ff6b6b, #ff4757);
+        border: none;
+        color: #fff;
+        font-weight: 600;
+        padding: 12px 30px;
+        border-radius: 12px;
+        transition: all 0.3s ease;
+    }
+
+    .error-modal .btn-error-ok:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 30px rgba(220, 53, 69, 0.3);
+    }
 </style>
 
 <div class="create-page">
@@ -474,7 +549,7 @@
                             'Sunday': 'Pazar'
                         };
                         const workingDaysStr = workingDaysList.map(d => dayNamesTr[d] || d).join(', ');
-                        alert(`Antrenör seçtiğiniz günde çalışmamaktadır.\n\nÇalıştığı günler: ${workingDaysStr}`);
+                        showErrorModal('Antrenör Seçtiğiniz Günde Çalışmamaktadır', `Lütfen antrenörün çalıştığı günlerden birini seçiniz.`, workingDaysStr);
                         this.value = '';
                         return;
                     }
@@ -531,6 +606,55 @@
             } else {
                 summaryCard.style.display = 'none';
             }
+        }
+
+        // Error Modal Fonksiyonu
+        function showErrorModal(title, message, workingDays) {
+            const modalHtml = `
+                <div class="modal fade error-modal" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="errorModalLabel">
+                                    <i class="bi bi-exclamation-triangle-fill"></i>
+                                    ${title}
+                                </h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <p>${message}</p>
+                                <div class="working-days">
+                                    <i class="bi bi-calendar-check me-2"></i>
+                                    <strong>Çalıştığı Günler:</strong> ${workingDays}
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-error-ok" data-bs-dismiss="modal">
+                                    <i class="bi bi-check-circle me-2"></i>Anladım
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Eğer varsa önceki modal'ı kaldır
+            const existingModal = document.getElementById('errorModal');
+            if (existingModal) {
+                existingModal.remove();
+            }
+            
+            // Yeni modal'ı ekle
+            document.body.insertAdjacentHTML('beforeend', modalHtml);
+            
+            // Modal'ı göster
+            const errorModal = new bootstrap.Modal(document.getElementById('errorModal'));
+            errorModal.show();
+            
+            // Modal kapandığında DOM'dan kaldır
+            document.getElementById('errorModal').addEventListener('hidden.bs.modal', function () {
+                this.remove();
+            });
         }
     </script>
 }
