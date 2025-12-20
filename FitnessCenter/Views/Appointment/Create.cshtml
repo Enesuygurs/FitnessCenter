@@ -473,6 +473,27 @@
             }
         ];
 
+        // Antrenör availability verilerini aktar
+        const trainerAvailabilities = {
+            @if (Model.Trainers != null)
+            {
+                @foreach (var trainer in Model.Trainers)
+                {
+                    @Html.Raw($"{trainer.Id}: [")
+                    @if (trainer.Availabilities != null)
+                    {
+                        @foreach (var avail in trainer.Availabilities)
+                        {
+                            @Html.Raw($"{{ dayOfWeek: {(int)avail.DayOfWeek}, startTime: '{avail.StartTime.Hours:D2}:{avail.StartTime.Minutes:D2}', endTime: '{avail.EndTime.Hours:D2}:{avail.EndTime.Minutes:D2}', isAvailable: {avail.IsAvailable.ToString().ToLower()} }},")
+                        }
+                    }
+                    @Html.Raw("],")
+                }
+            }
+        };
+        
+        console.log('Trainer Availabilities:', trainerAvailabilities);
+
         // Antrenör değişince hizmetleri filtrele
         document.getElementById('trainerSelect').addEventListener('change', function() {
             const serviceSelect = document.getElementById('serviceSelect');
@@ -522,7 +543,7 @@
             updateSummary();
         });
 
-        // Tarih değiştiğinde çalışma günü kontrolü yap
+        // Tarih değiştiğinde çalışma günü kontrolü yap ve müsait saatleri göster
         document.getElementById('dateSelect').addEventListener('change', async function() {
             const trainerId = document.getElementById('trainerSelect').value;
             const date = this.value;
@@ -555,49 +576,64 @@
                     }
                 }
                 
+                // Seçilen günün availability bilgilerini al
+                const selectedDate = new Date(date + 'T00:00:00');
+                const dayOfWeekNum = selectedDate.getDay(); // 0 = Sunday, 1 = Monday, ...
+                const availabilities = trainerAvailabilities[trainerId] || [];
+                
+                console.log('Seçilen tarih:', date);
+                console.log('Gün numarası (JS):', dayOfWeekNum);
+                console.log('Antrenör ID:', trainerId);
+                console.log('Availabilities:', availabilities);
+                
+                // O gün için müsait zaman aralıklarını bul
+                const dayAvailabilities = availabilities.filter(a => {
+                    console.log('Kontrol edilen availability:', a, 'dayOfWeek:', a.dayOfWeek, 'aranan:', dayOfWeekNum);
+                    return a.dayOfWeek === dayOfWeekNum && a.isAvailable;
+                });
+                
+                console.log('Bulunan müsait saatler:', dayAvailabilities);
+                
                 // Bugünün tarihi ve saati
                 const now = new Date();
                 const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-                const selectedDate = new Date(date + 'T00:00:00');
                 const isToday = selectedDate.getTime() === today.getTime();
                 const currentHour = now.getHours();
                 
-                // Basit saat seçenekleri oluştur
-                for (let h = 8; h <= 21; h++) {
-                    // Eğer bugün seçildiyse ve saat geçmişte ise, bu saati ekleme
-                    if (isToday && h <= currentHour) {
-                        continue;
-                    }
+                if (dayAvailabilities.length === 0) {
+                    timeSelect.innerHTML = '<option value="">Bu gün için müsait saat yok</option>';
+                } else {
+                    // Her availability aralığı için saatleri ekle
+                    dayAvailabilities.forEach(avail => {
+                        const startTime = avail.startTime.split(':');
+                        const endTime = avail.endTime.split(':');
+                        const startHour = parseInt(startTime[0]);
+                        const endHour = parseInt(endTime[0]);
+                        
+                        console.log('Saat aralığı:', startHour, '-', endHour);
+                        
+                        for (let h = startHour; h < endHour; h++) {
+                            // Eğer bugün seçildiyse ve saat geçmişte ise, bu saati ekleme
+                            if (isToday && h <= currentHour) {
+                                continue;
+                            }
+                            
+                            const option = document.createElement('option');
+                            option.value = `${h.toString().padStart(2,'0')}:00:00`;
+                            option.textContent = `${h.toString().padStart(2,'0')}:00`;
+                            timeSelect.appendChild(option);
+                        }
+                    });
                     
-                    const option = document.createElement('option');
-                    option.value = `${h.toString().padStart(2,'0')}:00:00`;
-                    option.textContent = `${h.toString().padStart(2,'0')}:00`;
-                    timeSelect.appendChild(option);
+                    // Eğer hiç saat eklenemediyse
+                    if (timeSelect.options.length === 1) {
+                        if (isToday) {
+                            timeSelect.innerHTML = '<option value="">Bugün için uygun saat yok</option>';
+                        } else {
+                            timeSelect.innerHTML = '<option value="">Bu gün için müsait saat yok</option>';
+                        }
+                    }
                 }
-                
-                // Eğer bugün için hiç saat kalmadıysa
-                if (isToday && timeSelect.options.length === 1) {
-                    timeSelect.innerHTML = '<option value="">Bugün için uygun saat yok</option>';
-                }
-            }
-            updateSummary();
-        });
-
-        // Tarih değişikliğinde Türkçe görünümünü güncelle
-        const dateInput = document.getElementById('dateSelect');
-        dateInput.addEventListener('change', function() {
-            if (this.value) {
-                const date = new Date(this.value + 'T00:00:00');
-                const turkishDate = date.toLocaleDateString('tr-TR', { 
-                    day: 'numeric', 
-                    month: 'long', 
-                    year: 'numeric' 
-                });
-                document.getElementById('selectedDateTurkish').textContent = `Seçilen Tarih: ${turkishDate}`;
-                document.getElementById('selectedDateTurkish').style.color = '#00d26a';
-            } else {
-                document.getElementById('selectedDateTurkish').textContent = 'Tarih seçili değil';
-                document.getElementById('selectedDateTurkish').style.color = '#888';
             }
             updateSummary();
         });

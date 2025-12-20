@@ -292,31 +292,28 @@ namespace FitnessCenter.Data
             context.TrainerServices.AddRange(trainerServices);
             await context.SaveChangesAsync();
 
-            // Antrenör müsaitlik zamanlarını oluştur
+            // Antrenör müsaitlik zamanlarını oluştur - her antrenör için WorkingDays'e göre
             var availabilities = new List<TrainerAvailability>();
             foreach (var trainer in trainers)
             {
-                // Pazartesi-Cuma
-                for (int day = 1; day <= 5; day++)
+                // WorkingDays string'ini parse et
+                var workingDaysList = trainer.WorkingDays?.Split(',').Select(d => d.Trim()).ToList() ?? new List<string>();
+                
+                foreach (var dayName in workingDaysList)
                 {
-                    availabilities.Add(new TrainerAvailability
+                    // String günü DayOfWeek enum'a çevir
+                    if (Enum.TryParse<DayOfWeek>(dayName, out var dayOfWeek))
                     {
-                        TrainerId = trainer.Id,
-                        DayOfWeek = (DayOfWeek)day,
-                        StartTime = trainer.WorkStartTime,
-                        EndTime = trainer.WorkEndTime,
-                        IsAvailable = true
-                    });
+                        availabilities.Add(new TrainerAvailability
+                        {
+                            TrainerId = trainer.Id,
+                            DayOfWeek = dayOfWeek,
+                            StartTime = trainer.WorkStartTime,
+                            EndTime = trainer.WorkEndTime,
+                            IsAvailable = true
+                        });
+                    }
                 }
-                // Cumartesi - kısa mesai
-                availabilities.Add(new TrainerAvailability
-                {
-                    TrainerId = trainer.Id,
-                    DayOfWeek = DayOfWeek.Saturday,
-                    StartTime = new TimeSpan(9, 0, 0),
-                    EndTime = new TimeSpan(14, 0, 0),
-                    IsAvailable = true
-                });
             }
 
             context.TrainerAvailabilities.AddRange(availabilities);

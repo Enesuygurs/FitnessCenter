@@ -49,6 +49,7 @@ namespace FitnessCenter.Controllers
             var trainers = await _context.Trainers
                 .Include(t => t.TrainerServices)
                     .ThenInclude(ts => ts.Service)
+                .Include(t => t.Availabilities)
                 .Where(t => t.IsActive)
                 .ToListAsync();
 
